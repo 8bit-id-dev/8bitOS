@@ -1,0 +1,13 @@
+node_modules
+dist
+dist-ssr
+.env
+.env.local
+.env.*.local
+.insforge
+.DS_Store
+*.log
+coverage
+.vite
+.pnpm-store
+*.tsbuildinfo
