@@ -11,3 +11,16 @@ coverage
 .vite
 .pnpm-store
 *.tsbuildinfo
+# InsForge & AI agent skills
+.agent
+.agents
+.augment
+.claude
+.cline
+.github/copilot*
+.kilocode
+.qoder
+.qwen
+.roo
+.trae
+.windsurf
