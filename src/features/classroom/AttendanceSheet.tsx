@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { insforge } from '@/shared/db/insforge';
+import { supabase } from '@/shared/db/supabase';
 import { listAttendanceForSession, listStudentsByClass, upsertAttendance } from '@/shared/db/queries';
 import type { AttendanceStatus, ClassSession, Subject } from '@/shared/db/types';
 import { PixelCard } from '@/shared/components/PixelCard';
@@ -26,7 +26,7 @@ const useSessionDetail = (sessionId: string) => {
   return useQuery({
     queryKey: ['session', sessionId],
     queryFn: async () => {
-      const { data, error } = await insforge.database
+      const { data, error } = await supabase
         .from('class_sessions')
         .select('*')
         .eq('id', sessionId)
@@ -60,7 +60,7 @@ export function AttendanceSheet() {
     if (!session) return;
     let cancelled = false;
     void (async () => {
-      const { data } = await insforge.database
+      const { data } = await supabase
         .from('subjects')
         .select('id, name')
         .eq('id', session.subject_id)

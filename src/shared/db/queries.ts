@@ -1,4 +1,4 @@
-import { insforge } from './insforge';
+import { supabase } from './supabase';
 import type {
   AttendanceRecord,
   AttendanceStatus,
@@ -28,7 +28,7 @@ const safeJson = (s: string | null): unknown => {
 };
 
 export const listClassesForUser = async (userId: string): Promise<ClassSummary[]> => {
-  const { data: classes, error: classesError } = await insforge.database
+  const { data: classes, error: classesError } = await supabase
     .from('classes')
     .select('*')
     .eq('user_id', userId)
@@ -46,9 +46,12 @@ export const listClassesForUser = async (userId: string): Promise<ClassSummary[]
 
   const [{ data: students, error: studentsError }, { data: links, error: linksError }, { data: subjects, error: subjectsError }] =
     await Promise.all([
-      insforge.database.from('students').select('id, class_id').in('class_id', classIds),
-      insforge.database.from('class_subjects').select('class_id, subject_id, subject:subjects(name)').in('class_id', classIds),
-      insforge.database.from('subjects').select('id, name').eq('user_id', userId),
+      supabase.from('students').select('id, class_id').in('class_id', classIds),
+      supabase
+        .from('class_subjects')
+        .select('class_id, subject_id, subject:subjects(name)')
+        .in('class_id', classIds),
+      supabase.from('subjects').select('id, name').eq('user_id', userId),
     ]);
 
   if (studentsError) throw studentsError;
@@ -88,7 +91,7 @@ export const listClassesForUser = async (userId: string): Promise<ClassSummary[]
 };
 
 export const getClassById = async (userId: string, classId: string): Promise<ClassRow | null> => {
-  const { data, error } = await insforge.database
+  const { data, error } = await supabase
     .from('classes')
     .select('*')
     .eq('id', classId)
@@ -100,7 +103,7 @@ export const getClassById = async (userId: string, classId: string): Promise<Cla
 };
 
 export const listStudentsByClass = async (classId: string): Promise<Student[]> => {
-  const { data, error } = await insforge.database
+  const { data, error } = await supabase
     .from('students')
     .select('*')
     .eq('class_id', classId)
@@ -111,7 +114,7 @@ export const listStudentsByClass = async (classId: string): Promise<Student[]> =
 };
 
 export const listScheduleForClass = async (classId: string): Promise<ScheduleSlot[]> => {
-  const { data, error } = await insforge.database
+  const { data, error } = await supabase
     .from('schedule_slots')
     .select('*')
     .eq('class_id', classId)
@@ -123,7 +126,7 @@ export const listScheduleForClass = async (classId: string): Promise<ScheduleSlo
 };
 
 export const listSessionsForClass = async (classId: string): Promise<ClassSession[]> => {
-  const { data, error } = await insforge.database
+  const { data, error } = await supabase
     .from('class_sessions')
     .select('*')
     .eq('class_id', classId)
@@ -135,7 +138,7 @@ export const listSessionsForClass = async (classId: string): Promise<ClassSessio
 };
 
 export const listAttendanceForSession = async (sessionId: string): Promise<AttendanceRecord[]> => {
-  const { data, error } = await insforge.database
+  const { data, error } = await supabase
     .from('attendance_records')
     .select('*')
     .eq('session_id', sessionId);
@@ -160,7 +163,7 @@ export const createSession = async (
     topic,
     status: 'active' as const,
   };
-  const { data, error } = await insforge.database.from('class_sessions').insert([row]).select('*').single();
+  const { data, error } = await supabase.from('class_sessions').insert(row).select('*').single();
   if (error) throw error;
   return data as unknown as ClassSession;
 };

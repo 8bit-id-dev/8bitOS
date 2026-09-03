@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { insforge } from '@/shared/db/insforge';
+import { supabase } from '@/shared/db/supabase';
 import type { ClassRow, Subject } from '@/shared/db/types';
 import { useSession } from '@/features/auth/useSession';
 import { todayInJakarta } from '@/shared/lib/time';
@@ -33,7 +33,7 @@ const fetchTodaySchedule = async (userId: string): Promise<JoinedSlot[]> => {
   // `todayInJakarta` returns 0=Sun..6=Sat. Convert: add 1 so 0->1, 1->2, ... 6->7.
   const dow = dowIso + 1;
 
-  const { data: slots, error: slotsError } = await insforge.database
+  const { data: slots, error: slotsError } = await supabase
     .from('schedule_slots')
     .select('*')
     .eq('day_of_week', dow)
@@ -46,7 +46,7 @@ const fetchTodaySchedule = async (userId: string): Promise<JoinedSlot[]> => {
   const classIds = Array.from(new Set(slotRows.map((s) => s.class_id)));
   const subjectIds = Array.from(new Set(slotRows.map((s) => s.subject_id)));
 
-  const { data: links, error: linksError } = await insforge.database
+  const { data: links, error: linksError } = await supabase
     .from('class_subjects')
     .select('id, class_id, subject_id, class:classes(id,name), subject:subjects(id,name)')
     .in('class_id', classIds)

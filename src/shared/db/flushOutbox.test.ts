@@ -3,13 +3,11 @@ import 'fake-indexeddb/auto';
 import { enqueueAttendance, count, peek, remove, __resetDbForTests } from './outbox';
 import { flushOutbox } from './flushOutbox';
 
-vi.mock('@/shared/db/insforge', () => ({
-  insforge: {
-    database: {
-      from: (_table: string) => ({
-        upsert: vi.fn(async (rows: unknown[]) => ({ data: rows, error: null })),
-      }),
-    },
+vi.mock('@/shared/db/supabase', () => ({
+  supabase: {
+    from: (_table: string) => ({
+      upsert: vi.fn(async (row: unknown) => ({ data: row, error: null })),
+    }),
   },
 }));
 
@@ -30,10 +28,10 @@ describe('flushOutbox', () => {
   });
 
   it('keeps row when write fails and increments attempts', async () => {
-    const { insforge } = await import('@/shared/db/insforge');
+    const { supabase } = await import('@/shared/db/supabase');
     const upsert = vi.fn(async () => ({ data: null, error: { message: 'fail' } }));
-    vi.spyOn(insforge.database, 'from').mockImplementation(
-      () => ({ upsert } as unknown as ReturnType<typeof insforge.database.from>),
+    vi.spyOn(supabase, 'from').mockImplementation(
+      () => ({ upsert } as unknown as ReturnType<typeof supabase.from>),
     );
     await enqueueAttendance({ sessionId: 's1', studentId: 'st1', status: 'hadir' });
     const result = await flushOutbox();

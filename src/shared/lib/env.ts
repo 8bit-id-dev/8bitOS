@@ -7,6 +7,6 @@ const requireEnv = (key: string): string => {
 };
 
 export const env = {
-  insforgeUrl: requireEnv('VITE_INSFORGE_URL'),
-  insforgeAnonKey: requireEnv('VITE_INSFORGE_ANON_KEY'),
+  supabaseUrl: requireEnv('VITE_SUPABASE_URL'),
+  supabaseAnonKey: requireEnv('VITE_SUPABASE_ANON_KEY'),
 } as const;

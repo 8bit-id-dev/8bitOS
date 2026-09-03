@@ -1,4 +1,4 @@
-import { insforge } from './insforge';
+import { supabase } from './supabase';
 import {
   incrementAttempts,
   peek,
@@ -9,20 +9,16 @@ import {
 
 const flushAttendance = async (row: OutboxRow): Promise<boolean> => {
   const payload = row.payload as AttendanceUpsert;
-  const { error } = await insforge.database
-    .from('attendance_records')
-    .upsert(
-      [
-        {
-          session_id: payload.sessionId,
-          student_id: payload.studentId,
-          status: payload.status,
-          note: payload.note ?? '',
-          recorded_at: new Date().toISOString(),
-        },
-      ],
-      { onConflict: 'session_id,student_id' },
-    );
+  const { error } = await supabase.from('attendance_records').upsert(
+    {
+      session_id: payload.sessionId,
+      student_id: payload.studentId,
+      status: payload.status,
+      note: payload.note ?? '',
+      recorded_at: new Date().toISOString(),
+    },
+    { onConflict: 'session_id,student_id' },
+  );
   return !error;
 };
 

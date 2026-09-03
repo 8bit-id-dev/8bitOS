@@ -9,7 +9,7 @@ import {
   listStudentsByClass,
 } from '@/shared/db/queries';
 import type { ScheduleSlot, Student, Subject } from '@/shared/db/types';
-import { insforge } from '@/shared/db/insforge';
+import { supabase } from '@/shared/db/supabase';
 import { useSession } from '@/features/auth/useSession';
 import { PixelCard } from '@/shared/components/PixelCard';
 import { PixelButton } from '@/shared/components/PixelButton';
@@ -45,7 +45,7 @@ const useClassBundle = (classId: string) => {
       ]);
 
       const subjectIds = Array.from(new Set(schedule.map((s) => s.subject_id)));
-      const { data: subjectsData } = await insforge.database
+      const { data: subjectsData } = await supabase
         .from('subjects')
         .select('id, name')
         .in('id', subjectIds.length > 0 ? subjectIds : ['00000000-0000-0000-0000-000000000000']);
