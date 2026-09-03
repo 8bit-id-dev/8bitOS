@@ -315,16 +315,16 @@ Karena semua berada dalam **8bitOS Teacher Environment**.
 | Kode | Modul | Fase | Spec |
 |---|---|---|---|
 | A | Dashboard | RENCANA | 1 ✅ |
-| B | Classroom Management | PELAKSANAAN/ASESMEN | 1 ✅ (parsial) |
-| C | Teaching Planner | RENCANA | 2 |
-| D1 | Smart Notes | PERSIAPAN/EVALUASI | 2 |
+| B | Classroom Management | PELAKSANAAN/ASESMEN | 1 ✅ + 2 ✅ (student CRUD, session report) |
+| C | Teaching Planner | RENCANA | 2 ✅ |
+| D1 | Smart Notes | PERSIAPAN/EVALUASI | 2 ✅ (teks; stylus/audio → Spec 3) |
 | D2 | Whiteboard | PELAKSANAAN | 3 |
 | D3 | Browser Internal | PERSIAPAN | 3 |
 | E | Assessment Center | ASESMEN | 3 |
 | F | Gradebook | ANALISIS | 3 |
 | G | Document Center | ARSIP | 4 |
 | H | AI Teacher Assistant | Lintas | 4 |
-| I | Launcher Mode | Device | 5+ |
+| I | Launcher Mode | Device | ✅ Dibangun (APK debug; hardening menyusul) |
 
 Detail tiap modul: **Dokumen 03 — Module Specs** (`docs/foundation/03-module-specs.md`).
 

@@ -151,6 +151,16 @@ Setiap modul punya: tujuan, layar, data, acceptance criteria, spec target.
 - **Launcher Mode:** dibangun & APK berhasil — `id.dev.eightbit.launcher` dengan intent HOME (Nova-style), immersive fullscreen, plugin native `LauncherApps` (listApps + launchApp), layar `/launcher` dengan jam besar + next session + grid modul + app drawer. APK debug 4.1 MB.
 - **Stack mobile:** Capacitor (sudah init, platform Android ter-commit).
 
+**Spec 2 (2026-09-03, commit f225fe6):**
+
+- Migration 0005: tabel `plans` + `notes` (+ index, RLS) — applied live, E2E 13/13.
+- **Planner** (`~/planner`): nav minggu (Senin-based Jakarta), form topik/tujuan/metode/media/aktivitas/refleksi, status draft/siap/selesai, upsert per kelas+minggu.
+- **Notes** (`~/notes`): master+detail, 4 jenis (pribadi/rapat/kelas/sesi), **auto-save 1.5s** dengan indikator menyimpan/tersimpan.
+- **Session Report** (`/classroom/:id/session/:id/report`): durasi, grid absensi 5 kolom (H/I/S/A/belum), catatan sesi, SELESAIKAN SESI (status→done).
+- **Student CRUD:** tambah siswa via modal di Roster, detail siswa (profil, % kehadiran, riwayat absensi), hapus dengan konfirmasi.
+- Navigasi: sidebar HOME/CLASS/PLAN/NOTES aktif; launcher grid + quick actions ter-wire.
+- Tests 17/17 (planner 5 + report 3 baru), typecheck clean, APK rebuild sukses.
+
 ---
 
 ## Roadmap Implementasi
@@ -158,8 +168,8 @@ Setiap modul punya: tujuan, layar, data, acceptance criteria, spec target.
 | Spec | Fokus | Status |
 |---|---|---|
 | 1 | Foundation (Shell + Dashboard + Classroom) | ✅ Selesai |
-| 2 | Teaching Workflow (Planner + Notes + Session Report + Student CRUD) | ⏳ Berikutnya |
-| 3 | Assessment + Gradebook + Whiteboard + Browser | ⏳ |
+| 2 | Teaching Workflow (Planner + Notes + Session Report + Student CRUD) | ✅ Selesai |
+| 3 | Assessment + Gradebook + Whiteboard + Browser | ⏳ Berikutnya |
 | 4 | Document Center + AI Assistant + Global Search + Command Palette | ⏳ |
 | 5+ | Multi-device sync + widgets + device integration lanjutan | ⏳ |
 
