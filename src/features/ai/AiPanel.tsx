@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/shared/db/supabase';
 import {
   createAiJob,
-  failAiJob,
   finishAiJob,
   listAiJobs,
   listClassesForUser,
@@ -20,7 +20,7 @@ import {
   type AiKind,
 } from './ai.helpers';
 
-const AI_ENDPOINT = '/api/ai-generate';
+const AI_ENDPOINT = 'https://nzamuxnrrqlqdtwdisrt.supabase.co/functions/v1/ai-generate';
 
 export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { user } = useSession();
@@ -62,11 +62,18 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
       };
       const job = await createAiJob(user.id, draft);
 
-      // Try real AI gateway (edge function); fall back to local outline.
+      // Real AI gateway: Supabase edge function -> Gemini 3.6 Flash.
+      // Falls back to local structured outline when unreachable.
       try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData.session?.access_token ?? '';
         const res = await fetch(AI_ENDPOINT, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY as string,
+          },
           body: JSON.stringify({ prompt }),
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -74,7 +81,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
         if (!data.response) throw new Error('EMPTY');
         return finishAiJob(job.id, data.response);
       } catch {
-        // Edge function unavailable — local structured fallback, still audited.
+        // Gateway unreachable — local structured fallback, still audited.
         return finishAiJob(job.id, localFallbackResponse(kind, input));
       }
     },
@@ -82,13 +89,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
       setActiveJob(job);
       void queryClient.invalidateQueries({ queryKey: ['ai-jobs'] });
     },
-    onError: async (e) => {
-      // Attempt to audit the failure; ignore audit errors silently.
-      try {
-        await failAiJob('00000000-0000-0000-0000-000000000000', (e as Error).message);
-      } catch {
-        /* noop */
-      }
+    onError: (e) => {
       setActiveJob(null);
       setSavedMsg(`ERROR: ${(e as Error).message}`);
     },
