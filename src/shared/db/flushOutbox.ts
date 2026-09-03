@@ -37,10 +37,10 @@ export const flushOutbox = async (): Promise<{ flushed: number; remaining: numbe
       ok = false;
     }
     if (ok) {
-      await remove(row.id);
+      if (row.id !== undefined) await remove(row.id);
       flushed += 1;
     } else {
-      await incrementAttempts(row.id);
+      if (row.id !== undefined) await incrementAttempts(row.id);
     }
   }
   const remaining = rows.length - flushed;

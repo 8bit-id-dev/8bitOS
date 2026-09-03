@@ -18,11 +18,36 @@
     margin: 0;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    overscroll-behavior: none;
+  }
+
+  *:focus {
+    outline: none;
   }
 
   *:focus-visible {
-    outline: 2px dashed var(--c-fg);
+    outline: 2px solid var(--c-fg);
     outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--c-fg);
+    color: var(--c-bg);
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--c-bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--c-gray-700);
+    border: 2px solid var(--c-bg);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--c-gray-500);
   }
 }
 
@@ -48,5 +73,31 @@
     background: var(--c-bg);
     border: var(--border-pixel);
     box-shadow: var(--shadow-pixel);
+  }
+
+  .pixel-shadow {
+    box-shadow: var(--shadow-pixel);
+  }
+
+  .pixel-shadow-sm {
+    box-shadow: var(--shadow-pixel-sm);
+  }
+
+  .tap-target {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .label-mono {
+    font-family: 'Pixelify Sans', system-ui, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .micro-label {
+    font-family: 'Pixelify Sans', system-ui, sans-serif;
+    font-size: 10px;
+    line-height: 1;
+    text-transform: uppercase;
   }
 }

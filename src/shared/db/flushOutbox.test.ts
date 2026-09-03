@@ -17,7 +17,7 @@ describe('flushOutbox', () => {
   beforeEach(async () => {
     await __resetDbForTests();
     const rows = await peek();
-    for (const r of rows) await remove(r.id);
+    for (const r of rows) if (r.id !== undefined) await remove(r.id);
   });
 
   it('drains pending attendance rows', async () => {

@@ -11,7 +11,7 @@ export interface AttendanceUpsert {
 export type OutboxOp = 'upsert';
 
 export interface OutboxRow {
-  id: number;
+  id?: number;
   table: 'attendance_records';
   op: OutboxOp;
   payload: AttendanceUpsert;

@@ -23,7 +23,7 @@ export function PixelModal({ open, onClose, title, children, footer }: PixelModa
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -33,7 +33,7 @@ export function PixelModal({ open, onClose, title, children, footer }: PixelModa
         className="pixel-card pixel-cut w-[480px] max-w-[90vw] p-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="font-pixel text-xl mb-4">{title}</h2>
+        <h2 className="font-pixel text-h2 mb-4">{title}</h2>
         <div>{children}</div>
         {footer && <div className="mt-6 flex justify-end gap-2">{footer}</div>}
       </div>

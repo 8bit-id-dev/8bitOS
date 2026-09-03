@@ -1,13 +1,29 @@
 :root {
-  --c-bg: #000000;
+  --c-bg: #050505;
   --c-fg: #ffffff;
   --c-gray-100: #f5f5f5;
   --c-gray-300: #d4d4d4;
   --c-gray-500: #737373;
   --c-gray-700: #404040;
+  --c-gray-950: #0a0a0a;
+
   --shadow-pixel: 4px 4px 0 0 var(--c-fg);
   --shadow-pixel-sm: 2px 2px 0 0 var(--c-fg);
+  --shadow-pixel-inset: inset 0 4px 0 0 #000000;
   --border-pixel: 2px solid var(--c-fg);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  --sidebar-w: 80px;
+  --header-h: 64px;
+  --footer-h: 40px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -16,5 +32,7 @@
   *::after {
     transition-duration: 0.001ms !important;
     animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
   }
 }

@@ -1,55 +1,87 @@
 import { NavLink } from 'react-router-dom';
+import { IconClass, IconHome, IconSystem, IconTools, IconWork } from './icons';
+import type { ComponentType, SVGProps } from 'react';
 
 interface DockItem {
   to: string;
   label: string;
   enabled: boolean;
+  Icon: ComponentType<SVGProps<SVGSVGElement>>;
 }
 
 const ITEMS: DockItem[] = [
-  { to: '/', label: 'HOME', enabled: true },
-  { to: '/classroom', label: 'CLASS', enabled: true },
-  { to: '/work', label: 'WORK', enabled: false },
-  { to: '/tools', label: 'TOOLS', enabled: false },
-  { to: '/system', label: 'SYSTEM', enabled: false },
+  { to: '/', label: 'HOME', enabled: true, Icon: IconHome },
+  { to: '/classroom', label: 'CLASS', enabled: true, Icon: IconClass },
+  { to: '/work', label: 'WORK', enabled: false, Icon: IconWork },
+  { to: '/tools', label: 'TOOLS', enabled: false, Icon: IconTools },
+  { to: '/system', label: 'SYSTEM', enabled: false, Icon: IconSystem },
 ];
 
 export function Dock() {
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 h-16 border-t-2 border-fg bg-bg flex items-stretch z-40"
-      aria-label="Primary"
+      className="fixed top-0 left-0 bottom-0 w-sidebar bg-bg flex flex-col items-stretch z-40 border-r-2 border-fg"
+      aria-label="Primary navigation"
     >
-      {ITEMS.map((item) => {
-        if (!item.enabled) {
+      <div className="h-header-h flex items-center justify-center border-b-2 border-fg">
+        <span className="font-pixel text-h2" aria-label="8bitOS">
+          8B
+        </span>
+      </div>
+
+      <ul className="flex-1 flex flex-col">
+        {ITEMS.map((item) => {
+          const { Icon } = item;
+          if (!item.enabled) {
+            return (
+              <li
+                key={item.to}
+                className="flex-1 flex flex-col items-center justify-center gap-1 text-gray-500 px-1"
+                aria-disabled="true"
+              >
+                <Icon aria-hidden />
+                <span className="font-pixel text-micro">{item.label}</span>
+                <span className="font-pixel text-[8px]">[SOON]</span>
+              </li>
+            );
+          }
           return (
-            <div
-              key={item.to}
-              className="flex-1 flex flex-col items-center justify-center font-pixel text-xs text-gray-500 border-r-2 border-fg last:border-r-0"
-              aria-disabled="true"
-            >
-              <span>{item.label}</span>
-              <span className="text-[10px]">[ SOON ]</span>
-            </div>
+            <li key={item.to} className="flex-1">
+              <NavLink
+                to={item.to}
+                end={item.to === '/'}
+                aria-label={item.label}
+                className={({ isActive }) =>
+                  `h-full flex flex-col items-center justify-center gap-1 tap-target ${
+                    isActive
+                      ? 'bg-fg text-bg shadow-pixel-inset'
+                      : 'text-fg hover:bg-gray-950'
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <Icon aria-hidden />
+                    <span className="font-pixel text-micro">{item.label}</span>
+                    {isActive && (
+                      <span
+                        className="block w-6 h-[2px] bg-bg"
+                        aria-hidden
+                      />
+                    )}
+                  </>
+                )}
+              </NavLink>
+            </li>
           );
-        }
-        return (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.to === '/'}
-            className={({ isActive }) =>
-              `flex-1 flex items-center justify-center font-pixel text-xs border-r-2 border-fg last:border-r-0 ${
-                isActive
-                  ? 'bg-fg text-bg shadow-[inset_0_4px_0_0_#000]'
-                  : 'bg-bg text-fg hover:bg-gray-700'
-              }`
-            }
-          >
-            {item.label}
-          </NavLink>
-        );
-      })}
+        })}
+      </ul>
+
+      <div className="h-footer-h flex items-center justify-center border-t-2 border-fg">
+        <span className="font-pixel text-[9px] text-gray-300" aria-label="Version">
+          v0.1
+        </span>
+      </div>
     </nav>
   );
 }

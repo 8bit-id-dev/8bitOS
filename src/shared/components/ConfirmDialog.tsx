@@ -32,17 +32,13 @@ export function ConfirmDialog({
           <PixelButton variant="secondary" onClick={onCancel}>
             {cancelLabel}
           </PixelButton>
-          <PixelButton
-            variant={destructive ? 'secondary' : 'primary'}
-            onClick={onConfirm}
-            className={destructive ? 'border-dashed' : ''}
-          >
+          <PixelButton variant={destructive ? 'danger' : 'primary'} onClick={onConfirm}>
             {confirmLabel}
           </PixelButton>
         </>
       }
     >
-      <p className="text-sm text-gray-100">{message}</p>
+      <p className="text-small text-gray-100">{message}</p>
     </PixelModal>
   );
 }

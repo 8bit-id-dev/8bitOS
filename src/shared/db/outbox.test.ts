@@ -13,7 +13,7 @@ describe('outbox', () => {
   beforeEach(async () => {
     await __resetDbForTests();
     const rows = await peek();
-    for (const r of rows) await remove(r.id);
+    for (const r of rows) if (r.id !== undefined) await remove(r.id);
   });
 
   it('enqueues and peeks rows', async () => {
@@ -28,7 +28,7 @@ describe('outbox', () => {
   it('removes a row', async () => {
     await enqueueAttendance(sample);
     const rows = await peek();
-    await remove(rows[0]!.id);
+    if (rows[0]?.id !== undefined) await remove(rows[0].id);
     expect(await count()).toBe(0);
   });
 });
