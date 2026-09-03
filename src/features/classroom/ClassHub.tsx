@@ -63,6 +63,7 @@ const useClassBundle = (classId: string) => {
 };
 
 const OverviewTab = ({
+  classId,
   className,
   schedule,
   students,
@@ -71,6 +72,7 @@ const OverviewTab = ({
   onStart,
   isStarting,
 }: {
+  classId: string;
   className: string;
   schedule: ScheduleSlot[];
   students: Student[];
@@ -145,6 +147,12 @@ const OverviewTab = ({
       <p className="font-mono text-xs">
         <Link to="/classroom" className="text-dim hover:text-accent">
           ← ~/classroom
+        </Link>
+        <Link
+          to={`/classroom/${classId}/documents`}
+          className="text-dim hover:text-accent ml-3"
+        >
+          📄 dokumen kelas →
         </Link>
         <span className="text-dimmer ml-2">{className}</span>
       </p>
@@ -319,6 +327,7 @@ export function ClassHub() {
 
       {tab === 'overview' && (
         <OverviewTab
+          classId={classId}
           className={data.classRow.name}
           schedule={data.schedule}
           students={data.students}

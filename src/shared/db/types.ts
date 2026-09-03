@@ -167,3 +167,38 @@ export interface Grade {
   note: string;
   recorded_at: string;
 }
+
+// ---------- Spec 4: Document Center ----------
+
+export type DocumentKind = 'modul_ajar' | 'rpp' | 'lkpd' | 'soal' | 'nilai' | 'surat' | 'lainnya';
+
+export interface DocumentRow {
+  id: string;
+  user_id: string;
+  class_id: string | null;
+  subject_id: string | null;
+  title: string;
+  kind: DocumentKind;
+  storage_key: string;
+  mime_type: string;
+  size_bytes: number;
+  tags: string;
+  created_at: string;
+}
+
+// ---------- Spec 4: AI Assistant ----------
+
+export type AiJobStatus = 'pending' | 'running' | 'done' | 'error';
+
+export interface AiJob {
+  id: string;
+  user_id: string;
+  kind: string;
+  prompt: string;
+  response: string | null;
+  status: AiJobStatus;
+  error: string | null;
+  linked_class_id: string | null;
+  created_at: string;
+  finished_at: string | null;
+}

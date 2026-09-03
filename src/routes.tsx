@@ -19,6 +19,7 @@ import { GradebookHome, GradebookClass } from './features/gradebook/Gradebook';
 import { Whiteboard } from './features/whiteboard/Whiteboard';
 import { Browser } from './features/browser/Browser';
 import { ToolsHome } from './features/tools/ToolsHome';
+import { Documents } from './features/documents/Documents';
 import { LauncherHome } from './features/launcher/LauncherHome';
 
 export function AppRoutes() {
@@ -46,6 +47,8 @@ export function AppRoutes() {
           <Route path="/gradebook/:classId" element={<GradebookClass />} />
           <Route path="/whiteboard" element={<Whiteboard />} />
           <Route path="/browser" element={<Browser />} />
+          <Route path="/documents" element={<Documents />} />
+          <Route path="/classroom/:classId/documents" element={<Documents />} />
           <Route path="/tools" element={<ToolsHome />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

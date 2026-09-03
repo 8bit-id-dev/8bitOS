@@ -6,6 +6,7 @@ const TOOLS = [
   { to: '/whiteboard', glyph: '▩', label: 'WHITEBOARD', desc: 'papan tulis + M-Pencil' },
   { to: '/assessment', glyph: '◉', label: 'ASESMEN', desc: 'quiz, ulangan, koreksi' },
   { to: '/gradebook', glyph: '▦', label: 'GRADEBOOK', desc: 'nilai tertimbang per kelas' },
+  { to: '/documents', glyph: '▣', label: 'DOKUMEN', desc: 'modul ajar, LKPD, arsip' },
 ];
 
 export function ToolsHome() {
@@ -18,7 +19,7 @@ export function ToolsHome() {
         <span className="font-mono text-xs text-dim">alat KBM</span>
       </header>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {TOOLS.map((t) => (
           <Link
             key={t.to}

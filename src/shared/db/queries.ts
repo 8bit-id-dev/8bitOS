@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import type {
+  AiJob,
   Assessment,
   AssessmentStatus,
   AssessmentType,
@@ -9,6 +10,8 @@ import type {
   AttendanceStatus,
   ClassRow,
   ClassSession,
+  DocumentKind,
+  DocumentRow,
   Grade,
   GradeComponent,
   Note,
@@ -608,4 +611,136 @@ export const upsertGrade = async (
     .single();
   if (error) throw error;
   return data as unknown as Grade;
+};
+
+// ---------- Documents (Spec 4) ----------
+
+export interface DocumentMetaDraft {
+  class_id?: string | null;
+  subject_id?: string | null;
+  kind: DocumentKind;
+  tags?: string;
+}
+
+export const uploadDocument = async (
+  userId: string,
+  file: File,
+  meta: DocumentMetaDraft,
+): Promise<DocumentRow> => {
+  const storageKey = `${userId}/${Date.now()}-${file.name.replace(/[^\w.-]/g, '_')}`;
+  const { error: upErr } = await supabase.storage
+    .from('documents')
+    .upload(storageKey, file, { contentType: file.type, upsert: false });
+  if (upErr) throw upErr;
+
+  const { data, error } = await supabase
+    .from('documents')
+    .insert({
+      user_id: userId,
+      class_id: meta.class_id ?? null,
+      subject_id: meta.subject_id ?? null,
+      title: file.name,
+      kind: meta.kind,
+      storage_key: storageKey,
+      mime_type: file.type,
+      size_bytes: file.size,
+      tags: meta.tags ?? '',
+    })
+    .select('*')
+    .single();
+  if (error) throw error;
+  return data as unknown as DocumentRow;
+};
+
+export const listDocuments = async (
+  filter?: { classId?: string; kind?: DocumentKind },
+): Promise<DocumentRow[]> => {
+  let q = supabase
+    .from('documents')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(200);
+  if (filter?.classId) q = q.eq('class_id', filter.classId);
+  if (filter?.kind) q = q.eq('kind', filter.kind);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as unknown as DocumentRow[];
+};
+
+export const deleteDocument = async (doc: DocumentRow): Promise<void> => {
+  const { error: storageError } = await supabase.storage
+    .from('documents')
+    .remove([doc.storage_key]);
+  if (storageError) throw storageError;
+  const { error } = await supabase.from('documents').delete().eq('id', doc.id);
+  if (error) throw error;
+};
+
+export const getDocumentUrl = async (doc: DocumentRow): Promise<string> => {
+  const { data, error } = await supabase.storage
+    .from('documents')
+    .createSignedUrl(doc.storage_key, 3600);
+  if (error || !data) throw error ?? new Error('NO_URL');
+  return (data as { signedUrl: string }).signedUrl;
+};
+
+// ---------- AI jobs (Spec 4) ----------
+
+export interface AiJobDraft {
+  kind: string;
+  prompt: string;
+  linked_class_id?: string | null;
+}
+
+export const createAiJob = async (userId: string, draft: AiJobDraft): Promise<AiJob> => {
+  const { data, error } = await supabase
+    .from('ai_jobs')
+    .insert({ user_id: userId, ...draft, status: 'running' })
+    .select('*')
+    .single();
+  if (error) throw error;
+  return data as unknown as AiJob;
+};
+
+export const finishAiJob = async (
+  jobId: string,
+  response: string,
+): Promise<AiJob> => {
+  const { data, error } = await supabase
+    .from('ai_jobs')
+    .update({ response, status: 'done', finished_at: new Date().toISOString() })
+    .eq('id', jobId)
+    .select('*')
+    .single();
+  if (error) throw error;
+  return data as unknown as AiJob;
+};
+
+export const failAiJob = async (jobId: string, message: string): Promise<void> => {
+  const { error } = await supabase
+    .from('ai_jobs')
+    .update({ status: 'error', error: message, finished_at: new Date().toISOString() })
+    .eq('id', jobId);
+  if (error) throw error;
+};
+
+export const listAiJobs = async (limit = 20): Promise<AiJob[]> => {
+  const { data, error } = await supabase
+    .from('ai_jobs')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []) as unknown as AiJob[];
+};
+
+export const saveAiResponseToNote = async (
+  userId: string,
+  job: AiJob,
+): Promise<Note> => {
+  return createNote(userId, {
+    kind: 'personal',
+    title: `AI: ${job.prompt.slice(0, 60)}`,
+    body: job.response ?? '',
+  });
 };

@@ -116,6 +116,9 @@ export function DashboardScreen() {
           <Link to="/gradebook">
             <PixelButton variant="secondary">NILAI</PixelButton>
           </Link>
+          <Link to="/documents">
+            <PixelButton variant="secondary">DOKUMEN</PixelButton>
+          </Link>
         </div>
       </div>
     </main>
