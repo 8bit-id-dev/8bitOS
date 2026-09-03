@@ -11,6 +11,14 @@ import { SessionReport } from './features/classroom/SessionReport';
 import { StudentDetail } from './features/classroom/StudentDetail';
 import { PlannerScreen } from './features/planner/PlannerScreen';
 import { NotesScreen } from './features/notes/NotesScreen';
+import { AssessmentList } from './features/assessment/AssessmentList';
+import { AssessmentBuilder } from './features/assessment/AssessmentBuilder';
+import { AssessmentRun } from './features/assessment/AssessmentRun';
+import { AssessmentResult } from './features/assessment/AssessmentResult';
+import { GradebookHome, GradebookClass } from './features/gradebook/Gradebook';
+import { Whiteboard } from './features/whiteboard/Whiteboard';
+import { Browser } from './features/browser/Browser';
+import { ToolsHome } from './features/tools/ToolsHome';
 import { LauncherHome } from './features/launcher/LauncherHome';
 
 export function AppRoutes() {
@@ -29,6 +37,16 @@ export function AppRoutes() {
           <Route path="/classroom/:classId/students/:studentId" element={<StudentDetail />} />
           <Route path="/planner" element={<PlannerScreen />} />
           <Route path="/notes" element={<NotesScreen />} />
+          <Route path="/assessment" element={<AssessmentList />} />
+          <Route path="/assessment/new" element={<AssessmentBuilder />} />
+          <Route path="/assessment/:assessmentId/edit" element={<AssessmentBuilder />} />
+          <Route path="/assessment/:assessmentId/run" element={<AssessmentRun />} />
+          <Route path="/assessment/:assessmentId/result" element={<AssessmentResult />} />
+          <Route path="/gradebook" element={<GradebookHome />} />
+          <Route path="/gradebook/:classId" element={<GradebookClass />} />
+          <Route path="/whiteboard" element={<Whiteboard />} />
+          <Route path="/browser" element={<Browser />} />
+          <Route path="/tools" element={<ToolsHome />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Route>

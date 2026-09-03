@@ -110,12 +110,12 @@ export function DashboardScreen() {
           <Link to="/notes">
             <PixelButton variant="secondary">NOTES</PixelButton>
           </Link>
-          <PixelButton variant="ghost" disabled>
-            quiz [soon]
-          </PixelButton>
-          <PixelButton variant="ghost" disabled>
-            nilai [soon]
-          </PixelButton>
+          <Link to="/assessment">
+            <PixelButton variant="secondary">QUIZ</PixelButton>
+          </Link>
+          <Link to="/gradebook">
+            <PixelButton variant="secondary">NILAI</PixelButton>
+          </Link>
         </div>
       </div>
     </main>

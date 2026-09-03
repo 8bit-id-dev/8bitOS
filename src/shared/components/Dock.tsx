@@ -14,7 +14,7 @@ const ITEMS: DockItem[] = [
   { to: '/classroom', label: 'CLASS', enabled: true, Icon: IconClass },
   { to: '/planner', label: 'PLAN', enabled: true, Icon: IconWork },
   { to: '/notes', label: 'NOTES', enabled: true, Icon: IconNotes },
-  { to: '#', label: 'SYSTEM', enabled: false, Icon: IconSystem },
+  { to: '/tools', label: 'TOOLS', enabled: true, Icon: IconSystem },
 ];
 
 export function Dock() {

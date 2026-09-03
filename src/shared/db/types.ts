@@ -97,3 +97,73 @@ export interface Note {
   created_at: string;
   updated_at: string;
 }
+
+// ---------- Spec 3: Assessment ----------
+
+export type AssessmentType = 'quiz' | 'daily_test' | 'assignment' | 'midterm' | 'final' | 'practice';
+export type AssessmentStatus = 'draft' | 'published' | 'closed';
+export type QuestionType = 'mc' | 'mc_multi' | 'tf' | 'short' | 'essay';
+
+export interface Assessment {
+  id: string;
+  user_id: string;
+  class_id: string | null;
+  subject_id: string | null;
+  title: string;
+  type: AssessmentType;
+  status: AssessmentStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Question {
+  id: string;
+  user_id: string;
+  assessment_id: string;
+  position: number;
+  type: QuestionType;
+  prompt: string;
+  options: string[];
+  answer_key: string | null;
+  points: number;
+}
+
+export interface Attempt {
+  id: string;
+  user_id: string;
+  assessment_id: string;
+  student_id: string;
+  started_at: string;
+  finished_at: string | null;
+  score: number | null;
+}
+
+export interface AttemptAnswer {
+  id: string;
+  attempt_id: string;
+  question_id: string;
+  response: string | null;
+  is_correct: boolean | null;
+  score: number;
+}
+
+// ---------- Spec 3: Gradebook ----------
+
+export interface GradeComponent {
+  id: string;
+  user_id: string;
+  class_id: string;
+  name: string;
+  weight: number;
+  created_at: string;
+}
+
+export interface Grade {
+  id: string;
+  user_id: string;
+  component_id: string;
+  student_id: string;
+  score: number;
+  note: string;
+  recorded_at: string;
+}

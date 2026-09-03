@@ -17,9 +17,9 @@ const MODULES = [
   { to: '/classroom', label: 'KELAS', glyph: '▤' },
   { to: '/planner', label: 'PLANNER', glyph: '◈' },
   { to: '/notes', label: 'NOTES', glyph: '▧' },
-  { to: '/', label: 'BROWSER', glyph: '⌘' },
-  { to: '/', label: 'QUIZ', glyph: '◉' },
-  { to: '/', label: 'NILAI', glyph: '▦' },
+  { to: '/browser', label: 'BROWSER', glyph: '⌘' },
+  { to: '/assessment', label: 'QUIZ', glyph: '◉' },
+  { to: '/gradebook', label: 'NILAI', glyph: '▦' },
 ];
 
 export function LauncherHome() {

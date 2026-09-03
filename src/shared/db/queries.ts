@@ -1,12 +1,21 @@
 import { supabase } from './supabase';
 import type {
+  Assessment,
+  AssessmentStatus,
+  AssessmentType,
+  Attempt,
+  AttemptAnswer,
   AttendanceRecord,
   AttendanceStatus,
   ClassRow,
   ClassSession,
+  Grade,
+  GradeComponent,
   Note,
   NoteKind,
   Plan,
+  Question,
+  QuestionType,
   ScheduleSlot,
   Student,
   Subject,
@@ -366,4 +375,237 @@ export const upsertPlan = async (userId: string, draft: PlanDraft): Promise<Plan
 export const deletePlan = async (planId: string): Promise<void> => {
   const { error } = await supabase.from('plans').delete().eq('id', planId);
   if (error) throw error;
+};
+
+// ---------- Assessment (Spec 3) ----------
+
+export const listAssessments = async (userId: string, classId?: string): Promise<Assessment[]> => {
+  let q = supabase
+    .from('assessments')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+  if (classId) q = q.eq('class_id', classId);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as unknown as Assessment[];
+};
+
+export interface AssessmentDraft {
+  class_id: string | null;
+  subject_id: string | null;
+  title: string;
+  type: AssessmentType;
+  status: AssessmentStatus;
+}
+
+export const createAssessment = async (userId: string, draft: AssessmentDraft): Promise<Assessment> => {
+  const { data, error } = await supabase
+    .from('assessments')
+    .insert({ user_id: userId, ...draft })
+    .select('*')
+    .single();
+  if (error) throw error;
+  return data as unknown as Assessment;
+};
+
+export const updateAssessment = async (
+  assessmentId: string,
+  patch: Partial<AssessmentDraft>,
+): Promise<Assessment> => {
+  const { data, error } = await supabase
+    .from('assessments')
+    .update({ ...patch, updated_at: new Date().toISOString() })
+    .eq('id', assessmentId)
+    .select('*')
+    .single();
+  if (error) throw error;
+  return data as unknown as Assessment;
+};
+
+export const deleteAssessment = async (assessmentId: string): Promise<void> => {
+  const { error } = await supabase.from('assessments').delete().eq('id', assessmentId);
+  if (error) throw error;
+};
+
+export const listQuestions = async (assessmentId: string): Promise<Question[]> => {
+  const { data, error } = await supabase
+    .from('questions')
+    .select('*')
+    .eq('assessment_id', assessmentId)
+    .order('position');
+  if (error) throw error;
+  return (data ?? []).map(
+    (r) =>
+      ({
+        ...r,
+        options: ((r as { options?: unknown }).options ?? []) as string[],
+      }) as unknown as Question,
+  );
+};
+
+export interface QuestionDraft {
+  assessment_id: string;
+  position: number;
+  type: QuestionType;
+  prompt: string;
+  options: string[];
+  answer_key: string | null;
+  points: number;
+}
+
+export const createQuestion = async (userId: string, draft: QuestionDraft): Promise<Question> => {
+  const { data, error } = await supabase
+    .from('questions')
+    .insert({ user_id: userId, ...draft })
+    .select('*')
+    .single();
+  if (error) throw error;
+  return (data ?? []) as unknown as Question;
+};
+
+export const updateQuestion = async (
+  questionId: string,
+  patch: Partial<Omit<QuestionDraft, 'assessment_id' | 'position'>>,
+): Promise<Question> => {
+  const { data, error } = await supabase
+    .from('questions')
+    .update(patch)
+    .eq('id', questionId)
+    .select('*')
+    .single();
+  if (error) throw error;
+  return data as unknown as Question;
+};
+
+export const deleteQuestion = async (questionId: string): Promise<void> => {
+  const { error } = await supabase.from('questions').delete().eq('id', questionId);
+  if (error) throw error;
+};
+
+export interface AttemptSubmission {
+  assessment_id: string;
+  student_id: string;
+  responses: Record<string, string | null>;
+  scores: Record<string, { score: number; isCorrect: boolean }>;
+  totalScore: number | null;
+  maxScore: number;
+}
+
+export const saveAttempt = async (
+  userId: string,
+  sub: AttemptSubmission,
+): Promise<Attempt> => {
+  const { data: attempt, error: attemptError } = await supabase
+    .from('attempts')
+    .upsert(
+      {
+        user_id: userId,
+        assessment_id: sub.assessment_id,
+        student_id: sub.student_id,
+        finished_at: new Date().toISOString(),
+        score: sub.totalScore,
+      },
+      { onConflict: 'assessment_id,student_id' },
+    )
+    .select('*')
+    .single();
+  if (attemptError) throw attemptError;
+
+  const rows = Object.entries(sub.responses).map(([questionId, response]) => ({
+    attempt_id: (attempt as unknown as Attempt).id,
+    question_id: questionId,
+    response,
+    is_correct: sub.scores[questionId]?.isCorrect ?? null,
+    score: sub.scores[questionId]?.score ?? 0,
+  }));
+  if (rows.length > 0) {
+    const { error: answersError } = await supabase
+      .from('attempt_answers')
+      .upsert(rows, { onConflict: 'attempt_id,question_id' });
+    if (answersError) throw answersError;
+  }
+  return attempt as unknown as Attempt;
+};
+
+export const listAttempts = async (assessmentId: string): Promise<Attempt[]> => {
+  const { data, error } = await supabase
+    .from('attempts')
+    .select('*')
+    .eq('assessment_id', assessmentId)
+    .order('score', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as unknown as Attempt[];
+};
+
+export const listAttemptAnswers = async (attemptId: string): Promise<AttemptAnswer[]> => {
+  const { data, error } = await supabase
+    .from('attempt_answers')
+    .select('*')
+    .eq('attempt_id', attemptId);
+  if (error) throw error;
+  return (data ?? []) as unknown as AttemptAnswer[];
+};
+
+// ---------- Gradebook (Spec 3) ----------
+
+export const listGradeComponents = async (classId: string): Promise<GradeComponent[]> => {
+  const { data, error } = await supabase
+    .from('grade_components')
+    .select('*')
+    .eq('class_id', classId)
+    .order('created_at');
+  if (error) throw error;
+  return (data ?? []) as unknown as GradeComponent[];
+};
+
+export const createGradeComponents = async (
+  userId: string,
+  classId: string,
+  comps: Array<{ name: string; weight: number }>,
+): Promise<GradeComponent[]> => {
+  const rows = comps.map((c) => ({ user_id: userId, class_id: classId, ...c }));
+  const { data, error } = await supabase.from('grade_components').insert(rows).select('*');
+  if (error) throw error;
+  return (data ?? []) as unknown as GradeComponent[];
+};
+
+export const deleteGradeComponent = async (componentId: string): Promise<void> => {
+  const { error } = await supabase.from('grade_components').delete().eq('id', componentId);
+  if (error) throw error;
+};
+
+export const listGradesByClass = async (classId: string): Promise<Grade[]> => {
+  const { data, error } = await supabase
+    .from('grades')
+    .select('*, component:grade_components!inner(id, class_id)')
+    .eq('component.class_id', classId);
+  if (error) throw error;
+  return (data ?? []) as unknown as Grade[];
+};
+
+export const upsertGrade = async (
+  userId: string,
+  componentId: string,
+  studentId: string,
+  score: number,
+  note?: string,
+): Promise<Grade> => {
+  const { data, error } = await supabase
+    .from('grades')
+    .upsert(
+      {
+        user_id: userId,
+        component_id: componentId,
+        student_id: studentId,
+        score,
+        note: note ?? '',
+        recorded_at: new Date().toISOString(),
+      },
+      { onConflict: 'component_id,student_id' },
+    )
+    .select('*')
+    .single();
+  if (error) throw error;
+  return data as unknown as Grade;
 };
