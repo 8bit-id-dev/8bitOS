@@ -1,10 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges">
-  <rect width="32" height="32" fill="#000000"/>
-  <rect x="4" y="6" width="4" height="4" fill="#ffffff"/>
-  <rect x="12" y="6" width="4" height="4" fill="#ffffff"/>
-  <rect x="20" y="6" width="4" height="4" fill="#ffffff"/>
-  <rect x="8" y="14" width="16" height="4" fill="#ffffff"/>
-  <rect x="4" y="22" width="4" height="4" fill="#ffffff"/>
-  <rect x="12" y="22" width="4" height="4" fill="#ffffff"/>
-  <rect x="20" y="22" width="4" height="4" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#0a0f0a"/>
+  <rect x="3" y="3" width="58" height="58" fill="none" stroke="#2f4a2f" stroke-width="3"/>
+  <text x="32" y="38" font-family="monospace" font-weight="700" font-size="20" text-anchor="middle" fill="#4af626">8OS</text>
+  <rect x="14" y="45" width="15" height="3" fill="#4af626"/>
 </svg>

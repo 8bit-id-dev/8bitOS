@@ -16,10 +16,19 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            storeFile file('../keystore/8bitos-release.keystore')
+            storePassword System.getenv('8BITOS_STORE_PASSWORD') ?: '8bitos2026'
+            keyAlias '8bitos'
+            keyPassword System.getenv('8BITOS_KEY_PASSWORD') ?: '8bitos2026'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }

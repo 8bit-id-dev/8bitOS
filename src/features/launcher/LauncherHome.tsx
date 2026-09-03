@@ -132,12 +132,20 @@ export function LauncherHome() {
         >
           ▤ ALL APPS
         </button>
-        <Link
-          to="/"
-          className="font-mono text-xs text-dim border border-line-strong px-3 py-1.5 hover:border-accent-dim hover:text-fg transition-colors"
-        >
-          WORKSPACE →
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/"
+            className="font-mono text-xs text-dim border border-line-strong px-3 py-1.5 hover:border-accent-dim hover:text-fg transition-colors"
+          >
+            ⌕ CARI (ctrl+k)
+          </Link>
+          <Link
+            to="/"
+            className="font-mono text-xs text-dim border border-line-strong px-3 py-1.5 hover:border-accent-dim hover:text-fg transition-colors"
+          >
+            WORKSPACE →
+          </Link>
+        </div>
       </footer>
 
       {/* App drawer overlay */}
