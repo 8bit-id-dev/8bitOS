@@ -172,6 +172,9 @@ export function AttendanceSheet() {
         <Link to={`/classroom/${classId}`}>
           <PixelButton variant="secondary">← KEMBALI</PixelButton>
         </Link>
+        <Link to={`/classroom/${classId}/session/${sessionId}/report`}>
+          <PixelButton>SELESAIKAN SESI →</PixelButton>
+        </Link>
       </div>
     </main>
   );

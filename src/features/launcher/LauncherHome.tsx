@@ -15,8 +15,8 @@ import { count } from '@/shared/db/outbox';
 
 const MODULES = [
   { to: '/classroom', label: 'KELAS', glyph: '▤' },
-  { to: '/', label: 'PLANNER', glyph: '◈' },
-  { to: '/', label: 'NOTES', glyph: '▧' },
+  { to: '/planner', label: 'PLANNER', glyph: '◈' },
+  { to: '/notes', label: 'NOTES', glyph: '▧' },
   { to: '/', label: 'BROWSER', glyph: '⌘' },
   { to: '/', label: 'QUIZ', glyph: '◉' },
   { to: '/', label: 'NILAI', glyph: '▦' },

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { IconClass, IconHome, IconSystem, IconTools, IconWork } from './icons';
+import { IconClass, IconHome, IconNotes, IconSystem, IconWork } from './icons';
 import type { ComponentType, SVGProps } from 'react';
 
 interface DockItem {
@@ -12,9 +12,9 @@ interface DockItem {
 const ITEMS: DockItem[] = [
   { to: '/', label: 'HOME', enabled: true, Icon: IconHome },
   { to: '/classroom', label: 'CLASS', enabled: true, Icon: IconClass },
-  { to: '/work', label: 'WORK', enabled: false, Icon: IconWork },
-  { to: '/tools', label: 'TOOLS', enabled: false, Icon: IconTools },
-  { to: '/system', label: 'SYSTEM', enabled: false, Icon: IconSystem },
+  { to: '/planner', label: 'PLAN', enabled: true, Icon: IconWork },
+  { to: '/notes', label: 'NOTES', enabled: true, Icon: IconNotes },
+  { to: '#', label: 'SYSTEM', enabled: false, Icon: IconSystem },
 ];
 
 export function Dock() {

@@ -54,3 +54,13 @@ export const IconSystem = (props: IconProps) => (
     <path d="M14 14H20V20H14V14Z" />
   </svg>
 );
+
+export const IconNotes = (props: IconProps) => (
+  <svg {...baseProps} {...props}>
+    <path d="M5 4H19V20H5V4Z" />
+    <path d="M5 8H19" />
+    <path d="M8 11H16" />
+    <path d="M8 14H14" />
+    <path d="M8 17H12" />
+  </svg>
+);

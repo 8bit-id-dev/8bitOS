@@ -64,3 +64,36 @@ export interface AttendanceRecord {
   note: string;
   recorded_at: string;
 }
+
+export type PlanStatus = 'draft' | 'ready' | 'done';
+
+export interface Plan {
+  id: string;
+  user_id: string;
+  class_id: string | null;
+  subject_id: string | null;
+  week_start: string;
+  topic: string;
+  goals: string;
+  method: string;
+  media: string;
+  activities: string;
+  reflection: string;
+  status: PlanStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export type NoteKind = 'personal' | 'meeting' | 'class' | 'session';
+
+export interface Note {
+  id: string;
+  user_id: string;
+  class_id: string | null;
+  session_id: string | null;
+  kind: NoteKind;
+  title: string;
+  body: string;
+  created_at: string;
+  updated_at: string;
+}

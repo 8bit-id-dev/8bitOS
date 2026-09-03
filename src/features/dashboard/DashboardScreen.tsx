@@ -104,9 +104,12 @@ export function DashboardScreen() {
           <Link to="/classroom">
             <PixelButton variant="secondary">CLASSROOM</PixelButton>
           </Link>
-          <PixelButton variant="ghost" disabled>
-            materi [soon]
-          </PixelButton>
+          <Link to="/planner">
+            <PixelButton variant="secondary">PLANNER</PixelButton>
+          </Link>
+          <Link to="/notes">
+            <PixelButton variant="secondary">NOTES</PixelButton>
+          </Link>
           <PixelButton variant="ghost" disabled>
             quiz [soon]
           </PixelButton>

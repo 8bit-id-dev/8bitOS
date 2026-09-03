@@ -3,10 +3,12 @@ import { Link, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createSession,
+  createStudent,
   getClassById,
   listScheduleForClass,
   listSessionsForClass,
   listStudentsByClass,
+  type StudentDraft,
 } from '@/shared/db/queries';
 import type { ScheduleSlot, Student, Subject } from '@/shared/db/types';
 import { supabase } from '@/shared/db/supabase';
@@ -14,6 +16,7 @@ import { useSession } from '@/features/auth/useSession';
 import { PixelCard } from '@/shared/components/PixelCard';
 import { PixelButton } from '@/shared/components/PixelButton';
 import { EmptyState } from '@/shared/components/EmptyState';
+import { StudentForm } from './StudentForm';
 
 type TabKey = 'overview' | 'roster' | 'attendance' | 'notes';
 
@@ -149,12 +152,54 @@ const OverviewTab = ({
   );
 };
 
-const RosterTab = ({ students }: { students: Student[] }) => {
-  if (students.length === 0) {
-    return <EmptyState title="BELUM ADA SISWA" hint="Tambahkan siswa di kelas ini." />;
+const RosterTab = ({
+  classId,
+  students,
+}: {
+  classId: string;
+  students: Student[];
+}) => {
+  const { user } = useSession();
+  const queryClient = useQueryClient();
+  const [formOpen, setFormOpen] = useState(false);
+  const [pendingAdd, setPendingAdd] = useState(false);
+  const [addError, setAddError] = useState('');
+
+  const handleAdd = async (draft: StudentDraft) => {
+    if (!user) return;
+    setPendingAdd(true);
+    setAddError('');
+    try {
+      await createStudent(user.id, { ...draft, class_id: classId });
+      setFormOpen(false);
+      void queryClient.invalidateQueries({ queryKey: ['class-students', classId] });
+      void queryClient.invalidateQueries({ queryKey: ['class-bundle', classId] });
+    } catch (e) {
+      setAddError((e as Error).message);
+    } finally {
+      setPendingAdd(false);
+    }
+  };
+
+  if (students.length === 0 && !formOpen) {
+    return (
+      <div className="space-y-3">
+        <EmptyState title="BELUM ADA SISWA" hint="Tambahkan siswa di kelas ini." />
+        <div>
+          <PixelButton onClick={() => setFormOpen(true)}>+ SISWA</PixelButton>
+        </div>
+      </div>
+    );
   }
   return (
-    <PixelCard title={`daftar_siswa (${students.length})`}>
+    <PixelCard
+      title={`daftar_siswa (${students.length})`}
+    >
+      <div className="mb-2">
+        <PixelButton variant="secondary" onClick={() => setFormOpen(true)}>
+          + SISWA
+        </PixelButton>
+      </div>
       <ul className="flex flex-col">
         {students.map((s, idx) => (
           <li
@@ -162,12 +207,26 @@ const RosterTab = ({ students }: { students: Student[] }) => {
             className="flex items-center gap-3 border-b border-line last:border-b-0 py-1.5 font-mono text-xs"
           >
             <span className="text-dimmer w-8 text-right">{idx + 1}.</span>
-            <span className="flex-1 text-fg">{s.full_name}</span>
+            <Link
+              to={`/classroom/${classId}/students/${s.id}`}
+              className="flex-1 text-fg hover:text-accent"
+            >
+              {s.full_name}
+            </Link>
             <span className="text-dim">{s.nisn || '—'}</span>
             <span className="text-dim w-6 text-center">{s.gender}</span>
           </li>
         ))}
       </ul>
+      <StudentForm
+        open={formOpen}
+        onCancel={() => setFormOpen(false)}
+        onSubmit={handleAdd}
+        pending={pendingAdd}
+      />
+      {addError && (
+        <p className="font-mono text-xs text-fg mt-2">ERROR: {addError}</p>
+      )}
     </PixelCard>
   );
 };
@@ -269,7 +328,7 @@ export function ClassHub() {
           isStarting={startMutation.isPending}
         />
       )}
-      {tab === 'roster' && <RosterTab students={data.students} />}
+      {tab === 'roster' && <RosterTab classId={classId} students={data.students} />}
       {tab === 'attendance' && <SoonTab name="ATTENDANCE" />}
       {tab === 'notes' && <SoonTab name="NOTES" />}
 

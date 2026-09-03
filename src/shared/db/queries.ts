@@ -4,6 +4,9 @@ import type {
   AttendanceStatus,
   ClassRow,
   ClassSession,
+  Note,
+  NoteKind,
+  Plan,
   ScheduleSlot,
   Student,
   Subject,
@@ -175,4 +178,192 @@ export const upsertAttendance = async (
   note?: string,
 ): Promise<void> => {
   await enqueueAttendance({ sessionId, studentId, status, note });
+};
+
+// ---------- Student CRUD (Spec 2) ----------
+
+export interface StudentDraft {
+  class_id: string;
+  full_name: string;
+  nisn: string;
+  gender: 'L' | 'P';
+}
+
+export const createStudent = async (userId: string, draft: StudentDraft): Promise<Student> => {
+  const { data, error } = await supabase
+    .from('students')
+    .insert({ user_id: userId, ...draft })
+    .select('*')
+    .single();
+  if (error) throw error;
+  return data as unknown as Student;
+};
+
+export const updateStudent = async (
+  studentId: string,
+  patch: Partial<StudentDraft>,
+): Promise<Student> => {
+  const { data, error } = await supabase
+    .from('students')
+    .update(patch)
+    .eq('id', studentId)
+    .select('*')
+    .single();
+  if (error) throw error;
+  return data as unknown as Student;
+};
+
+export const deleteStudent = async (studentId: string): Promise<void> => {
+  const { error } = await supabase.from('students').delete().eq('id', studentId);
+  if (error) throw error;
+};
+
+export const getStudentById = async (studentId: string): Promise<Student | null> => {
+  const { data, error } = await supabase
+    .from('students')
+    .select('*')
+    .eq('id', studentId)
+    .maybeSingle();
+  if (error) throw error;
+  return (data as unknown as Student | null) ?? null;
+};
+
+// ---------- Session lifecycle (Spec 2) ----------
+
+export const endSession = async (sessionId: string): Promise<ClassSession> => {
+  const { data, error } = await supabase
+    .from('class_sessions')
+    .update({ status: 'done' })
+    .eq('id', sessionId)
+    .select('*')
+    .single();
+  if (error) throw error;
+  return data as unknown as ClassSession;
+};
+
+export const getSessionReport = async (
+  sessionId: string,
+): Promise<{
+  session: ClassSession;
+  attendance: AttendanceRecord[];
+  notes: Note[];
+}> => {
+  const { data: session, error: sessionError } = await supabase
+    .from('class_sessions')
+    .select('*')
+    .eq('id', sessionId)
+    .maybeSingle();
+  if (sessionError) throw sessionError;
+  if (!session) throw new Error('SESSION_NOT_FOUND');
+
+  const [attendance, notes] = await Promise.all([
+    listAttendanceForSession(sessionId),
+    supabase
+      .from('notes')
+      .select('*')
+      .eq('session_id', sessionId)
+      .order('updated_at', { ascending: false }),
+  ]);
+
+  return {
+    session: session as unknown as ClassSession,
+    attendance,
+    notes: (notes.data ?? []) as unknown as Note[],
+  };
+};
+
+// ---------- Notes (Spec 2) ----------
+
+export const listNotes = async (
+  filter?: { classId?: string; kind?: NoteKind },
+): Promise<Note[]> => {
+  let q = supabase.from('notes').select('*').order('updated_at', { ascending: false }).limit(100);
+  if (filter?.classId) q = q.eq('class_id', filter.classId);
+  if (filter?.kind) q = q.eq('kind', filter.kind);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as unknown as Note[];
+};
+
+export interface NoteDraft {
+  kind: NoteKind;
+  title: string;
+  body: string;
+  class_id?: string | null;
+  session_id?: string | null;
+}
+
+export const createNote = async (userId: string, draft: NoteDraft): Promise<Note> => {
+  const { data, error } = await supabase
+    .from('notes')
+    .insert({ user_id: userId, ...draft })
+    .select('*')
+    .single();
+  if (error) throw error;
+  return data as unknown as Note;
+};
+
+export const updateNote = async (
+  noteId: string,
+  patch: Partial<Pick<Note, 'title' | 'body' | 'kind'>>,
+): Promise<Note> => {
+  const { data, error } = await supabase
+    .from('notes')
+    .update({ ...patch, updated_at: new Date().toISOString() })
+    .eq('id', noteId)
+    .select('*')
+    .single();
+  if (error) throw error;
+  return data as unknown as Note;
+};
+
+export const deleteNote = async (noteId: string): Promise<void> => {
+  const { error } = await supabase.from('notes').delete().eq('id', noteId);
+  if (error) throw error;
+};
+
+// ---------- Planner (Spec 2) ----------
+
+export const listPlans = async (userId: string, weekStart?: string): Promise<Plan[]> => {
+  let q = supabase
+    .from('plans')
+    .select('*')
+    .order('week_start', { ascending: false })
+    .limit(50);
+  q = q.eq('user_id', userId);
+  if (weekStart) q = q.eq('week_start', weekStart);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as unknown as Plan[];
+};
+
+export interface PlanDraft {
+  class_id: string | null;
+  subject_id: string | null;
+  week_start: string;
+  topic: string;
+  goals: string;
+  method: string;
+  media: string;
+  activities: string;
+  reflection: string;
+  status: 'draft' | 'ready' | 'done';
+}
+
+export const upsertPlan = async (userId: string, draft: PlanDraft): Promise<Plan> => {
+  const { data, error } = await supabase
+    .from('plans')
+    .upsert(
+      { user_id: userId, ...draft, updated_at: new Date().toISOString() },
+      { onConflict: 'user_id,class_id,subject_id,week_start' },
+    )
+    .select('*')
+    .single();
+  if (error) throw error;
+  return data as unknown as Plan;
+};
+
+export const deletePlan = async (planId: string): Promise<void> => {
+  const { error } = await supabase.from('plans').delete().eq('id', planId);
+  if (error) throw error;
 };
