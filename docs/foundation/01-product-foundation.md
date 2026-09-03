@@ -72,7 +72,7 @@ Seluruh modul 8bitOS dipetakan ke salah satu fase ini.
 | F | Gradebook | ASSESS | ⏳ Spec 3 |
 | G | Document Center | REPORT | ⏳ Spec 4 |
 | H | AI Teacher Assistant | PLAN / PREPARE / REPORT | ⏳ Spec 4 |
-| I | Launcher Mode | (device integration) | ⏳ Phase 4 |
+| I | Launcher Mode | (device integration) | 🔨 Dibangun — APK debug ada, menunggu hardening |
 
 Detail setiap modul ada di Dokumen 02 (Workflow Map) dan Dokumen 03 (Module Specs, menyusul).
 
@@ -99,7 +99,7 @@ Detail setiap modul ada di Dokumen 02 (Workflow Map) dan Dokumen 03 (Module Spec
 | Routing | React Router 6 (HashRouter) | PWA-friendly, tidak butuh server rewrite |
 | State | Zustand + TanStack Query | Ringan; server state ter-cache |
 | Local DB | IndexedDB via `idb` | Offline outbox |
-| Backend | InsForge (Postgres + auth + RLS) | BaaS all-in-one |
+| Backend | Supabase (Postgres + auth + RLS) | BaaS all-in-one |
 | Mobile wrap | Capacitor | Akses stylus, fullscreen, launcher mode |
 | Test | Vitest + happy-dom + MSW | Cepat, TDD-friendly |
 | PWA | `vite-plugin-pwa` + Workbox | Service worker + manifest |

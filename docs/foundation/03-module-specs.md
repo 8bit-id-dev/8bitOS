@@ -326,7 +326,7 @@ Semua dokumen guru: modul ajar, LKPD, soal, hasil evaluasi, laporan, administras
 - `document_links` (relasi ke `class_sessions`, `plans`, `assessments`)
 
 ### Acceptance
-- [ ] Upload file (InsForge Storage)
+- [ ] Upload file (Supabase Storage)
 - [ ] Tag & filter
 - [ ] Preview (PDF, gambar)
 - [ ] Link ke kelas/sesi/plan/assessment
@@ -370,7 +370,7 @@ Asisten AI yang selalu tersedia untuk mempercepat pekerjaan guru: buat modul, so
 - [ ] Rate limit + token counter
 
 ### Spec Target
-**Spec 4** (Provider: OpenRouter via InsForge AI gateway)
+**Spec 4** (Provider: OpenAI-compatible LLM via Supabase Edge Functions (planned))
 
 ---
 
@@ -415,7 +415,7 @@ Spec 1 dianggap selesai bila:
 - **Dokumen 04 — Design System** (`docs/decisions/04-design-system.md`) ✅
 - **Dokumen 05 — Tech Stack** (`docs/decisions/06-tech-stack.md`) ✅
 - **Dokumen 06 — Data Model** (`docs/decisions/07-data-model.md`) ✅
-- **Dokumen 07 — InsForge Setup** (`docs/decisions/08-insforge-setup.md`) ✅
+- **Dokumen 07 — InsForge Setup (historical, sekarang Supabase)** (`docs/decisions/08-insforge-setup.md`) ✅
 - **Dokumen 08 — Spec 1** (`docs/specs/2026-09-03-8bithos-spec-1.md`) ✅
 - **Dokumen 09 — Implementation Plan** (`docs/plans/2026-09-03-8bithos-spec-1-implementation.md`) ✅
 

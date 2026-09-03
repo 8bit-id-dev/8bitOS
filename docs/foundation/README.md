@@ -23,7 +23,7 @@ Dokumen-dokumen di folder ini adalah **fondasi produk** 8bitOS — spesifikasi t
 
 Dokumen teknis pendukung di folder lain:
 
-- `docs/decisions/` — design system (04), tech stack (06), data model (07), InsForge setup (08)
+- `docs/decisions/` — design system (04), tech stack (06), data model (07), InsForge setup \(08, historical � sekarang Supabase\)
 - `docs/specs/` — spec implementation (saat ini: `2026-09-03-8bithos-spec-1.md`)
 - `docs/plans/` — implementation plan (saat ini: `2026-09-03-8bithos-spec-1-implementation.md`)
 
@@ -84,7 +84,7 @@ Setiap modul punya: tujuan, layar, data, acceptance criteria, spec target.
 - **5 layer** (Presentation → Workspace → Assessment → Productivity → AI)
 - **Hardware target:** Huawei MatePad Mini, 6–8GB RAM, 128–256GB storage
 - **Frontend stack:** React 18 + TS 5 + Vite 5 + Tailwind 3 + Zustand + TanStack Query + IndexedDB
-- **Backend:** InsForge (Postgres + RLS + Storage + AI gateway)
+- **Backend:** Supabase (Postgres + RLS + Auth + Storage + Realtime)
 - **Offline-first:** service worker + IndexedDB outbox
 - **Launcher mode:** Capacitor + custom Android plugin
 
@@ -143,7 +143,13 @@ Setiap modul punya: tujuan, layar, data, acceptance criteria, spec target.
 - Production build: 453 KiB PWA precache
 - PWA installable + service worker aktif
 
-**Spec 1 belum:** apply migrations 0001–0005 ke InsForge (blocked: butuh admin API key — sudah pernah di-paste `uak_pmO1JMP7ySzvBtHOUddX-J8iw3ma3xluugy6opMaho4` tapi reported invalid, kemungkinan env var name salah atau key perlu reissue).
+**Spec 1 backend:** DONE — migrated ke Supabase. Schema applied via Management API, demo user + seed inserted (2 kelas, 20 siswa, 7 slot jadwal), E2E verified 8/8.
+
+**Update setelah Spec 1 (2026-09-03):**
+
+- **Tema:** redesigned ke **retro terminal** (phosphor green `#4af626` di `#0a0f0a`, IBM Plex Mono, glow halus, CRT scanline, panel header terminal-style). Menggantikan pixel-monochrome.
+- **Launcher Mode:** dibangun & APK berhasil — `id.dev.eightbit.launcher` dengan intent HOME (Nova-style), immersive fullscreen, plugin native `LauncherApps` (listApps + launchApp), layar `/launcher` dengan jam besar + next session + grid modul + app drawer. APK debug 4.1 MB.
+- **Stack mobile:** Capacitor (sudah init, platform Android ter-commit).
 
 ---
 
@@ -155,7 +161,9 @@ Setiap modul punya: tujuan, layar, data, acceptance criteria, spec target.
 | 2 | Teaching Workflow (Planner + Notes + Session Report + Student CRUD) | ⏳ Berikutnya |
 | 3 | Assessment + Gradebook + Whiteboard + Browser | ⏳ |
 | 4 | Document Center + AI Assistant + Global Search + Command Palette | ⏳ |
-| 5+ | Launcher Mode + multi-device sync | ⏳ Phase 4 |
+| 5+ | Multi-device sync + widgets + device integration lanjutan | ⏳ |
+
+**Catatan:** Launcher Mode (semula direncanakan Spec 5+/Phase 4) sudah dibangun lebih awal — APK debug tersedia, menunggu pengujian di MatePad dan hardening (release signing) sebelum distribusi.
 
 ---
 

@@ -280,7 +280,7 @@ Notes
 | Lokasi | DB | Untuk |
 |---|---|---|
 | Local | SQLite / Room | Offline, cache |
-| Cloud | PostgreSQL (InsForge) | Source of truth, sync |
+| Cloud | PostgreSQL (Supabase) | Source of truth, sync |
 
 ---
 
@@ -407,7 +407,7 @@ Storage
 | Lokasi | DB | Untuk |
 |---|---|---|
 | Local | SQLite + Room | Offline, cache |
-| Cloud | PostgreSQL (InsForge / Supabase) | Source of truth |
+| Cloud | PostgreSQL (Supabase) | Source of truth |
 
 ---
 
@@ -448,7 +448,7 @@ TanStack Query
    ↓
 queries.ts (typed wrapper)
    ↓
-insforge.database.from(table)
+supabase.from(table)
    ↓
 Postgres + RLS
 ```
@@ -462,16 +462,16 @@ upsertAttendance() → enqueueAttendance()
    ↓
 IndexedDB outbox
    ↓ (background, online)
-flushOutbox() → insforge.database.upsert()
+flushOutbox() → supabase.from(...).upsert()
    ↓
 Postgres
 ```
 
 ---
 
-## 12. Backend Architecture (InsForge)
+## 12. Backend Architecture (Supabase)
 
-### Kenapa InsForge
+### Kenapa Supabase
 
 - All-in-one: Postgres + Auth + Storage + Edge Functions + AI gateway + Realtime
 - RLS native
@@ -517,7 +517,7 @@ Postgres
 
 ### Komponen
 
-- **AI Gateway** — InsForge route ke OpenRouter
+- **AI Gateway** — Supabase Edge Functions route ke LLM provider
 - **Templates** — `ai_templates` table
 - **Jobs** — `ai_jobs` table, audit semua prompt + response
 - **Embed** — hasil AI disisipkan ke Notes/Document/Assessment
@@ -583,12 +583,12 @@ System set 8bitOS as default HOME
     │            │           │
     └────────────┴───────────┘
                  │
-           InsForge Backend
+           Supabase Backend
                  │
             Postgres RLS
 ```
 
-- InsForge Realtime (websocket): dashboard auto-update
+- Supabase Realtime (websocket): dashboard auto-update
 - Optimistic UI: apply lokal dulu, rollback jika gagal
 
 ---
@@ -610,7 +610,7 @@ System set 8bitOS as default HOME
 ## 17. Deployment
 
 - **Frontend:** Vercel / Netlify / Cloudflare Pages · HTTPS otomatis
-- **Backend:** InsForge managed (region `ap-southeast`)
+- **Backend:** Supabase managed (project nzamuxnrrqlqdtwdisrt)
 - **Mobile:** `npx cap build android` → APK langsung untuk guru, atau Play Store internal
 - **CI/CD (planned):** GitHub Actions (typecheck + test + build, auto-deploy staging)
 
@@ -620,7 +620,7 @@ System set 8bitOS as default HOME
 
 | Risiko | Mitigasi |
 |---|---|
-| InsForge outage | SW cache + outbox tahan offline |
+| Supabase outage | SW cache + outbox tahan offline |
 | Backend API berubah | Wrapper `queries.ts` single point of change |
 | M-Pencil API tidak stabil | Fallback touch + canvas abstraction |
 | Bundle bengkak | Code splitting per modul (lazy load) |
