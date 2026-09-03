@@ -1,0 +1,20 @@
+:root {
+  --c-bg: #000000;
+  --c-fg: #ffffff;
+  --c-gray-100: #f5f5f5;
+  --c-gray-300: #d4d4d4;
+  --c-gray-500: #737373;
+  --c-gray-700: #404040;
+  --shadow-pixel: 4px 4px 0 0 var(--c-fg);
+  --shadow-pixel-sm: 2px 2px 0 0 var(--c-fg);
+  --border-pixel: 2px solid var(--c-fg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}
