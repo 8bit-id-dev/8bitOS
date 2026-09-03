@@ -161,6 +161,25 @@ Setiap modul punya: tujuan, layar, data, acceptance criteria, spec target.
 - Navigasi: sidebar HOME/CLASS/PLAN/NOTES aktif; launcher grid + quick actions ter-wire.
 - Tests 17/17 (planner 5 + report 3 baru), typecheck clean, APK rebuild sukses.
 
+**Spec 3 (2026-09-03, commit 662e41b):**
+
+- Migration 0006: `assessments`, `questions`, `attempts`, `attempt_answers`, `grade_components`, `grades` (+ index, RLS) — applied live, E2E 11/11.
+- **Assessment** (`~/assessment`): List → Builder (soal PG/B-S/PG kompleks/isian/esai + kunci) → KOREKSI (grid siswa, PG/B-S **auto-graded**, esai manual, skor 0–100) → HASIL (statistik rata²/tertinggi/terendah/tuntas ≥70 + peringkat).
+- **Gradebook** (`~/gradebook`): grid nilai Excel-like, komponen tertimbang (default Tugas 20/Quiz 30/Ulangan 40/Keaktifan 10), tap-cell editing, kolom AKHIR rata-rata tertimbang re-normalized.
+- **Whiteboard** (`~/whiteboard`): canvas pointer events + pressure (M-Pencil), pen/marker/penghapus, grid, undo, export PNG, persist lokal.
+- **Browser** (`~/browser`): URL bar + switcher DDG/Bing/Google, iframe sandbox + fallback X-Frame-Options, SIMPAN KE NOTES (referensi + sumber).
+- **Tools hub** (`~/tools`): 4 alat + roadmap.
+- Sidebar 5/5 aktif (TOOLS live); launcher + quick actions ter-wire. Tests 28/28 (+11).
+
+**Spec 4 (2026-09-03, commit a1dd97c):**
+
+- Migration 0007 + 0007b: `documents` + `ai_jobs` (+ index, RLS); storage bucket `documents` (private, 50MB, mime whitelist) + `storage.objects` policy owner-uuid.
+- **Document Center** (`~/documents`): upload Supabase Storage per-user, 7 jenis (modul ajar/RPP/LKPD/soal/nilai/surat/lainnya), filter chips, signed URL 1 jam, hapus; context kelas `/classroom/:id/documents`.
+- **AI Assistant** (Modul H): FAB global → panel drawer dengan 7 template prompt (Bebas/Modul Ajar/Tujuan/Soal/Rangkuman/Refleksi/Rubrik) + konteks kelas, audit trail `ai_jobs` (running→done), riwayat 10 job, SIMPAN KE NOTES. Gateway `/api/ai-generate` (edge function slot) + fallback lokal terstruktur.
+- Tests 33/33 (+5 AI), E2E 10/10 (storage upload/signed URL/ai lifecycle/ai→note).
+
+**Seluruh modul A–I blueprint kini terimplementasikan.** Sisa opsional: edge function AI asli (butuh LLM API key), release signing APK, widget Android, Global Search + Command Palette (dipindah ke backlog).
+
 ---
 
 ## Roadmap Implementasi
@@ -169,9 +188,9 @@ Setiap modul punya: tujuan, layar, data, acceptance criteria, spec target.
 |---|---|---|
 | 1 | Foundation (Shell + Dashboard + Classroom) | ✅ Selesai |
 | 2 | Teaching Workflow (Planner + Notes + Session Report + Student CRUD) | ✅ Selesai |
-| 3 | Assessment + Gradebook + Whiteboard + Browser | ⏳ Berikutnya |
-| 4 | Document Center + AI Assistant + Global Search + Command Palette | ⏳ |
-| 5+ | Multi-device sync + widgets + device integration lanjutan | ⏳ |
+| 3 | Assessment + Gradebook + Whiteboard + Browser | ✅ Selesai |
+| 4 | Document Center + AI Assistant | ✅ Selesai |
+| 5+ | AI edge function asli · release signing · widgets · Global Search + Command Palette | ⏳ Backlog |
 
 **Catatan:** Launcher Mode (semula direncanakan Spec 5+/Phase 4) sudah dibangun lebih awal — APK debug tersedia, menunggu pengujian di MatePad dan hardening (release signing) sebelum distribusi.
 
