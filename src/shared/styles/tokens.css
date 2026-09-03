@@ -1,29 +1,30 @@
 :root {
-  --c-bg: #050505;
-  --c-fg: #ffffff;
-  --c-gray-100: #f5f5f5;
-  --c-gray-300: #d4d4d4;
-  --c-gray-500: #737373;
-  --c-gray-700: #404040;
-  --c-gray-950: #0a0a0a;
+  --c-bg: #0a0f0a;
+  --c-bg-raised: #0d130d;
+  --c-fg: #c8e6c9;
+  --c-accent: #4af626;
+  --c-accent-dim: #2f9e1f;
+  --c-dim: #5a7a5a;
+  --c-dimmer: #374b37;
+  --c-line: #1d2b1d;
+  --c-line-strong: #2f4a2f;
 
-  --shadow-pixel: 4px 4px 0 0 var(--c-fg);
-  --shadow-pixel-sm: 2px 2px 0 0 var(--c-fg);
-  --shadow-pixel-inset: inset 0 4px 0 0 #000000;
-  --border-pixel: 2px solid var(--c-fg);
+  --glow-sm: 0 0 6px rgba(74, 246, 38, 0.35);
+  --glow-md: 0 0 12px rgba(74, 246, 38, 0.25);
+  --glow-text: 0 0 8px rgba(74, 246, 38, 0.4);
+
+  --border-hair: 1px solid var(--c-line-strong);
+  --border-solid: 1px solid var(--c-accent-dim);
 
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
   --space-6: 24px;
-  --space-8: 32px;
-  --space-12: 48px;
-  --space-16: 64px;
 
-  --sidebar-w: 80px;
-  --header-h: 64px;
-  --footer-h: 40px;
+  --sidebar-w: 64px;
+  --header-h: 48px;
+  --footer-h: 28px;
 }
 
 @media (prefers-reduced-motion: reduce) {

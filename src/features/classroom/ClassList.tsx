@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { listClassesForUser, type ClassSummary } from '@/shared/db/queries';
 import { useSession } from '@/features/auth/useSession';
-import { PixelCard } from '@/shared/components/PixelCard';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { PixelButton } from '@/shared/components/PixelButton';
 
@@ -21,22 +20,23 @@ const ClassRowView = ({ s }: { s: ClassSummary }) => {
   return (
     <Link
       to={`/classroom/${c.id}`}
-      className="block border-2 border-fg p-4 bg-bg hover:bg-grays transition-colors"
+      className="block panel px-3 py-2 hover:border-accent-dim hover:shadow-glow transition-colors"
     >
       <div className="flex items-baseline justify-between gap-2">
-        <h3 className="font-pixel text-lg">{c.name.toUpperCase()}</h3>
-        <span className="text-xs text-gray-300 font-pixel">{c.academic_year}</span>
+        <h3 className="font-mono font-bold text-base text-accent">{c.name}</h3>
+        <span className="font-mono text-micro-label text-dimmer">{c.academic_year}</span>
       </div>
-      <p className="text-gray-300 text-sm mt-1">Wali: {c.homeroom || '—'}</p>
-      <p className="text-gray-300 text-sm">{s.studentCount} siswa</p>
+      <p className="font-mono text-xs text-dim mt-0.5">
+        homeroom: {c.homeroom || '—'} · siswa: {s.studentCount}
+      </p>
       {s.subjectNames.length > 0 && (
-        <div className="flex gap-1 flex-wrap mt-2">
+        <div className="flex gap-1 flex-wrap mt-1.5">
           {s.subjectNames.map((name) => (
             <span
               key={name}
-              className="text-[10px] font-pixel px-1 border-2 border-fg text-gray-300"
+              className="font-mono text-micro-label px-1 border border-line-strong text-dim"
             >
-              {name.toUpperCase()}
+              {name}
             </span>
           ))}
         </div>
@@ -50,41 +50,36 @@ export function ClassList() {
   const { data, isLoading, error } = useClassList();
 
   return (
-    <main className="p-6 space-y-4">
-      <header className="flex items-baseline justify-between">
-        <h1 className="font-pixel text-2xl">CLASSROOM</h1>
-        <span className="text-xs text-gray-300 font-pixel">
-          {user?.email ?? '—'}
-        </span>
+    <main className="p-4 space-y-3 flex flex-col min-h-screen">
+      <header className="flex items-center justify-between gap-2">
+        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+          ~/classroom
+        </h1>
+        <span className="font-mono text-xs text-dim">{user?.email ?? '—'}</span>
       </header>
 
-      {isLoading && <p className="font-pixel text-sm text-gray-300">LOADING…</p>}
+      {isLoading && <p className="font-mono text-xs text-dim">loading…</p>}
 
       {error && (
-        <PixelCard>
-          <p className="font-pixel text-sm">
-            BACKEND TIDAK TERHUBUNG. TUNGGU ATAU PERIKSA JARINGAN.
-          </p>
-          <p className="text-gray-300 text-xs mt-2">{(error as Error).message}</p>
-        </PixelCard>
+        <div className="panel-accent p-3">
+          <p className="font-mono text-xs text-fg">BACKEND TIDAK TERHUBUNG.</p>
+          <p className="font-mono text-xs text-dim mt-1">{(error as Error).message}</p>
+        </div>
       )}
 
       {!isLoading && !error && (data?.length ?? 0) === 0 && (
-        <EmptyState
-          title="BELUM ADA KELAS"
-          hint="Tambahkan kelas di halaman ini setelah backend siap."
-        />
+        <EmptyState title="BELUM ADA KELAS" hint="Tambahkan kelas setelah backend siap." />
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {(data ?? []).map((s) => (
           <ClassRowView key={s.classRow.id} s={s} />
         ))}
       </div>
 
       <div>
-        <PixelButton variant="secondary" disabled>
-          + KELAS BARU <span className="ml-2 text-[10px]">[ SOON ]</span>
+        <PixelButton variant="ghost" disabled>
+          + kelas baru [soon]
         </PixelButton>
       </div>
     </main>

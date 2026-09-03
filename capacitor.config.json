@@ -1,0 +1,13 @@
+{
+  "appId": "id.dev.eightbit.launcher",
+  "appName": "8bitOS",
+  "webDir": "dist",
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

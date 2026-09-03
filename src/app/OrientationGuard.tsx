@@ -15,12 +15,12 @@ export function OrientationGuard({ children }: { children: ReactNode }) {
   if (isPortrait) {
     return (
       <div
-        className="fixed inset-0 flex flex-col items-center justify-center bg-bg text-fg p-6 text-center gap-4"
+        className="fixed inset-0 flex flex-col items-center justify-center bg-bg text-fg p-6 text-center gap-3"
         role="alert"
       >
-        <p className="font-pixel text-h1">ROTATE TABLET</p>
-        <p className="font-pixel text-small text-gray-300">LANDSCAPE ONLY</p>
-        <div className="text-[64px]" aria-hidden>
+        <p className="font-mono text-lg label-term text-accent text-glow">ROTATE TABLET</p>
+        <p className="font-mono text-xs text-dim">landscape only</p>
+        <div className="text-[48px] text-accent" aria-hidden>
           ⟳
         </div>
       </div>

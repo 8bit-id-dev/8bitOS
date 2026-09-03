@@ -7,12 +7,14 @@ import { DashboardScreen } from './features/dashboard/DashboardScreen';
 import { ClassList } from './features/classroom/ClassList';
 import { ClassHub } from './features/classroom/ClassHub';
 import { AttendanceSheet } from './features/classroom/AttendanceSheet';
+import { LauncherHome } from './features/launcher/LauncherHome';
 
 export function AppRoutes() {
   return (
     <Routes>
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/sign-up" element={<SignUp />} />
+      <Route path="/launcher" element={<LauncherHome />} />
       <Route element={<RequireAuth />}>
         <Route element={<AppLayout />}>
           <Route path="/" element={<DashboardScreen />} />

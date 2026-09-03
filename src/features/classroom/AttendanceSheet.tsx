@@ -15,11 +15,11 @@ const STATUS_LABEL: Record<AttendanceStatus, string> = {
   alpha: 'A',
 };
 
-const STATUS_TONE: Record<AttendanceStatus, string> = {
-  hadir: 'bg-fg text-bg',
-  izin: 'bg-bg text-fg',
-  sakit: 'bg-bg text-fg',
-  alpha: 'bg-bg text-fg',
+const STATUS_KEY: Record<AttendanceStatus, string> = {
+  hadir: 'hadir',
+  izin: 'izin',
+  sakit: 'sakit',
+  alpha: 'alpha',
 };
 
 const useSessionDetail = (sessionId: string) => {
@@ -95,10 +95,10 @@ export function AttendanceSheet() {
 
   if (!session) {
     return (
-      <main className="p-6">
-        <p className="font-pixel text-sm text-gray-300">SESI TIDAK DITEMUKAN</p>
-        <Link to="/classroom" className="text-xs underline mt-2 inline-block">
-          ← KEMBALI
+      <main className="p-4 space-y-2">
+        <p className="font-mono text-xs text-dim">sesi tidak ditemukan</p>
+        <Link to="/classroom" className="font-mono text-xs text-accent">
+          ← ~/classroom
         </Link>
       </main>
     );
@@ -107,39 +107,41 @@ export function AttendanceSheet() {
   const students = studentsQ.data ?? [];
 
   return (
-    <main className="p-6 space-y-4">
-      <header className="flex items-baseline justify-between">
-        <h1 className="font-pixel text-2xl">ABSENSI</h1>
-        <span className="text-xs text-gray-300 font-pixel">{subjectName || '—'}</span>
+    <main className="p-4 space-y-3 flex flex-col min-h-screen">
+      <header className="flex items-center justify-between gap-2">
+        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+          ~/absensi
+        </h1>
+        <span className="font-mono text-xs text-dim">{subjectName || '—'}</span>
       </header>
 
-      <PixelCard>
-        <div className="grid grid-cols-4 gap-2 text-center">
+      <PixelCard title="rekap" accent>
+        <div className="grid grid-cols-4 gap-2 text-center font-mono">
           {(Object.keys(STATUS_LABEL) as AttendanceStatus[]).map((k) => (
-            <div key={k} className="border-2 border-fg p-2">
-              <p className="text-gray-300 text-[10px] font-pixel">{STATUS_LABEL[k]}</p>
-              <p className="text-xl font-pixel">{counts[k]}</p>
+            <div key={k} className="panel px-2 py-1.5">
+              <p className="text-micro-label text-dim">{STATUS_KEY[k]}</p>
+              <p className="text-md font-bold text-accent">{counts[k]}</p>
             </div>
           ))}
         </div>
-        <p className="text-gray-500 text-[10px] font-pixel mt-2">
-          OFFLINE-FIRST · DISIMPAN KE OUTBOX
+        <p className="font-mono text-micro-label text-dimmer mt-2">
+          offline-first · disimpan ke outbox
         </p>
       </PixelCard>
 
-      {studentsQ.isLoading && <p className="font-pixel text-xs text-gray-300">LOADING…</p>}
+      {studentsQ.isLoading && <p className="font-mono text-xs text-dim">loading…</p>}
 
-      <PixelCard>
+      <PixelCard title={`daftar_siswa (${students.length})`}>
         <ul className="flex flex-col">
           {students.map((s, idx) => {
             const current = statusByStudent.get(s.id);
             return (
               <li
                 key={s.id}
-                className="flex items-center gap-3 border-b-2 border-fg last:border-b-0 py-2"
+                className="flex items-center gap-3 border-b border-line last:border-b-0 py-1.5"
               >
-                <span className="text-gray-500 font-pixel w-8 text-right">{idx + 1}</span>
-                <span className="flex-1 text-sm">{s.full_name}</span>
+                <span className="font-mono text-dimmer w-8 text-right text-xs">{idx + 1}.</span>
+                <span className="flex-1 font-mono text-xs text-fg">{s.full_name}</span>
                 <div className="flex gap-1">
                   {(Object.keys(STATUS_LABEL) as AttendanceStatus[]).map((k) => {
                     const isActive = current === k;
@@ -149,8 +151,10 @@ export function AttendanceSheet() {
                         type="button"
                         onClick={() => void handleSet(s.id, k)}
                         aria-label={`${s.full_name} ${k}`}
-                        className={`w-9 h-9 font-pixel text-sm border-2 border-fg ${
-                          isActive ? STATUS_TONE[k] : 'bg-bg text-gray-300'
+                        className={`w-9 h-9 font-mono text-xs border transition-colors ${
+                          isActive
+                            ? 'bg-accent text-bg border-accent shadow-glow'
+                            : 'bg-transparent text-dim border-line-strong hover:border-dim'
                         }`}
                       >
                         {STATUS_LABEL[k]}
@@ -166,7 +170,7 @@ export function AttendanceSheet() {
 
       <div className="flex gap-2">
         <Link to={`/classroom/${classId}`}>
-          <PixelButton variant="secondary">KEMBALI</PixelButton>
+          <PixelButton variant="secondary">← KEMBALI</PixelButton>
         </Link>
       </div>
     </main>

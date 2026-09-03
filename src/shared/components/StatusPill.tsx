@@ -6,15 +6,15 @@ export interface StatusPillProps {
 }
 
 const TONE_CLASSES: Record<Tone, string> = {
-  on: 'bg-fg text-bg border-fg',
-  off: 'bg-bg text-fg border-fg border-dashed',
-  error: 'bg-fg text-bg border-fg',
+  on: 'bg-accent text-bg border-accent shadow-glow',
+  off: 'bg-transparent text-dim border-dashed border-dim',
+  error: 'bg-transparent text-fg border-fg',
 };
 
 export function StatusPill({ tone, label }: StatusPillProps) {
   return (
     <span
-      className={`inline-block px-3 py-1 font-pixel text-xs border-2 ${TONE_CLASSES[tone]}`}
+      className={`inline-block px-2 py-0.5 font-mono text-micro-label label-term border ${TONE_CLASSES[tone]}`}
       aria-live="polite"
     >
       {label}

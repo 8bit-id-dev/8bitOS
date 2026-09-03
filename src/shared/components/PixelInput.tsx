@@ -10,11 +10,11 @@ export const PixelInput = forwardRef<HTMLInputElement, PixelInputProps>(function
   { label, error, className = '', id, ...rest },
   ref,
 ) {
-  const inputId = id ?? `pixel-input-${label.replace(/\s+/g, '-').toLowerCase()}`;
+  const inputId = id ?? `term-input-${label.replace(/\s+/g, '-').toLowerCase()}`;
   const errorId = error ? `${inputId}-error` : undefined;
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={inputId} className="font-pixel text-sm">
+      <label htmlFor={inputId} className="font-mono text-micro-label label-term text-dim">
         {label}
       </label>
       <input
@@ -22,11 +22,13 @@ export const PixelInput = forwardRef<HTMLInputElement, PixelInputProps>(function
         id={inputId}
         aria-invalid={Boolean(error)}
         aria-describedby={errorId}
-        className={`bg-bg text-fg border-2 ${error ? 'border-dashed' : 'border-fg'} px-3 py-2 font-sans focus-visible:outline focus-visible:outline-2 focus-visible:outline-fg focus-visible:outline-offset-2 ${className}`}
+        className={`bg-bg text-fg border px-2 py-1.5 font-mono text-small focus-visible:border-accent focus-visible:shadow-glow ${
+          error ? 'border-dashed border-fg' : 'border-line-strong'
+        } ${className}`}
         {...rest}
       />
       {error && (
-        <span id={errorId} className="font-pixel text-micro text-fg">
+        <span id={errorId} className="font-mono text-micro-label text-fg">
           {error}
         </span>
       )}

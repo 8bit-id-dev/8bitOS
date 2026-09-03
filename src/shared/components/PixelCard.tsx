@@ -1,14 +1,19 @@
 import type { HTMLAttributes } from 'react';
 
 export interface PixelCardProps extends HTMLAttributes<HTMLDivElement> {
-  cut?: boolean;
+  accent?: boolean;
+  title?: string;
 }
 
-export function PixelCard({ cut = true, className = '', children, ...rest }: PixelCardProps) {
-  const cutClass = cut ? 'pixel-cut' : '';
+export function PixelCard({ accent = false, title, className = '', children, ...rest }: PixelCardProps) {
   return (
-    <div className={`pixel-card ${cutClass} p-4 ${className}`} {...rest}>
-      {children}
-    </div>
+    <section className={`${accent ? 'panel-accent' : 'panel'} ${className}`} {...rest}>
+      {title && (
+        <header className="px-3 py-1.5 border-b hairline text-micro-label text-dim label-term">
+          {title}
+        </header>
+      )}
+      <div className="p-3">{children}</div>
+    </section>
   );
 }

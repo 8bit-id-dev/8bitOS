@@ -11,7 +11,9 @@
     height: 100%;
     background: var(--c-bg);
     color: var(--c-fg);
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', monospace;
+    font-size: 13px;
+    line-height: 1.5;
   }
 
   body {
@@ -21,83 +23,93 @@
     overscroll-behavior: none;
   }
 
+  /* CRT scanline overlay — very subtle */
+  #root::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 0, 0, 0.12) 3px,
+      transparent 4px
+    );
+    z-index: 9999;
+  }
+
   *:focus {
     outline: none;
   }
 
   *:focus-visible {
-    outline: 2px solid var(--c-fg);
-    outline-offset: 2px;
+    outline: 1px solid var(--c-accent);
+    outline-offset: 1px;
   }
 
   ::selection {
-    background: var(--c-fg);
+    background: var(--c-accent);
     color: var(--c-bg);
   }
 
   ::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+    width: 8px;
+    height: 8px;
   }
   ::-webkit-scrollbar-track {
     background: var(--c-bg);
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--c-gray-700);
-    border: 2px solid var(--c-bg);
+    background: var(--c-line-strong);
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--c-gray-500);
+    background: var(--c-dim);
+  }
+
+  a {
+    color: var(--c-accent);
+    text-decoration: none;
   }
 }
 
 @layer components {
-  .pixel-cut {
-    clip-path: polygon(
-      0 4px,
-      4px 4px,
-      4px 0,
-      calc(100% - 4px) 0,
-      calc(100% - 4px) 4px,
-      100% 4px,
-      100% calc(100% - 4px),
-      calc(100% - 4px) calc(100% - 4px),
-      calc(100% - 4px) 100%,
-      4px 100%,
-      4px calc(100% - 4px),
-      0 calc(100% - 4px)
-    );
+  .text-glow {
+    text-shadow: var(--glow-text);
   }
 
-  .pixel-card {
-    background: var(--c-bg);
-    border: var(--border-pixel);
-    box-shadow: var(--shadow-pixel);
+  .accent-glow {
+    box-shadow: var(--glow-sm);
   }
 
-  .pixel-shadow {
-    box-shadow: var(--shadow-pixel);
+  .panel {
+    background: var(--c-bg-raised);
+    border: var(--border-hair);
   }
 
-  .pixel-shadow-sm {
-    box-shadow: var(--shadow-pixel-sm);
+  .panel-accent {
+    background: var(--c-bg-raised);
+    border: 1px solid var(--c-accent-dim);
+  }
+
+  .hairline {
+    border-color: var(--c-line-strong);
+  }
+
+  .label-term {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .micro-label {
+    font-size: 9px;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
   }
 
   .tap-target {
     min-width: 44px;
     min-height: 44px;
-  }
-
-  .label-mono {
-    font-family: 'Pixelify Sans', system-ui, sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-  }
-
-  .micro-label {
-    font-family: 'Pixelify Sans', system-ui, sans-serif;
-    font-size: 10px;
-    line-height: 1;
-    text-transform: uppercase;
   }
 }
