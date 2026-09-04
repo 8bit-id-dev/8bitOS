@@ -145,6 +145,46 @@ const OverviewTab = ({
         )}
       </PixelCard>
 
+      {/* Class History (Dok 07 §34): sesi bisa dibuka kembali */}
+      <PixelCard title={`class_history (${sessions.length})`}>
+        {sessions.length === 0 ? (
+          <p className="font-sans text-pixel-sm text-gray-300">belum ada riwayat sesi</p>
+        ) : (
+          <ul className="flex flex-col">
+            {sessions.map((s) => (
+              <li key={s.id} className="border-b border-line last:border-b-0">
+                <Link
+                  to={`/classroom/${classId}/session/${s.id}/report`}
+                  className="flex items-center gap-3 py-1.5 font-sans text-pixel-sm hover:text-fg"
+                >
+                  <span
+                    className={
+                      s.status === 'done'
+                        ? 'micro-pixel text-gray-500'
+                        : s.status === 'active'
+                          ? 'micro-pixel text-fg'
+                          : 'micro-pixel text-gray-300'
+                    }
+                  >
+                    {s.status === 'done' ? 'SELESAI' : s.status === 'active' ? 'AKTIF' : 'RENCANA'}
+                  </span>
+                  <span className="flex-1 text-fg">{s.topic || '(tanpa topik)'}</span>
+                  <span className="text-gray-300">
+                    {new Date(s.scheduled_for).toLocaleDateString('id-ID', {
+                      day: '2-digit',
+                      month: 'short',
+                    })}
+                  </span>
+                  <span className="text-gray-500" aria-hidden>
+                    →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </PixelCard>
+
       <p className="font-sans text-pixel-sm">
         <Link to="/classroom" className="text-gray-300 hover:text-fg">
             ~/classroom

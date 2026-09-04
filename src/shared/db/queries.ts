@@ -684,6 +684,120 @@ export const getDocumentUrl = async (doc: DocumentRow): Promise<string> => {
   return (data as { signedUrl: string }).signedUrl;
 };
 
+// ---------- Dashboard: Recent + Tasks (Dok 07 §6) ----------
+
+export interface RecentActivityItem {
+  id: string;
+  kind: 'session' | 'note';
+  label: string;
+  sublabel: string;
+  at: string;
+  to: string;
+}
+
+export const listRecentActivity = async (
+  userId: string,
+  limit = 5,
+): Promise<RecentActivityItem[]> => {
+  const [sessionsRes, notesRes] = await Promise.all([
+    supabase
+      .from('class_sessions')
+      .select('id, class_id, topic, status, created_at, class:classes(name)')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(limit),
+    supabase
+      .from('notes')
+      .select('id, title, kind, updated_at')
+      .eq('user_id', userId)
+      .order('updated_at', { ascending: false })
+      .limit(limit),
+  ]);
+
+  const sessions = (sessionsRes.data ?? []) as unknown as Array<{
+    id: string;
+    class_id: string;
+    topic: string;
+    status: string;
+    created_at: string;
+    class: { name: string } | null;
+  }>;
+  const notes = (notesRes.data ?? []) as unknown as Array<{
+    id: string;
+    title: string;
+    kind: string;
+    updated_at: string;
+  }>;
+
+  const items: RecentActivityItem[] = [
+    ...sessions.map((s) => ({
+      id: `s-${s.id}`,
+      kind: 'session' as const,
+      label: s.topic || '(tanpa topik)',
+      sublabel: s.class?.name ?? 'kelas?',
+      at: s.created_at,
+      to: `/classroom/${s.class_id}/session/${s.id}/report`,
+    })),
+    ...notes.map((n) => ({
+      id: `n-${n.id}`,
+      kind: 'note' as const,
+      label: n.title || '(tanpa judul)',
+      sublabel: `note · ${n.kind}`,
+      at: n.updated_at,
+      to: '/notes',
+    })),
+  ];
+
+  return items
+    .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
+    .slice(0, limit);
+};
+
+export interface PendingTask {
+  id: string;
+  label: string;
+  detail: string;
+  to: string;
+}
+
+// Tasks: active sessions with incomplete attendance (Dok 07 §6 "Missing Attendance")
+export const listPendingTasks = async (userId: string): Promise<PendingTask[]> => {
+  const { data: activeSessions } = await supabase
+    .from('class_sessions')
+    .select('id, class_id, topic, scheduled_for, class:classes(name)')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .order('scheduled_for', { ascending: false })
+    .limit(10);
+
+  const sessions = (activeSessions ?? []) as unknown as Array<{
+    id: string;
+    class_id: string;
+    topic: string;
+    scheduled_for: string;
+    class: { name: string } | null;
+  }>;
+
+  const tasks: PendingTask[] = [];
+  for (const s of sessions) {
+    const [studentsRes, attRes] = await Promise.all([
+      supabase.from('students').select('id', { count: 'exact', head: true }).eq('class_id', s.class_id),
+      supabase.from('attendance_records').select('id', { count: 'exact', head: true }).eq('session_id', s.id),
+    ]);
+    const roster = studentsRes.count ?? 0;
+    const marked = attRes.count ?? 0;
+    if (roster === 0 || marked < roster) {
+      tasks.push({
+        id: `t-${s.id}`,
+        label: `Absensi belum lengkap — ${s.class?.name ?? 'kelas'}`,
+        detail: `${marked}/${roster} siswa · ${s.topic || 'tanpa topik'}`,
+        to: `/classroom/${s.class_id}/attendance/${s.id}`,
+      });
+    }
+  }
+  return tasks.slice(0, 5);
+};
+
 // ---------- AI jobs (Spec 4) ----------
 
 export interface AiJobDraft {

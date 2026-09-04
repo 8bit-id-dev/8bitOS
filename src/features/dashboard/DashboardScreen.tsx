@@ -8,11 +8,15 @@ import { PixelButton } from '@/shared/components/PixelButton';
 import { useOnlineStatus } from '@/shared/hooks/useOnlineStatus';
 import { StatusPill } from '@/shared/components/StatusPill';
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { count } from '@/shared/db/outbox';
 import { flushOutbox } from '@/shared/db/flushOutbox';
+import { listRecentActivity, listPendingTasks } from '@/shared/db/queries';
+import { useSession } from '@/features/auth/useSession';
 
 export function DashboardScreen() {
   const { data, isLoading } = useTodaySchedule();
+  const { user } = useSession();
   const online = useOnlineStatus();
   const [pending, setPending] = useState<number>(0);
   const [nowIso, setNowIso] = useState<string>(new Date().toISOString());
@@ -22,6 +26,20 @@ export function DashboardScreen() {
     const t = setInterval(() => setNowIso(new Date().toISOString()), 30_000);
     return () => clearInterval(t);
   }, []);
+
+  // Recent + Tasks (Dok 07 §6 — Teacher Command Center)
+  const recentQ = useQuery({
+    queryKey: ['recent-activity', user?.id ?? 'anon'],
+    queryFn: () => listRecentActivity(user!.id, 5),
+    enabled: Boolean(user),
+    staleTime: 30_000,
+  });
+  const tasksQ = useQuery({
+    queryKey: ['pending-tasks', user?.id ?? 'anon'],
+    queryFn: () => listPendingTasks(user!.id),
+    enabled: Boolean(user),
+    staleTime: 30_000,
+  });
 
   const slots = sortSlotsByStart(data ?? []);
   const next = findNextSlot(slots, { hhmm: formatJakartaTime(nowIso) });
@@ -96,6 +114,44 @@ export function DashboardScreen() {
             </li>
           ))}
         </ul>
+      </PixelCard>
+
+      {/* Tasks — pending tindak lanjut (Dok 07 §6) */}
+      {(tasksQ.data?.length ?? 0) > 0 && (
+        <PixelCard title="tasks">
+          <ul className="flex flex-col">
+            {(tasksQ.data ?? []).map((t) => (
+              <li key={t.id} className="border-b border-line last:border-b-0">
+                <Link to={t.to} className="flex items-center gap-3 py-1.5 font-sans text-pixel-sm hover:text-fg">
+                  <span className="w-2 h-2 bg-fg shrink-0" aria-hidden />
+                  <span className="flex-1 text-fg">{t.label}</span>
+                  <span className="text-gray-300">{t.detail}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </PixelCard>
+      )}
+
+      {/* Recent — aktivitas terakhir (Dok 07 §6) */}
+      <PixelCard title="recent">
+        {(recentQ.data?.length ?? 0) === 0 ? (
+          <p className="font-sans text-pixel-sm text-gray-300">belum ada aktivitas</p>
+        ) : (
+          <ul className="flex flex-col">
+            {(recentQ.data ?? []).map((r) => (
+              <li key={r.id} className="border-b border-line last:border-b-0">
+                <Link to={r.to} className="flex items-center gap-3 py-1.5 font-sans text-pixel-sm hover:text-fg">
+                  <span className="micro-pixel text-gray-500 w-14 shrink-0">
+                    {r.kind === 'session' ? 'SESI' : 'NOTE'}
+                  </span>
+                  <span className="flex-1 text-fg truncate">{r.label}</span>
+                  <span className="text-gray-300 shrink-0">{r.sublabel}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </PixelCard>
 
       <div>
