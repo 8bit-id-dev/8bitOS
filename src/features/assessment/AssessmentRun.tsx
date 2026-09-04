@@ -147,6 +147,25 @@ export function AssessmentRun() {
         </span>
       </header>
 
+      {/* Progress monitor (Doc 08 WORK-04): x/y terkoreksi */}
+      <div className="flex items-center gap-3">
+        <div className="flex-1 h-3 border border-line-strong relative overflow-hidden" aria-hidden>
+          <div
+            className="absolute inset-y-0 left-0 bg-fg"
+            style={{
+              width: `${
+                students.length > 0
+                  ? Math.round((scoredCount / students.length) * 100)
+                  : 0
+              }%`,
+            }}
+          />
+        </div>
+        <span className="font-pixel text-pixel-sm text-fg tabular-nums">
+          {scoredCount}/{students.length}
+        </span>
+      </div>
+
       <div className="flex gap-2">
         <Link to={`/assessment/${assessmentId}/edit`}>
           <PixelButton variant="secondary">← SOAL</PixelButton>

@@ -5,6 +5,11 @@ import type { Note, NoteKind } from '@/shared/db/types';
 import { useSession } from '@/features/auth/useSession';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { ConfirmDialog } from '@/shared/components/ConfirmDialog';
+import {
+  HandwriteCanvas,
+  strokesToDataUrl,
+  type HandStroke,
+} from '@/shared/components/HandwriteCanvas';
 
 const KINDS: Array<{ key: NoteKind; label: string }> = [
   { key: 'personal', label: 'PRIBADI' },
@@ -37,6 +42,10 @@ export function NotesScreen() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Handwriting layer (Doc 08 NOTES-02): dual-mode editor — text + stylus
+  const [editorTab, setEditorTab] = useState<'text' | 'ink'>('text');
+  const [strokes, setStrokes] = useState<HandStroke[]>([]);
+
   const notesQ = useQuery({
     queryKey: ['notes', user?.id ?? 'anon'],
     queryFn: () => listNotes(),
@@ -51,7 +60,14 @@ export function NotesScreen() {
   );
 
   const saveMutation = useMutation({
-    mutationFn: (noteId: string) => updateNote(noteId, { title, body, kind }),
+    mutationFn: (noteId: string) => {
+      // Ink layer disimpan sebagai marker di akhir body
+      const fullBody =
+        strokes.length > 0
+          ? `${body}\n[[ink:${JSON.stringify(strokes)}]]`
+          : body;
+      return updateNote(noteId, { title, body: fullBody, kind });
+    },
     onSuccess: () => {
       setSaveState('saved');
       void queryClient.invalidateQueries({ queryKey: ['notes'] });
@@ -67,10 +83,23 @@ export function NotesScreen() {
     },
   });
 
-  // Auto-save debounce (Don't Make Teacher Save)
+  // Auto-save debounce (Don't Make Teacher Save) — text, kind, dan ink strokes
   useEffect(() => {
     if (!active) return;
-    if (active.title === title && active.body === body && active.kind === kind) {
+    const inkUnchanged =
+      JSON.stringify(strokes) ===
+      JSON.stringify(
+        (() => {
+          try {
+            const m = active.body.match(/\[\[ink:(.+?)\]\]/s);
+            return m ? (JSON.parse(m[1]!) as HandStroke[]) : [];
+          } catch {
+            return [];
+          }
+        })(),
+      );
+    const textBody = active.body.replace(/\s*\[\[ink:.+?\]\]\s*/s, '');
+    if (active.title === title && textBody === body && active.kind === kind && inkUnchanged) {
       setSaveState('idle');
       return;
     }
@@ -83,12 +112,20 @@ export function NotesScreen() {
       if (timer.current) clearTimeout(timer.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, body, kind, activeId]);
+  }, [title, body, kind, strokes, activeId]);
 
   const openNote = (n: Note) => {
     setActiveId(n.id);
     setTitle(n.title);
-    setBody(n.body);
+    // Handwrite layer tersimpan sebagai marker di body: [[ink:<strokes-json>]]
+    const inkMatch = n.body.match(/\[\[ink:(.+?)\]\]/s);
+    const textBody = n.body.replace(/\s*\[\[ink:.+?\]\]\s*/s, '');
+    setBody(textBody);
+    try {
+      setStrokes(inkMatch ? (JSON.parse(inkMatch[1]!) as HandStroke[]) : []);
+    } catch {
+      setStrokes([]);
+    }
     setKind(n.kind);
     setSaveState('idle');
   };
@@ -206,13 +243,81 @@ export function NotesScreen() {
                 className="bg-transparent text-pixel-xl font-sans text-fg border-none outline-none placeholder:text-gray-500"
                 aria-label="Judul catatan"
               />
-              <textarea
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                placeholder="tulis di sini…"
-                className="flex-1 bg-transparent text-small font-sans text-fg border border-line px-3 py-2 outline-none focus-visible:border-fg resize-none"
-                aria-label="Isi catatan"
-              />
+
+              {/* Dual-mode editor (Doc 08 §14: Digital + Stylus) */}
+              <div className="flex gap-1 border-b border-line pb-1">
+                <button
+                  type="button"
+                  onClick={() => setEditorTab('text')}
+                  className={`micro-pixel px-2 py-1 border ${
+                    editorTab === 'text'
+                      ? 'bg-fg text-bg border-fg'
+                      : 'text-gray-300 border-line-strong'
+                  }`}
+                >
+                  TEKS
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditorTab('ink')}
+                  className={`micro-pixel px-2 py-1 border ${
+                    editorTab === 'ink'
+                      ? 'bg-fg text-bg border-fg'
+                      : 'text-gray-300 border-line-strong'
+                  }`}
+                >
+                  ✎ TULIS TANGAN
+                </button>
+              </div>
+
+              {editorTab === 'text' ? (
+                <textarea
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  placeholder="tulis di sini…"
+                  className="flex-1 bg-transparent text-small font-sans text-fg border border-line px-3 py-2 outline-none focus-visible:border-fg resize-none"
+                  aria-label="Isi catatan"
+                />
+              ) : (
+                <div className="flex-1 flex flex-col gap-2">
+                  <HandwriteCanvas
+                    strokes={strokes}
+                    onChange={setStrokes}
+                    height={220}
+                  />
+                  <div className="flex gap-2 items-center">
+                    <button
+                      type="button"
+                      onClick={() => setStrokes((s) => s.slice(0, -1))}
+                      className="micro-pixel px-2 py-1 border border-line-strong text-gray-300 hover:border-fg"
+                    >
+                      ↶ UNDO
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStrokes([])}
+                      className="micro-pixel px-2 py-1 border border-line-strong text-gray-300 hover:border-fg"
+                    >
+                      KOSONGKAN
+                    </button>
+                    <span className="flex-1" />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const url = strokesToDataUrl(strokes);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `ink-${Date.now()}.png`;
+                        a.click();
+                      }}
+                      disabled={strokes.length === 0}
+                      className="micro-pixel px-2 py-1 border border-line-strong text-gray-300 hover:border-fg disabled:opacity-40"
+                    >
+                      PNG ↓
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </>
         )}
