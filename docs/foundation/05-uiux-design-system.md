@@ -1,510 +1,243 @@
 # Dokumen 05 — 8bitOS UI/UX Design System
 
-**Versi:** 1.0
+**Versi:** 2.0 — Pixel Minimalist + Stylus First Edition
 **Status:** Final
 **Tanggal:** 2026-09-03
-**Tipe:** Design system untuk launcher, dashboard, ikon, warna, navigasi, pengalaman MatePad Mini
+**Platform:** Huawei MatePad Mini (Launcher + Fullscreen App)
+**Target:** Guru SMA/SMK
 
-> Mendefinisikan tampilan 8bitOS: launcher, dashboard, ikon, warna, tipografi, navigasi, dan pola interaksi di Huawei MatePad Mini (landscape). Dokumen ini menjadi acuan implementasi visual seluruh modul A–I.
-
----
-
-## 1. Filosofi Desain
-
-8bitOS menggunakan identitas **pixel-monochrome** sebagai bahasa visual:
-
-- **Monokrom tegas** — hitam & putih sebagai pondasi, abu-abu sebagai variasi. Tidak ada warna aksen mencolok; status dibedakan oleh label, bukan hue.
-- **Pixel-cut** — sudut tajam, clip-path geometris, tanpa rounded corners.
-- **Tipografi pixel** — Pixelify Sans untuk heading/UI, Inter untuk body agar tetap terbaca panjang.
-- **Border 2px** — semua permukaan penting memiliki garis batas tegas.
-- **Hard offset shadow** — bayangan bukan blur, melainkan offset solid (pixel-art style).
-- **Reduced motion default** — hormati `prefers-reduced-motion`.
-
-Tujuan UX: **guru bisa menavigasi dengan 1-2 tap** dari Dashboard ke fungsi KBM apapun. Tidak ada menu tersembunyi, tidak ada animasi berlebihan.
+> Direction: **Clean • Pixel • Monochrome • Stylus-First • Distraction Free**
+> "Minimal Pixel Productivity OS for Teachers" — retro-futuristic, tetap profesional.
 
 ---
 
-## 2. Target Device & Orientasi
+## 1. Design Philosophy
 
-| Atribut | Nilai |
-|---|---|
-| Device utama | Huawei MatePad Mini |
-| Orientasi default | **Landscape** (paksa via OrientationGuard) |
-| Resolusi desain | 1280×800, 1920×1200 |
-| Input | Touch, M-Pencil, keyboard opsional |
-| Touch target minimum | 44×44 CSS px (Apple HIG) |
-| Density | 2x (consider 1.5x untuk tablet kecil) |
+8bitOS harus terasa seperti: notebook digital premium, ruang kerja pribadi guru, sistem operasi produktivitas. Bukan dashboard sekolah penuh warna atau aplikasi administrasi.
 
-**OrientationGuard** menampilkan提示 "Putar tablet ke mode landscape" jika `window.orientation` bukan landscape.
+> "Remove everything unnecessary. Keep only what helps the teacher think and teach."
+
+### Prinsip
+1. **Teacher First** — desain mengikuti alur kerja guru (masuk kelas → absensi → materi → menjelaskan → latihan → evaluasi → nilai → laporan), bukan struktur menu.
+2. **Zero Distraction** — tanpa berpindah aplikasi, tanpa mencari file, tanpa banyak tab/akun.
+3. **One Screen Workflow** — satu layar utama memberi jadwal, kelas berikutnya, catatan terakhir, tugas pending, shortcut.
+4. **Human Interface** — terasa seperti notebook digital, bukan sistem administrasi sekolah.
 
 ---
 
-## 3. Color Tokens
+## 2. Visual Identity
 
-### 3.1 Skema utama
+**Keywords:** Pixel · Minimal · Monochrome · Digital Notebook · Teacher Workspace · Handwriting Friendly · Precision
+
+**Inspirasi:** retro computer terminal · pixel art modern · e-ink notebook · digital handwriting tablet · Apple Notes + Notion + 8-bit aesthetic
+
+**Dilarang:** gradient · warna cerah/dekoratif · bounce animation · banyak badge · border berlebihan · ikon pendidikan klasik
+
+---
+
+## 3. Color System
+
+Monokrom murni — tidak ada warna lain.
 
 | Token | Hex | Penggunaan |
 |---|---|---|
-| `--bg` | `#050505` | Background utama |
-| `--fg` | `#ffffff` | Teks, border, ikon aktif |
-| `--gray-950` | `#0a0a0a` | Permukaan elevated |
-| `--gray-700` | `#404040` | Border sekunder, disabled text |
-| `--gray-500` | `#737373` | Teks tersier |
-| `--gray-300` | `#d4d4d4` | Teks sekunder |
-| `--gray-100` | `#f5f5f5` | Teks di dark mode (jarang) |
+| `bg` | `#050505` | Background utama (dark = default) |
+| `surface` | `#111111` | Panel/elevated surface |
+| `fg` | `#FFFFFF` | Text utama, primary action |
+| `gray-300` | `#AAAAAA` | Text sekunder |
+| `line` | `#222222` | Hairline border |
+| `line-strong` | `#333333` | Border tegas |
 
-### 3.2 Status (pakai label, bukan hue)
+**Dark mode = default** (cocok dengan pixel style). Light mode reverse: bg `#FFFFFF`, surface `#FAFAFA`, text `#000000`, border `#E5E5E5`.
 
-| Status | Background | Text |
-|---|---|---|
-| Online | `--fg` | `--bg` |
-| Offline | `--bg` + border 2px | `--fg` |
-| Pending | `--bg` + border 2px dashed | `--fg` |
-| Error | `--fg` solid | `--bg` (label "ERROR" eksplisit) |
-
-**Prinsip:** tidak pernah hanya mengandalkan warna untuk state. Selalu ada label teks (`ONLINE` / `OFFLINE` / `ERROR`).
-
-### 3.3 Tailwind config (existing)
-
-```ts
-colors: {
-  bg: '#050505',
-  fg: '#ffffff',
-  grays: '#404040',
-  gray300: '#d4d4d4',
-  gray500: '#737373',
-}
-```
+Status dibedakan **label teks**, bukan warna (color-blind safe).
 
 ---
 
-## 4. Typography
+## 4. Typography System
 
-### 4.1 Font families
+### 4.1 Font Pairing
 
-| Nama | Font | Penggunaan |
-|---|---|---|
-| `font-pixel` | Pixelify Sans | Heading, button, label, tab, nav |
-| `font-sans` | Inter | Body, paragraf, daftar |
+**Pixel identity font — Pixelify Sans:**
+- Logo, menu, judul, heading, label, status, tombol, count
+- Modern pixel, tetap readable untuk UI
 
-### 4.2 Skala tipografi
+**Reading font — Inter:**
+- Body/materi/soal/catatan/dokumen/deskripsi
+- Pixel font untuk identitas, bukan untuk membaca panjang
 
-| Token | Size | Weight | Font | Line-height | Penggunaan |
-|---|---|---|---|---|---|
-| `display` | 32px | 700 | pixel | 1.1 | Halaman utama |
-| `h1` | 24px | 700 | pixel | 1.2 | Section header |
-| `h2` | 18px | 700 | pixel | 1.3 | Card title |
-| `body` | 14px | 400 | sans | 1.5 | Body text |
-| `small` | 12px | 400 | sans | 1.4 | Metadata |
-| `mono` | 12px | 700 | pixel | 1.0 | Label, status, count |
-| `micro` | 10px | 700 | pixel | 1.0 | [SOON], [ERROR] |
+**Alternatif:** VT323 (terminal style, heading saja) · Silkscreen · Press Start 2P (judul display saja, jangan body)
 
-### 4.3 Aturan
+### 4.2 Type Scale
 
-- Heading selalu uppercase + tracking normal (pixel font sudah自带 kerning).
-- Body text tidak pernah uppercase.
-- Maksimum 60 karakter per baris body (readability).
+| Level | Font | Size | Weight | Notes |
+|---|---|---|---|---|
+| Pixel Display | Pixelify | 42px | 700 | "GOOD MORNING TEACHER" |
+| Pixel Heading | Pixelify | 24px | 600 | section title |
+| Pixel Label | Pixelify | 12px | 500 | label/status/menu |
+| Micro | Pixelify | 10px | 500 | [SOON], hint |
+| Body | Inter | 15px | 400 | lh 1.6–1.7 |
+| Caption | Inter | 12px | 400 | `#777`-ish secondary |
 
 ---
 
-## 5. Iconography
+## 5. Layout System
 
-### 5.1 Style
+**Tablet-first landscape** (MatePad Mini), portrait secondary (OrientationGuard memaksa landscape di app; launcher boleh both).
 
-- **Pixel-style SVG** — `viewBox 0 0 24 24`, `strokeWidth 2`, `strokeLinecap="square"`, `strokeLinejoin="miter"`.
-- 5 ikon utama (sudah ada di `src/shared/components/icons.tsx`):
+```
+┌────────────────────────────────┐
+│ Status / Context Bar           │
+├──────────┬─────────────────────┤
+│ Sidebar  │ Workspace          │
+│ 72px     │ (padding luas,      │
+│          │  banyak whitespace) │
+├──────────┴─────────────────────┤
+│ Quick Actions (floating)       │
+└────────────────────────────────┘
+```
 
-| Ikon | Modul | Bentuk |
-|---|---|---|
-| IconHome | Dashboard | Rumah + pintu |
-| IconClass | Classroom | Buku dengan halaman |
-| IconWork | Planner (soon) | Briefcase |
-| IconTools | Tools (soon) | Obeng + kunci pas |
-| IconSystem | System (soon) | Grid 4-kotak |
-
-### 5.2 Aturan tambahan (modul masa depan)
-
-- Ikon modul AI: robot kepala kotak dengan antena
-- Ikon Notes: buku catatan spiral
-- Ikon Whiteboard: kanvas dengan kuas
-- Ikon Browser: globe kotak dengan grid
-- Ikon Assessment: checklist dengan centang
-- Ikon Gradebook: tabel dengan baris nilai
-- Ikon Document: folder dengan dokumen
+Whitespace: margin besar, padding luas, sedikit elemen. Divider pakai hairline `#222`, bukan shadow.
 
 ---
 
-## 6. Layout Grid
+## 6. Sidebar (Dock)
 
-### 6.1 Breakpoints
-
-| Name | Min-width | Layout |
-|---|---|---|
-| `xs` (phone) | 0px | Single column (jarang dipakai) |
-| `sm` (tablet portrait) | 640px | Single column |
-| `md` (tablet landscape) | 960px | 2-column grid |
-| `lg` (desktop) | 1280px | 3-column grid |
-| `xl` (wide) | 1536px | 4-column grid |
-
-### 6.2 Spacing scale (4px base)
-
-`4 · 8 · 12 · 16 · 24 · 32 · 48 · 64`
-
-### 6.3 Layout utama (landscape)
+Minimal, outline-only icon stroke 1.5px feel (pixel outline), monochrome.
 
 ```
-┌────┬────────────────────────────────────────────┐
-│    │  Header                                    │
-│ S  ├────────────────────────────────────────────┤
-│ I  │                                            │
-│ D  │                                            │
-│ E  │              Main Content                  │
-│ B  │                                            │
-│ A  │                                            │
-│ R  │                                            │
-│    │                                            │
-│80px│                                            │
-└────┴────────────────────────────────────────────┘
+HOME · CLASS · PLAN · ASSESS · GRADE · NOTES · TOOLS
+────────
+SETTINGS (soon)
 ```
 
-- **Sidebar (kiri):** 80px lebar, fixed, berisi nav utama + brand mark + versi.
-- **Header (atas konten):** tidak tetap — inline di tiap screen (h1 + metadata kanan).
-- **Main content:** scrollable vertikal, padding 24px.
+Active: `#FFFFFF` fill left-bar + text putih. Inactive: `#777`. Label pixel font 10px uppercase.
 
 ---
 
-## 7. Navigation
+## 7. Component System
 
-### 7.1 Primary: Sidebar kiri (5 slot)
-
-| Slot | Label | Status Spec 1 |
-|---|---|---|
-| 1 | HOME | ✅ aktif |
-| 2 | CLASS | ✅ aktif |
-| 3 | WORK | 🔒 [SOON] |
-| 4 | TOOLS | 🔒 [SOON] |
-| 5 | SYSTEM | 🔒 [SOON] |
-
-**State aktif:** background `--fg`, text `--bg`, underline 2×6px di bawah ikon.
-**State nonaktif (soon):** text `--gray-500`, label `[SOON]`.
-
-### 7.2 Secondary: Tab dalam layar
-
-Contoh: ClassHub punya 4 tab: OVERVIEW / ROSTER / ATTENDANCE / NOTES.
-
-Style tab:
-- Inactive: `bg-bg text-fg border-2 border-fg`
-- Active: `bg-fg text-bg border-2 border-fg`
-- Soon: label `[SOON]` suffix
-
-### 7.3 Tertiary: Breadcrumb / Back link
-
-Pakai teks biasa dengan underline + prefix "←":
+### 7.1 Pixel Button
 
 ```
-← KEMBALI KE DAFTAR KELAS
+┌────────────────┐
+│  START QUIZ ▶  │   primary: bg #FFF, text #000
+└────────────────┘   secondary: border 1px #333, transparent
+                     height 44px, pixel-cut corner
 ```
+
+Corner: **pixel cut** (chamfer 3px), bukan rounded modern. Hover: invert halus. Active: offset 2px.
+
+### 7.2 Flat Card
+
+Tanpa bayangan. Background `#050505`/`#111`, border hairline, padding lega. Header label pixel font + hairline divider.
+
+### 7.3 Pixel Icon
+
+Fill-based 12×12 grid, sharp edges, monochrome. Ukuran 16/20/24px.
+
+### 7.4 Input
+
+Border 1px `#333`, font **Inter** 15px (input = membaca/menulis). Focus: border putih solid.
 
 ---
 
-## 8. Komponen Inti (Pixel Components)
+## 8. Stylus Interaction System
 
-Semua komponen di `src/shared/components/`. Prinsip:
+Stylus = first-class input. Saat pen aktif:
 
-- **PixelButton** — 3 variant: `primary` (fg fill), `secondary` (border only), `danger`. Padding 12×16. Font pixel. Disabled state: text `--gray-500`.
-- **PixelCard** — border 2px, padding 16, no rounded, no shadow default. Opsional `pixelShadow` prop untuk hard offset 4×4.
-- **PixelInput** — border 2px, background `--bg`, text `--fg`, focus ring 2px offset.
-- **PixelModal** — overlay hitam 80%, card 480px max-width, pixel-cut clip-path.
-- **StatusPill** — 2 tone: `on` (fg fill), `off` (border only). Selalu ada label.
-- **EmptyState** — title (pixel) + hint (sans, gray-300) + opsional CTA button.
-- **ConfirmDialog** — wrapper di atas PixelModal untuk aksi destruktif.
-- **Sidebar (Dock)** — lihat section 7.1.
-
-### 8.1 Pixel-cut clip-path
-
-```css
-.pixel-cut {
-  clip-path: polygon(
-    0 4px, 4px 4px, 4px 0,
-    calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
-    100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px),
-    calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px),
-    0 calc(100% - 4px)
-  );
-}
+```
+┌────────────────────┐
+│ PEN MODE ACTIVE    │
+│ ✎ Draw □ Select   │
+│ T Text E Eraser    │
+│ ↶ Undo             │
+└────────────────────┘
 ```
 
-Memberikan efek "pixel chamfer" di keempat sudut.
+- Palm rejection otomatis saat pen terdeteksi
+- Pressure sensitivity: stroke 2–5px scaled by pressure
+- Handwriting layer terpisah dari text layer per halaman
 
 ---
 
-## 9. Interaction Patterns
+## 9. Digital Notebook & Canvas
 
-### 9.1 Tap target
+Setiap halaman punya: Page ID, Date, Class, Subject, Tags, Handwritten Layer, Text Layer.
 
-- Minimum 44×44 CSS px.
-- Spacing antar tap target minimal 8px.
-- Sidebar items: 80×80px (lebih besar dari minimum, mudah dijangkau stylus).
+**Canvas background — Pixel Paper:** grid 4px, opacity 5% (halus, tidak mengganggu tulisan).
 
-### 9.2 Feedback
-
-- Tap tombol: tidak ada animasi (langsung state berubah) — sesuai prinsip reduced motion.
-- Sukses: tampilkan toast 1.5s "✓ TERSIMPAN" atau update inline count.
-- Error: tampilkan banner merah (label "ERROR") + retry button.
-- Loading: skeleton block hitam dengan pulse subtle (atau text "LOADING…").
-
-### 9.3 Form (Spec 2)
-
-- Single column di tablet portrait, two-column di landscape.
-- Submit button di kanan bawah, sticky pada scroll.
-- Auto-save draft setiap 5 detik untuk notes panjang.
-
-### 9.4 Drag & drop (Spec 3, Planner)
-
-- 24px drop zone dengan border dashed.
-- Visual feedback: drop zone jadi solid border saat item di atasnya.
-- Tidak ada animasi transisi (instant snap).
-
-### 9.5 Gestures (Capacitor, Phase 2)
-
-- Swipe kanan dari edge: kembali (back gesture).
-- Swipe kiri di dashboard: buka search/global.
-- Two-finger swipe dari atas: split workspace toggle.
-- Long press pada item: context menu.
+**Handwriting recognition flow:** guru menulis → AI baca → tawaran `[Keep handwriting] [Convert text] [Create material]`.
 
 ---
 
-## 10. State & Empty Patterns
+## 10. AI Assistant — "8bit AI"
 
-### 10.1 Loading
-
-`<p className="font-pixel text-xs text-gray-300">LOADING…</p>`
-
-### 10.2 Empty
-
-Gunakan `EmptyState` component:
-- Title uppercase (pixel)
-- Hint sentence (sans, gray-300)
-- CTA opsional
-
-Contoh:
-- ClassList: "BELUM ADA KELAS" + "Tambahkan kelas di halaman ini setelah backend siap."
-- AttendanceSheet: "TIDAK ADA SISWA" + "Tambahkan siswa di kelas ini."
-
-### 10.3 Error
-
-`<PixelCard>` dengan border merah-equivalent (pakai border fg + label "ERROR"):
-```
-ERROR
-Tidak dapat memuat data.
-PERIKSA JARINGAN → RETRY
-```
-
-### 10.4 Offline banner (Dashboard)
-
-Border 2px fg, text "PULIHKAN SINDIKASI? · N ITEM BELUM TERKIRIM" + tombol RETRY.
+Visual identitas pixel block (`█` mark), floating panel minimal. Prompt chips: Generate / Analyze / Summarize. Bukan chatbot besar — copilot kecil yang fokus.
 
 ---
 
-## 11. Launcher Mode Mockup (Phase 4)
+## 11. Animation
 
-Saat 8bitOS menjadi Home App, tampilan pertama:
-
-```
-┌─────────────────────┐
-│  8bitOS TEACHER     │
-│                     │
-│  Senin 30 Agustus   │
-│                     │
-│  08.00 Matematika   │
-│                     │
-├─────────────────────┤
-│ 📚 Materi           │
-│ 👥 Kelas            │
-│ 📝 Quiz             │
-│ 📊 Nilai            │
-│ 📒 Notes            │
-│ 🌐 Browser          │
-│ 🤖 AI Guru          │
-└─────────────────────┘
-```
-
-Style sama dengan launcher biasa: monokrom, pixel font, 2px border. Tap modul → langsung masuk workspace.
+Sangat halus. Durasi: micro 150ms · normal 250ms · page 350ms. Transisi: fade, slide, scale kecil. Loading: pixel progress bar `█░░░`.
 
 ---
 
-## 12. Accessibility (a11y)
+## 12. Accessibility
 
-- **Kontras:** semua teks `--fg` di `--bg` lulus WCAG AAA (>15:1).
-- **Touch target:** minimum 44×44 (lihat 9.1).
-- **Focus ring:** 2px offset solid `--fg` di semua interactive element.
-- **Screen reader:** setiap komponen punya `aria-label` (e.g. "Andi, Izin, toggle button").
-- **Reduced motion:** `@media (prefers-reduced-motion: reduce)` nonaktifkan pulse skeleton.
-- **Bahasa:** label UI pakai Bahasa Indonesia (konsisten dengan guru lokal). Spesifikasi kode & file pakai English.
+Font scaling · high contrast (putih di `#050505` > 18:1) · keyboard shortcut (Ctrl+K) · stylus support · label-status bukan warna.
 
 ---
 
-## 13. Microcopy Guidelines
+## 13. Screen Personality
 
-| Konteks | Style | Contoh |
-|---|---|---|
-| Tombol aksi | Verb + uppercase | MULAI KBM · SIMPAN · HAPUS |
-| Label status | Uppercase + monospace | ONLINE · OFFLINE · PENDING |
-| Error | "Tidak dapat…" + saran | "Tidak dapat memuat. PERIKSA JARINGAN." |
-| Empty state | Title uppercase + hint | "BELUM ADA KELAS. Tambahkan kelas…" |
-| Confirmation | Kalimat langsung | "Hapus catatan ini? TIDAK DAPAT DIBATALKAN." |
-| Notifikasi sukses | "✓ …" singkat | "✓ TERSIMPAN" |
-
-**Prinsip:**
-- Jangan pakai jargon teknis ("Sync failed") — pakai bahasa guru.
-- Sentence case untuk body, UPPERCASE untuk label/tombol.
-- Maksimum 8 kata per baris tombol.
+- **Launcher Home** — "Teacher Command Center": jam besar, NEXT MISSION (kelas berikut), grid tool, TODAY LOG
+- **Classroom Mode** — fokus: kelas, kehadiran, material, activity, notes
+- **Assessment Studio** — seperti editor game level: QUESTION BUILDER dengan level `★★★☆☆`, stimulus/question/answer/analysis
+- **Grade Center** — tabel minimal hairline
+- **Whiteboard** — pixel paper + pen mode
+- **Browser** — chrome minimal, aksi simpan-referensi
 
 ---
 
-## 14. Component Inventory (Existing vs Planned)
+## 14. Logo Direction
 
-| Komponen | Status | File |
-|---|---|---|
-| Sidebar (Dock) | ✅ Spec 1 | `src/shared/components/Dock.tsx` |
-| PixelButton | ✅ | `src/shared/components/PixelButton.tsx` |
-| PixelCard | ✅ | `src/shared/components/PixelCard.tsx` |
-| PixelInput | ✅ | `src/shared/components/PixelInput.tsx` |
-| PixelModal | ✅ | `src/shared/components/PixelModal.tsx` |
-| StatusPill | ✅ | `src/shared/components/StatusPill.tsx` |
-| EmptyState | ✅ | `src/shared/components/EmptyState.tsx` |
-| ConfirmDialog | ✅ | `src/shared/components/ConfirmDialog.tsx` |
-| Icon set (5) | ✅ | `src/shared/components/icons.tsx` |
-| SplitWorkspace (Spec 2) | 🔜 | — |
-| CalendarHeatmap (Spec 2) | 🔜 | — |
-| QuestionEditor (Spec 3) | 🔜 | — |
-| WhiteboardCanvas (Spec 3) | 🔜 | — |
-| BrowserView (Spec 3) | 🔜 | — |
-| AIPromptPanel (Spec 4) | 🔜 | — |
+Monochrome: **8 + pixel/brain + OS**. Wordmark **8OS** putih di `#050505` + pixel cursor `▮`. Tanpa gradient/warna cerah.
 
 ---
 
-## 15. Design Tokens Reference (Code)
+## 15. Personality Map
 
-File: `src/shared/styles/tokens.css`
-
-```css
-:root {
-  --bg: #050505;
-  --fg: #ffffff;
-  --gray-950: #0a0a0a;
-  --gray-700: #404040;
-  --gray-500: #737373;
-  --gray-300: #d4d4d4;
-  --gray-100: #f5f5f5;
-  --border: 2px;
-  --shadow-offset: 4px;
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-6: 24px;
-  --space-8: 32px;
-}
-```
-
-File: `tailwind.config.ts` — extend dengan `colors`, `fontFamily`, `boxShadow`.
+| Produk | Karakter |
+|---|---|
+| Apple | Premium |
+| Notion | Flexible |
+| Linear | Technical |
+| Arc | Calm |
+| **8bitOS** | **Teacher Intelligence Workspace** |
 
 ---
 
-## 16. Contoh End-to-End Flow Visual
+## 16. Final Visual Statement
 
-### 16.1 Morning Dashboard
+> "A pixel-inspired digital workstation where teachers write, teach, assess, and manage their classroom using one device and one stylus."
 
-```
-┌────┬───────────────────────────────────────────┐
-│ 8B │  DASHBOARD                    SELASA...   │
-│    │  [ONLINE] DEMO TEACHER                    │
-│ ▣H │  ┌──────────────────────────────────────┐  │
-│ ▢C │  │ NEXT CLASS                          │  │
-│ ▢W │  │ MATEMATIKA    [MULAI KBM]           │  │
-│ ▢T │  │ XI IPA 1 · 08.00 · R.12             │  │
-│ ▢S │  └──────────────────────────────────────┘  │
-│    │  JADWAL HARI INI                          │
-│    │  08.00  Matematika  XI IPA 1  R.12        │
-│    │  09.30  Fisika      XI IPA 2  R.07        │
-│    │  ...                                      │
-│ v1 │  QUICK ACTIONS                            │
-│    │  [CLASSROOM] [MATERI·SOON] [QUIZ·SOON]    │
-└────┴───────────────────────────────────────────┘
-```
-
-### 16.2 ClassHub Overview
-
-```
-┌────┬───────────────────────────────────────────┐
-│ 8B │  XI IPA 1                       KELAS     │
-│    │  [OVERVIEW] [ROSTER] [ATTENDANCE][SOON]   │
-│ ▣H │  [NOTES·SOON]                             │
-│ ▢C │  RINGKASAN                                │
-│ ▢W │  [32 siswa][5 mapel][7 sesi]              │
-│ ▢T │  MULAI SESI                               │
-│ ▢S │  [MATEMATIKA] [FISIKA] [BIOLOGI]          │
-│    │  JADWAL                                   │
-│    │  SENIN 07.00-08.30  Matematika  R.12      │
-│    │  SELASA ...                               │
-└────┴───────────────────────────────────────────┘
-```
-
-### 16.3 AttendanceSheet
-
-```
-┌────┬───────────────────────────────────────────┐
-│ 8B │  ABSENSI                       MATEMATIKA │
-│ ▣H │  ┌────┬────┬────┬────┐                    │
-│ ▢C │  │ H  │ I  │ S  │ A  │ ← count            │
-│ ▢W │  │ 0  │ 0  │ 0  │ 0  │                    │
-│ ▢T │  └────┴────┴────┴────┘                    │
-│ ▢S │  1. Andi P.    [H][I][S][A]               │
-│    │  2. Budi S.    [H][I][S][A]               │
-│    │  3. Citra L.   [H][I][S][A]               │
-│    │  ...                                      │
-│    │  [KEMBALI]                                │
-└────┴───────────────────────────────────────────┘
-```
+8bitOS harus terlihat seperti sistem operasi profesional untuk guru — hitam-putih, whitespace, typography kuat, ikon pixel, interface tenang, fokus pada pekerjaan guru.
 
 ---
 
-## 17. Design Decision Log
+## 17. Implementasi (mapping ke kode)
 
-| # | Keputusan | Alasan |
-|---|---|---|
-| D-01 | Monokrom `#050505` / `#ffffff` saja | Konsisten dengan identitas "8bit", fokus pada konten |
-| D-02 | Pixelify Sans untuk UI, Inter untuk body | Pixel font sulit dibaca panjang; body perlu readability |
-| D-03 | Tidak ada rounded corners | Pixel-art aesthetic, tegas |
-| D-04 | Border 2px untuk semua permukaan | Konsistensi, mudah di-scan visual |
-| D-05 | Sidebar kiri, bukan bottom dock | Lebih cocok untuk tablet landscape (jempol tidak perlu reach ke bawah) |
-| D-06 | Status dibedakan label, bukan warna | Aksesibilitas (color-blind safe) |
-| D-07 | Reduced motion default | Hormati preferensi OS, lebih hemat baterai |
-| D-08 | Bahasa Indonesia untuk UI | Target pengguna guru lokal |
-| D-09 | English untuk kode & file | Standar industri, tooling lebih baik |
+| Rule | File |
+|---|---|
+| Tokens monokrom | `src/shared/styles/tokens.css` |
+| Pixel-cut + pixel-paper utilities | `src/shared/styles/globals.css` |
+| Font pairing (Pixelify/Inter) | `index.html` + `tailwind.config.ts` (`font-pixel` / `font-sans`) |
+| Pixel icons fill-based | `src/shared/components/icons.tsx` |
+| Dock 7 slot | `src/shared/components/Dock.tsx` |
+| PixelButton/PixelCard/Input | `src/shared/components/` |
+| Reading areas font-sans | planner/notes/assessment/AI screens |
+| Whiteboard pixel paper + pen mode | `src/features/whiteboard/Whiteboard.tsx` |
+| Icon 8OS monokrom | `scripts/gen-icons.mjs` → semua density |
 
----
-
-## 18. Acceptance Design Spec 1
-
-- [x] Sidebar kiri dengan 5 slot, HOME + CLASS aktif
-- [x] Dashboard: header, status, outbox banner, next class card, schedule list, quick actions
-- [x] ClassList: grid 1/2 column, card per kelas
-- [x] ClassHub: 4 tab, Overview + Roster aktif
-- [x] AttendanceSheet: 4-toggle H/I/S/A per siswa, count cards
-- [x] Pixel components: Button, Card, Input, Modal, StatusPill, EmptyState, ConfirmDialog
-- [x] Icon set minimal 5 (home, class, work, tools, system)
-- [x] Dark mode otomatis, tidak ada light mode (Doc 04)
-- [x] OrientationGuard untuk landscape
-- [x] Pixel-cut clip-path tersedia
-
----
-
-## 19. Dokumen Lanjutan
-
-- **Dokumen 01–04** — fondasi produk, workflow, modules, architecture
-- **Dokumen 06** — Data Model (`docs/decisions/07-data-model.md`)
-- **Dokumen 07** — Spec 1 (`docs/specs/2026-09-03-8bithos-spec-1.md`)
-
-Dokumen 05 ini menutup blueprint UX 8bitOS untuk Spec 1–4. Modul baru (Spec 2+) sebaiknya menambah komponen dengan mengikuti pattern yang sama.
+> **Catatan versi:** v1.0 (pixel monochrome, Doc 05 awal) → v1.1 retro terminal phosphor-green → **v2.0 Pixel Minimalist + Stylus First (SAAT INI)** — kembali ke monokrom murni, tanpa glow/scanline, font pairing Pixelify+Inter, reading Inter.

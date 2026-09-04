@@ -84,30 +84,30 @@ const OverviewTab = ({
   return (
     <div className="space-y-3">
       <PixelCard title="ringkasan">
-        <div className="grid grid-cols-3 gap-2 text-center font-mono">
+        <div className="grid grid-cols-3 gap-2 text-center font-sans">
           <div className="panel px-2 py-2">
-            <p className="text-micro-label text-dim">SISWA</p>
-            <p className="text-md font-bold text-accent">{students.length}</p>
+            <p className="micro-pixel text-gray-300">SISWA</p>
+            <p className="text-body font-bold text-fg">{students.length}</p>
           </div>
           <div className="panel px-2 py-2">
-            <p className="text-micro-label text-dim">MAPEL</p>
-            <p className="text-md font-bold text-accent">{schedule.length}</p>
+            <p className="micro-pixel text-gray-300">MAPEL</p>
+            <p className="text-body font-bold text-fg">{schedule.length}</p>
           </div>
           <div className="panel px-2 py-2">
-            <p className="text-micro-label text-dim">SESI</p>
-            <p className="text-md font-bold text-accent">{sessions.length}</p>
+            <p className="micro-pixel text-gray-300">SESI</p>
+            <p className="text-body font-bold text-fg">{sessions.length}</p>
           </div>
         </div>
       </PixelCard>
 
       <PixelCard title="mulai_sesi">
         {schedule.length === 0 ? (
-          <p className="font-mono text-xs text-dim">belum ada jadwal</p>
+          <p className="font-sans text-pixel-sm text-gray-300">belum ada jadwal</p>
         ) : (
           <div className="flex gap-2 flex-wrap">
             {Array.from(
               new Map(
-                schedule.map((s) => [s.subject_id, subjectById.get(s.subject_id) ?? '—']),
+                schedule.map((s) => [s.subject_id, subjectById.get(s.subject_id) ?? 'â€”']),
               ),
             ).map(([subjectId, name]) => (
               <PixelButton
@@ -115,7 +115,7 @@ const OverviewTab = ({
                 onClick={() => onStart(subjectId)}
                 disabled={isStarting}
               >
-                {String(name).toUpperCase()} →
+                {String(name).toUpperCase()} â†’
               </PixelButton>
             ))}
           </div>
@@ -124,37 +124,37 @@ const OverviewTab = ({
 
       <PixelCard title="jadwal">
         {schedule.length === 0 ? (
-          <p className="font-mono text-xs text-dim">belum ada slot</p>
+          <p className="font-sans text-pixel-sm text-gray-300">belum ada slot</p>
         ) : (
           <ul className="flex flex-col">
             {schedule.map((s) => (
               <li
                 key={s.id}
-                className="flex items-center gap-3 border-b border-line last:border-b-0 py-1.5 font-mono text-xs"
+                className="flex items-center gap-3 border-b border-line last:border-b-0 py-1.5 font-sans text-pixel-sm"
               >
-                <span className="text-dim w-16">{dayLabel(s.day_of_week)}</span>
-                <span className="text-accent">
-                  {s.start_time.slice(0, 5)}–{s.end_time.slice(0, 5)}
+                <span className="text-gray-300 w-16">{dayLabel(s.day_of_week)}</span>
+                <span className="text-fg">
+                  {s.start_time.slice(0, 5)}â€“{s.end_time.slice(0, 5)}
                 </span>
-                <span className="flex-1 text-fg">{subjectById.get(s.subject_id) ?? '—'}</span>
-                <span className="text-dimmer">{s.room || '—'}</span>
+                <span className="flex-1 text-fg">{subjectById.get(s.subject_id) ?? 'â€”'}</span>
+                <span className="text-gray-500">{s.room || 'â€”'}</span>
               </li>
             ))}
           </ul>
         )}
       </PixelCard>
 
-      <p className="font-mono text-xs">
-        <Link to="/classroom" className="text-dim hover:text-accent">
-          ← ~/classroom
+      <p className="font-sans text-pixel-sm">
+        <Link to="/classroom" className="text-gray-300 hover:text-fg">
+          â† ~/classroom
         </Link>
         <Link
           to={`/classroom/${classId}/documents`}
-          className="text-dim hover:text-accent ml-3"
+          className="text-gray-300 hover:text-fg ml-3"
         >
-          📄 dokumen kelas →
+          ðŸ“„ dokumen kelas â†’
         </Link>
-        <span className="text-dimmer ml-2">{className}</span>
+        <span className="text-gray-500 ml-2">{className}</span>
       </p>
     </div>
   );
@@ -212,17 +212,17 @@ const RosterTab = ({
         {students.map((s, idx) => (
           <li
             key={s.id}
-            className="flex items-center gap-3 border-b border-line last:border-b-0 py-1.5 font-mono text-xs"
+            className="flex items-center gap-3 border-b border-line last:border-b-0 py-1.5 font-sans text-pixel-sm"
           >
-            <span className="text-dimmer w-8 text-right">{idx + 1}.</span>
+            <span className="text-gray-500 w-8 text-right">{idx + 1}.</span>
             <Link
               to={`/classroom/${classId}/students/${s.id}`}
-              className="flex-1 text-fg hover:text-accent"
+              className="flex-1 text-fg hover:text-fg"
             >
               {s.full_name}
             </Link>
-            <span className="text-dim">{s.nisn || '—'}</span>
-            <span className="text-dim w-6 text-center">{s.gender}</span>
+            <span className="text-gray-300">{s.nisn || 'â€”'}</span>
+            <span className="text-gray-300 w-6 text-center">{s.gender}</span>
           </li>
         ))}
       </ul>
@@ -233,7 +233,7 @@ const RosterTab = ({
         pending={pendingAdd}
       />
       {addError && (
-        <p className="font-mono text-xs text-fg mt-2">ERROR: {addError}</p>
+        <p className="font-sans text-pixel-sm text-fg mt-2">ERROR: {addError}</p>
       )}
     </PixelCard>
   );
@@ -263,21 +263,21 @@ export function ClassHub() {
   });
 
   const subjectName = useMemo(() => {
-    if (!data?.subjectById) return '—';
-    return Array.from(data.subjectById.values()).join(', ') || '—';
+    if (!data?.subjectById) return 'â€”';
+    return Array.from(data.subjectById.values()).join(', ') || 'â€”';
   }, [data]);
 
   if (isLoading) {
-    return <p className="p-4 font-mono text-xs text-dim">loading…</p>;
+    return <p className="p-4 font-sans text-pixel-sm text-gray-300">loadingâ€¦</p>;
   }
   if (error) {
     return (
       <main className="p-4">
-        <div className="panel-accent p-3 space-y-2">
-          <p className="font-mono text-xs text-fg">GAGAL MEMUAT KELAS.</p>
-          <p className="font-mono text-xs text-dim">{(error as Error).message}</p>
-          <Link to="/classroom" className="font-mono text-xs text-accent inline-block">
-            ← kembali
+        <div className="panel-strong p-3 space-y-2">
+          <p className="font-sans text-pixel-sm text-fg">GAGAL MEMUAT KELAS.</p>
+          <p className="font-sans text-pixel-sm text-gray-300">{(error as Error).message}</p>
+          <Link to="/classroom" className="font-sans text-pixel-sm text-fg inline-block">
+            â† kembali
           </Link>
         </div>
       </main>
@@ -294,10 +294,10 @@ export function ClassHub() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/classroom/{data.classRow.name.toLowerCase().replace(/\s+/g, '-')}
         </h1>
-        <span className="font-mono text-xs text-dim">mapel: {subjectName}</span>
+        <span className="font-sans text-pixel-sm text-gray-300">mapel: {subjectName}</span>
       </header>
 
       <nav className="flex gap-1 border-b border-line-strong" aria-label="Class tabs">
@@ -310,16 +310,16 @@ export function ClassHub() {
               type="button"
               onClick={() => setTab(k)}
               disabled={t.soon}
-              className={`px-3 py-1 font-mono text-micro-label label-term border-b-2 -mb-px transition-colors ${
+              className={`px-3 py-1 font-sans micro-pixel label-pixel border-b-2 -mb-px transition-colors ${
                 isActive
-                  ? 'text-accent border-accent'
+                  ? 'text-fg border-fg'
                   : t.soon
-                    ? 'text-dimmer border-transparent cursor-not-allowed'
-                    : 'text-dim border-transparent hover:text-fg'
+                    ? 'text-gray-500 border-transparent cursor-not-allowed'
+                    : 'text-gray-300 border-transparent hover:text-fg'
               }`}
             >
               {t.label}
-              {t.soon && <span className="ml-1 text-dimmer">[soon]</span>}
+              {t.soon && <span className="ml-1 text-gray-500">[soon]</span>}
             </button>
           );
         })}
@@ -341,7 +341,7 @@ export function ClassHub() {
       {tab === 'attendance' && <SoonTab name="ATTENDANCE" />}
       {tab === 'notes' && <SoonTab name="NOTES" />}
 
-      <p className="font-mono text-xs text-dimmer">mapel: {subjectName}</p>
+      <p className="font-sans text-pixel-sm text-gray-500">mapel: {subjectName}</p>
     </main>
   );
 }

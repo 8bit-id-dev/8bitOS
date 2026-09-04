@@ -44,15 +44,15 @@ export function AssessmentList() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/assessment
         </h1>
-        <span className="font-mono text-xs text-dim">
+        <span className="font-sans text-pixel-sm text-gray-300">
           {assessments?.length ?? 0} asesmen
         </span>
       </header>
 
-      {isLoading && <p className="font-mono text-xs text-dim">loading…</p>}
+      {isLoading && <p className="font-sans text-pixel-sm text-gray-300">loading…</p>}
 
       {!isLoading && (assessments?.length ?? 0) === 0 && (
         <div className="space-y-3">
@@ -80,13 +80,13 @@ export function AssessmentList() {
         {(assessments ?? []).map((a) => {
           const cls = a.class_id ? classById.get(a.class_id) : null;
           return (
-            <PixelCard key={a.id} className="hover:border-accent-dim transition-colors">
+            <PixelCard key={a.id} className="hover:border-fg transition-colors">
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="font-mono text-sm text-fg truncate">{a.title}</p>
-                  <p className="font-mono text-xs text-dim mt-0.5">
+                  <p className="font-sans text-small text-fg truncate">{a.title}</p>
+                  <p className="font-sans text-pixel-sm text-gray-300 mt-0.5">
                     {TYPE_LABEL[a.type]} · {cls?.name ?? 'tanpa kelas'} ·{' '}
-                    <span className={a.status === 'published' ? 'text-accent' : 'text-dim'}>
+                    <span className={a.status === 'published' ? 'text-fg' : 'text-gray-300'}>
                       {STATUS_LABEL[a.status] ?? a.status}
                     </span>
                   </p>

@@ -14,12 +14,12 @@ import {
 import { count } from '@/shared/db/outbox';
 
 const MODULES = [
-  { to: '/classroom', label: 'KELAS', glyph: '▤' },
-  { to: '/planner', label: 'PLANNER', glyph: '◈' },
-  { to: '/notes', label: 'NOTES', glyph: '▧' },
-  { to: '/browser', label: 'BROWSER', glyph: '⌘' },
-  { to: '/assessment', label: 'QUIZ', glyph: '◉' },
-  { to: '/gradebook', label: 'NILAI', glyph: '▦' },
+  { to: '/classroom', label: 'KELAS', glyph: 'â–¤' },
+  { to: '/planner', label: 'PLANNER', glyph: 'â—ˆ' },
+  { to: '/notes', label: 'NOTES', glyph: 'â–§' },
+  { to: '/browser', label: 'BROWSER', glyph: 'âŒ˜' },
+  { to: '/assessment', label: 'QUIZ', glyph: 'â—‰' },
+  { to: '/gradebook', label: 'NILAI', glyph: 'â–¦' },
 ];
 
 export function LauncherHome() {
@@ -66,56 +66,56 @@ export function LauncherHome() {
   const date = formatJakartaDate(nowIso);
 
   return (
-    <div className="min-h-screen bg-bg text-fg font-mono flex flex-col p-6 gap-6 select-none">
+    <div className="min-h-screen bg-bg text-fg font-sans flex flex-col p-6 gap-6 select-none">
       {/* Top status strip */}
-      <header className="flex items-center justify-between text-xs">
-        <span className="text-accent text-glow font-bold">8bitOS</span>
-        <span className="text-dim">
-          {date} · <span className="text-accent">{time}</span>
-          {pending > 0 && <span className="ml-2 text-accent">· SYNC {pending}</span>}
+      <header className="flex items-center justify-between text-pixel-sm">
+        <span className="text-fg  font-bold">8bitOS</span>
+        <span className="text-gray-300">
+          {date} · <span className="text-fg">{time}</span>
+          {pending > 0 && <span className="ml-2 text-fg">· SYNC {pending}</span>}
         </span>
       </header>
 
-      {/* Clock block */}
+      {/* Clock block — pixel display (Doc 05 v2 §4.2) */}
       <section className="mt-4">
-        <p className="text-dim text-xs">good morning, teacher</p>
-        <h1 className="text-[64px] leading-none font-bold text-accent text-glow tracking-tight">
+        <p className="micro-pixel text-gray-300">GOOD MORNING, TEACHER</p>
+        <h1 className="font-pixel text-display leading-none font-bold text-fg tracking-wide">
           {time}
         </h1>
       </section>
 
       {/* Next class hero */}
       {next ? (
-        <section className="panel-accent p-4 max-w-md">
-          <p className="text-micro-label text-dim label-term mb-1">next_session</p>
-          <p className="text-md font-bold text-fg">
+        <section className="panel-strong p-4 max-w-md">
+          <p className="micro-pixel text-gray-300 label-pixel mb-1">next_session</p>
+          <p className="text-body font-bold text-fg">
             {next.subject.name.toUpperCase()} · {next.classRow.name}
           </p>
-          <p className="text-xs text-dim mt-0.5">
-            {next.slot.start_time.slice(0, 5)} · ruang {next.slot.room || '—'}
+          <p className="text-pixel-sm text-gray-300 mt-0.5">
+            {next.slot.start_time.slice(0, 5)} · ruang {next.slot.room || 'â€”'}
           </p>
           <Link to={`/classroom/${next.classRow.id}`} className="inline-block mt-3">
-            <PixelButton>MULAI KBM →</PixelButton>
+            <PixelButton>MULAI KBM â†’</PixelButton>
           </Link>
         </section>
       ) : (
         <section className="panel p-4 max-w-md">
-          <p className="text-xs text-dim">no more classes today</p>
+          <p className="text-pixel-sm text-gray-300">no more classes today</p>
         </section>
       )}
 
       {/* Module grid */}
       <section className="mt-2">
-        <p className="text-micro-label text-dim label-term mb-2">modules</p>
+        <p className="micro-pixel text-gray-300 label-pixel mb-2">modules</p>
         <div className="grid grid-cols-6 gap-2 max-w-3xl">
           {MODULES.map((m) => (
             <Link
               key={m.label}
               to={m.to}
-              className="panel h-20 flex flex-col items-center justify-center gap-1.5 hover:border-accent-dim hover:shadow-glow transition-colors"
+              className="panel h-20 flex flex-col items-center justify-center gap-1.5 hover:border-fg hover: transition-colors"
             >
-              <span className="text-lg text-accent">{m.glyph}</span>
-              <span className="text-micro-label text-dim">{m.label}</span>
+              <span className="text-pixel-xl text-fg">{m.glyph}</span>
+              <span className="micro-pixel text-gray-300">{m.label}</span>
             </Link>
           ))}
         </div>
@@ -128,22 +128,22 @@ export function LauncherHome() {
         <button
           type="button"
           onClick={() => setDrawerOpen(true)}
-          className="font-mono text-xs text-dim border border-line-strong px-3 py-1.5 hover:border-accent-dim hover:text-fg transition-colors"
+          className="font-sans text-pixel-sm text-gray-300 border border-line-strong px-3 py-1.5 hover:border-fg hover:text-fg transition-colors"
         >
-          ▤ ALL APPS
+          â–¤ ALL APPS
         </button>
         <div className="flex items-center gap-2">
           <Link
             to="/"
-            className="font-mono text-xs text-dim border border-line-strong px-3 py-1.5 hover:border-accent-dim hover:text-fg transition-colors"
+            className="font-sans text-pixel-sm text-gray-300 border border-line-strong px-3 py-1.5 hover:border-fg hover:text-fg transition-colors"
           >
-            ⌕ CARI (ctrl+k)
+            âŒ• CARI (ctrl+k)
           </Link>
           <Link
             to="/"
-            className="font-mono text-xs text-dim border border-line-strong px-3 py-1.5 hover:border-accent-dim hover:text-fg transition-colors"
+            className="font-sans text-pixel-sm text-gray-300 border border-line-strong px-3 py-1.5 hover:border-fg hover:text-fg transition-colors"
           >
-            WORKSPACE →
+            WORKSPACE â†’
           </Link>
         </div>
       </footer>
@@ -160,14 +160,14 @@ export function LauncherHome() {
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="search apps…"
+              placeholder="search appsâ€¦"
               autoFocus
-              className="flex-1 max-w-sm bg-bg text-fg border border-line-strong px-3 py-2 font-mono text-small focus-visible:border-accent"
+              className="flex-1 max-w-sm bg-bg text-fg border border-line-strong px-3 py-2 font-sans text-small focus-visible:border-fg"
             />
             <button
               type="button"
               onClick={() => setDrawerOpen(false)}
-              className="font-mono text-xs text-dim hover:text-accent px-2"
+              className="font-sans text-pixel-sm text-gray-300 hover:text-fg px-2"
               aria-label="Close drawer"
             >
               [X] CLOSE
@@ -175,8 +175,8 @@ export function LauncherHome() {
           </div>
 
           {!isLauncherNative() && (
-            <p className="text-xs text-dimmer">
-              app drawer hanya tersedia di Android native — jalankan via APK/Capacitor
+            <p className="text-pixel-sm text-gray-500">
+              app drawer hanya tersedia di Android native â€” jalankan via APK/Capacitor
             </p>
           )}
 
@@ -187,16 +187,16 @@ export function LauncherHome() {
                   key={a.packageName}
                   type="button"
                   onClick={() => void launchAndroidApp(a.packageName)}
-                  className="panel h-24 flex flex-col items-center justify-center gap-2 hover:border-accent-dim hover:shadow-glow transition-colors"
+                  className="panel h-24 flex flex-col items-center justify-center gap-2 hover:border-fg hover: transition-colors"
                 >
-                  <span className="text-xl text-accent">▣</span>
-                  <span className="text-micro-label text-dim text-center px-1 leading-tight">
+                  <span className="text-xl text-fg">â–£</span>
+                  <span className="micro-pixel text-gray-300 text-center px-1 leading-tight">
                     {a.label}
                   </span>
                 </button>
               ))}
               {isLauncherNative() && filteredApps.length === 0 && (
-                <p className="text-xs text-dimmer col-span-full">no apps found</p>
+                <p className="text-pixel-sm text-gray-500 col-span-full">no apps found</p>
               )}
             </div>
           </div>

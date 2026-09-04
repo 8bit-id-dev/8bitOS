@@ -9,11 +9,11 @@ export interface EmptyStateProps {
 export function EmptyState({ title, hint, action }: EmptyStateProps) {
   return (
     <div
-      className="flex flex-col items-center justify-center gap-2 py-10 px-4 text-center border border-dashed border-line-strong"
+      className="flex flex-col items-center justify-center gap-2 py-12 px-6 text-center border border-dashed border-line-strong"
       role="status"
     >
-      <p className="font-mono text-xs label-term text-dim">{`[ ${title} ]`}</p>
-      {hint && <p className="text-xs text-dimmer max-w-md">{hint}</p>}
+      <p className="font-pixel text-pixel-sm text-gray-300 uppercase tracking-widest">{`[ ${title} ]`}</p>
+      {hint && <p className="font-sans text-small text-gray-500 max-w-md">{hint}</p>}
       {action}
     </div>
   );

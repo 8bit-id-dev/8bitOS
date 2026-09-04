@@ -56,13 +56,13 @@ export function StudentDetail() {
   });
 
   if (studentQ.isLoading) {
-    return <p className="p-4 font-mono text-xs text-dim">loadingâ€¦</p>;
+    return <p className="p-4 font-sans text-pixel-sm text-gray-300">loadingâ€¦</p>;
   }
   if (!studentQ.data) {
     return (
       <main className="p-4 space-y-2">
         <EmptyState title="SISWA TIDAK DITEMUKAN" hint="Periksa tautan Anda." />
-        <Link to={`/classroom/${classId}`} className="font-mono text-xs text-accent">
+        <Link to={`/classroom/${classId}`} className="font-sans text-pixel-sm text-fg">
           â† kembali
         </Link>
       </main>
@@ -88,48 +88,48 @@ export function StudentDetail() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/student
         </h1>
         <button
           type="button"
           onClick={() => setConfirmDelete(true)}
-          className="font-mono text-xs text-dim hover:text-fg"
+          className="font-sans text-pixel-sm text-gray-300 hover:text-fg"
         >
           [HAPUS]
         </button>
       </header>
 
       <PixelCard title="profil" accent>
-        <p className="font-mono text-md font-bold text-fg">{s.full_name}</p>
-        <p className="font-mono text-xs text-dim mt-0.5">
-          NISN: {s.nisn || 'â€”'} Â· {s.gender === 'L' ? 'Laki-laki' : 'Perempuan'}
+        <p className="font-sans text-body font-bold text-fg">{s.full_name}</p>
+        <p className="font-sans text-pixel-sm text-gray-300 mt-0.5">
+          NISN: {s.nisn || 'â€”'} · {s.gender === 'L' ? 'Laki-laki' : 'Perempuan'}
         </p>
         {attendanceRate !== null && (
-          <p className="font-mono text-xs text-dim mt-1">
-            kehadiran: <span className="text-accent">{attendanceRate}%</span>
+          <p className="font-sans text-pixel-sm text-gray-300 mt-1">
+            kehadiran: <span className="text-fg">{attendanceRate}%</span>
           </p>
         )}
       </PixelCard>
 
       <PixelCard title="riwayat_absensi">
         {!attendanceBySession.data || attendanceBySession.data.length === 0 ? (
-          <p className="font-mono text-xs text-dim">belum ada sesi tercatat</p>
+          <p className="font-sans text-pixel-sm text-gray-300">belum ada sesi tercatat</p>
         ) : (
           <ul className="flex flex-col">
             {attendanceBySession.data.map((row) => (
               <li
                 key={row.sessionId}
-                className="flex items-center justify-between border-b border-line last:border-b-0 py-1.5 font-mono text-xs"
+                className="flex items-center justify-between border-b border-line last:border-b-0 py-1.5 font-sans text-pixel-sm"
               >
-                <span className="text-dim">{formatJakartaDate(row.date)}</span>
+                <span className="text-gray-300">{formatJakartaDate(row.date)}</span>
                 <span
                   className={
                     row.record?.status === 'hadir'
-                      ? 'text-accent'
+                      ? 'text-fg'
                       : row.record
                         ? 'text-fg'
-                        : 'text-dimmer'
+                        : 'text-gray-500'
                   }
                 >
                   {row.record ? STATUS_SHORT[row.record.status] : 'â€”'}

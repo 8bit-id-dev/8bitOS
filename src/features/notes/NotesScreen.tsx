@@ -106,13 +106,13 @@ export function NotesScreen() {
       {/* Master — list */}
       <aside className="w-72 border-r border-line-strong bg-bg flex flex-col">
         <header className="h-header-h flex items-center justify-between px-3 border-b border-line-strong">
-          <h1 className="font-mono font-bold text-sm text-accent text-glow label-term">
+          <h1 className="font-sans font-bold text-small text-fg  label-pixel">
             ~/notes
           </h1>
           <button
             type="button"
             onClick={() => void newNote()}
-            className="font-mono text-xs text-accent border border-accent-dim px-1.5 hover:shadow-glow"
+            className="font-sans text-pixel-sm text-fg border border-line-strong px-1.5 hover:"
           >
             + BARU
           </button>
@@ -120,7 +120,7 @@ export function NotesScreen() {
 
         <nav className="flex border-b border-line">
           {KINDS.map((k) => (
-            <span key={k.key} className="px-2 py-1 font-mono text-micro-label text-dimmer">
+            <span key={k.key} className="px-2 py-1 font-sans micro-pixel text-gray-500">
               {k.label}
             </span>
           ))}
@@ -128,22 +128,22 @@ export function NotesScreen() {
 
         <div className="flex-1 overflow-y-auto">
           {notesQ.isLoading && (
-            <p className="font-mono text-xs text-dim p-3">loading…</p>
+            <p className="font-sans text-pixel-sm text-gray-300 p-3">loading…</p>
           )}
           {!notesQ.isLoading && notes.length === 0 && (
-            <p className="font-mono text-xs text-dimmer p-3">belum ada catatan</p>
+            <p className="font-sans text-pixel-sm text-gray-500 p-3">belum ada catatan</p>
           )}
           {notes.map((n) => (
             <button
               key={n.id}
               type="button"
               onClick={() => openNote(n)}
-              className={`w-full text-left px-3 py-2 border-b border-line font-mono ${
-                n.id === activeId ? 'bg-bg-raised text-accent border-l-2 border-l-accent' : 'text-fg hover:bg-bg-raised'
+              className={`w-full text-left px-3 py-2 border-b border-line font-sans ${
+                n.id === activeId ? 'bg-surface text-fg border-l-2 border-l-accent' : 'text-fg hover:bg-surface'
               }`}
             >
-              <p className="text-xs truncate">{n.title || '(tanpa judul)'}</p>
-              <p className="text-micro-label text-dimmer mt-0.5">
+              <p className="text-pixel-sm truncate">{n.title || '(tanpa judul)'}</p>
+              <p className="micro-pixel text-gray-500 mt-0.5">
                 {KINDS.find((k) => k.key === n.kind)?.label} · {relativeTime(n.updated_at)}
               </p>
             </button>
@@ -164,12 +164,12 @@ export function NotesScreen() {
           <>
             <header className="h-header-h flex items-center gap-3 px-3 border-b border-line-strong">
               <span
-                className={`font-mono text-micro-label ${
+                className={`font-sans micro-pixel ${
                   saveState === 'saved'
-                    ? 'text-accent'
+                    ? 'text-fg'
                     : saveState === 'saving'
-                      ? 'text-dim'
-                      : 'text-dimmer'
+                      ? 'text-gray-300'
+                      : 'text-gray-500'
                 }`}
                 aria-live="polite"
               >
@@ -179,7 +179,7 @@ export function NotesScreen() {
               <select
                 value={kind}
                 onChange={(e) => setKind(e.target.value as NoteKind)}
-                className="bg-bg text-fg border border-line-strong px-1.5 py-0.5 font-mono text-micro-label"
+                className="bg-bg text-fg border border-line-strong px-1.5 py-0.5 font-sans micro-pixel"
                 aria-label="Jenis catatan"
               >
                 {KINDS.map((k) => (
@@ -191,7 +191,7 @@ export function NotesScreen() {
               <button
                 type="button"
                 onClick={() => setConfirmDelete(true)}
-                className="font-mono text-xs text-dim hover:text-fg"
+                className="font-sans text-pixel-sm text-gray-300 hover:text-fg"
                 aria-label="Hapus catatan"
               >
                 [HAPUS]
@@ -203,14 +203,14 @@ export function NotesScreen() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="judul…"
-                className="bg-transparent text-lg font-mono text-accent border-none outline-none placeholder:text-dimmer"
+                className="bg-transparent text-pixel-xl font-sans text-fg border-none outline-none placeholder:text-gray-500"
                 aria-label="Judul catatan"
               />
               <textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
                 placeholder="tulis di sini…"
-                className="flex-1 bg-transparent text-sm font-mono text-fg border border-line px-3 py-2 outline-none focus-visible:border-accent resize-none"
+                className="flex-1 bg-transparent text-small font-sans text-fg border border-line px-3 py-2 outline-none focus-visible:border-fg resize-none"
                 aria-label="Isi catatan"
               />
             </div>

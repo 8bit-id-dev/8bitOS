@@ -180,7 +180,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
       aria-label="Command palette"
     >
       <div
-        className="panel-accent w-[560px] max-w-[92vw] shadow-glow-md"
+        className="panel-strong w-[560px] max-w-[92vw] "
         onClick={(e) => e.stopPropagation()}
       >
         <input
@@ -202,14 +202,14 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
               onClose();
             }
           }}
-          placeholder="cari siswa, kelas, catatan, asesmen… atau ketik perintah"
-          className="w-full bg-transparent text-fg font-mono text-sm px-4 py-3 outline-none border-b border-accent-dim placeholder:text-dimmer"
+          placeholder="cari siswa, kelas, catatan, asesmenâ€¦ atau ketik perintah"
+          className="w-full bg-transparent text-fg font-sans text-small px-4 py-3 outline-none border-b border-line-strong placeholder:text-gray-500"
           aria-label="Pencarian global"
         />
 
         <ul className="max-h-[50vh] overflow-y-auto">
           {results.length === 0 && (
-            <li className="px-4 py-3 font-mono text-xs text-dimmer">
+            <li className="px-4 py-3 font-sans text-pixel-sm text-gray-500">
               tidak ada hasil untuk "{query}"
             </li>
           )}
@@ -219,23 +219,23 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                 type="button"
                 onClick={() => run(r)}
                 onMouseEnter={() => setCursor(i)}
-                className={`w-full text-left px-4 py-2 flex items-center gap-2 font-mono text-xs ${
-                  i === cursor ? 'bg-accent text-bg' : 'text-fg hover:bg-bg-raised'
+                className={`w-full text-left px-4 py-2 flex items-center gap-2 font-sans text-pixel-sm ${
+                  i === cursor ? 'bg-fg text-bg' : 'text-fg hover:bg-surface'
                 }`}
               >
-                <span className={i === cursor ? 'text-bg' : 'text-dimmer'}>{r.group}</span>
+                <span className={i === cursor ? 'text-bg' : 'text-gray-500'}>{r.group}</span>
                 <span className="flex-1 truncate">{r.label}</span>
                 {r.hint && (
-                  <span className={i === cursor ? 'text-bg/70' : 'text-dimmer'}>{r.hint}</span>
+                  <span className={i === cursor ? 'text-bg/70' : 'text-gray-500'}>{r.hint}</span>
                 )}
               </button>
             </li>
           ))}
         </ul>
 
-        <footer className="px-4 py-2 border-t hairline flex items-center gap-3 font-mono text-micro-label text-dimmer">
-          <span>↑↓ navigasi</span>
-          <span>↵ buka</span>
+        <footer className="px-4 py-2 border-t hairline flex items-center gap-3 font-sans micro-pixel text-gray-500">
+          <span>â†‘â†“ navigasi</span>
+          <span>â†µ buka</span>
           <span>esc tutup</span>
           <span className="flex-1" />
           <span>ctrl+k</span>

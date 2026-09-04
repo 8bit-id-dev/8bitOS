@@ -38,7 +38,7 @@ export function ConfirmDialog({
         </>
       }
     >
-      <p className="text-xs text-fg">{message}</p>
+      <p className="text-pixel-sm text-fg">{message}</p>
     </PixelModal>
   );
 }

@@ -51,13 +51,13 @@ export function SessionReport() {
   });
 
   if (reportQ.isLoading) {
-    return <p className="p-4 font-mono text-xs text-dim">loading…</p>;
+    return <p className="p-4 font-sans text-pixel-sm text-gray-300">loading…</p>;
   }
   if (reportQ.error || !reportQ.data) {
     return (
       <main className="p-4 space-y-2">
         <EmptyState title="SESI TIDAK DITEMUKAN" hint="Periksa tautan Anda." />
-        <Link to={`/classroom/${classId}`} className="font-mono text-xs text-accent">
+        <Link to={`/classroom/${classId}`} className="font-sans text-pixel-sm text-fg">
           ← kembali
         </Link>
       </main>
@@ -73,53 +73,53 @@ export function SessionReport() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/session_report
         </h1>
-        <span className="font-mono text-xs text-dim">
+        <span className="font-sans text-pixel-sm text-gray-300">
           {formatJakartaDate(session.scheduled_for)} ·{' '}
           {formatJakartaTime(session.scheduled_for)}
         </span>
       </header>
 
       <PixelCard title="identitas" accent>
-        <p className="font-mono text-md font-bold text-fg">
+        <p className="font-sans text-body font-bold text-fg">
           {className} · {session.topic || 'tanpa topik'}
         </p>
-        <p className="font-mono text-xs text-dim mt-1">
+        <p className="font-sans text-pixel-sm text-gray-300 mt-1">
           durasi: {sessionDurationLabel(session.scheduled_for, isDone ? session.created_at : null)}{' '}
-          · status: <span className={isDone ? 'text-accent' : 'text-fg'}>{session.status}</span>
+          · status: <span className={isDone ? 'text-fg' : 'text-fg'}>{session.status}</span>
         </p>
       </PixelCard>
 
       <PixelCard title={`absensi (${rosterSize} siswa)`}>
-        <div className="grid grid-cols-5 gap-2 text-center font-mono">
+        <div className="grid grid-cols-5 gap-2 text-center font-sans">
           <div className="panel px-2 py-1.5">
-            <p className="text-micro-label text-dim">HADIR</p>
-            <p className="text-md font-bold text-accent">{counts.hadir}</p>
+            <p className="micro-pixel text-gray-300">HADIR</p>
+            <p className="text-body font-bold text-fg">{counts.hadir}</p>
           </div>
           <div className="panel px-2 py-1.5">
-            <p className="text-micro-label text-dim">IZIN</p>
-            <p className="text-md font-bold text-fg">{counts.izin}</p>
+            <p className="micro-pixel text-gray-300">IZIN</p>
+            <p className="text-body font-bold text-fg">{counts.izin}</p>
           </div>
           <div className="panel px-2 py-1.5">
-            <p className="text-micro-label text-dim">SAKIT</p>
-            <p className="text-md font-bold text-fg">{counts.sakit}</p>
+            <p className="micro-pixel text-gray-300">SAKIT</p>
+            <p className="text-body font-bold text-fg">{counts.sakit}</p>
           </div>
           <div className="panel px-2 py-1.5">
-            <p className="text-micro-label text-dim">ALPHA</p>
-            <p className="text-md font-bold text-fg">{counts.alpha}</p>
+            <p className="micro-pixel text-gray-300">ALPHA</p>
+            <p className="text-body font-bold text-fg">{counts.alpha}</p>
           </div>
           <div className="panel px-2 py-1.5">
-            <p className="text-micro-label text-dim">BELUM</p>
-            <p className="text-md font-bold text-dim">{counts.unmarked}</p>
+            <p className="micro-pixel text-gray-300">BELUM</p>
+            <p className="text-body font-bold text-gray-300">{counts.unmarked}</p>
           </div>
         </div>
       </PixelCard>
 
       <PixelCard title={`catatan_sesi (${notes.length})`}>
         {notes.length === 0 ? (
-          <p className="font-mono text-xs text-dim">
+          <p className="font-sans text-pixel-sm text-gray-300">
             belum ada catatan — buat dari tab NOTES di kelas
           </p>
         ) : (
@@ -127,10 +127,10 @@ export function SessionReport() {
             {notes.map((n) => (
               <li
                 key={n.id}
-                className="border-b border-line last:border-b-0 py-1.5 font-mono text-xs"
+                className="border-b border-line last:border-b-0 py-1.5 font-sans text-pixel-sm"
               >
                 <p className="text-fg">{n.title || '(tanpa judul)'}</p>
-                <p className="text-dimmer truncate">{n.body}</p>
+                <p className="text-gray-500 truncate">{n.body}</p>
               </li>
             ))}
           </ul>

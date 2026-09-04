@@ -48,7 +48,7 @@ export function Browser() {
         body: input.trim(),
       }),
     onSuccess: () => {
-      setSavedMsg('â— tersimpan ke notes');
+      setSavedMsg('Ã¢â€” tersimpan ke notes');
       void queryClient.invalidateQueries({ queryKey: ['notes'] });
       setTimeout(() => setSavedMsg(''), 2500);
     },
@@ -57,7 +57,7 @@ export function Browser() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/browser
         </h1>
         <div className="flex gap-1">
@@ -66,10 +66,10 @@ export function Browser() {
               key={s.label}
               type="button"
               onClick={() => setEngineIndex(i)}
-              className={`font-mono text-micro-label px-1.5 py-0.5 border ${
+              className={`font-sans micro-pixel px-1.5 py-0.5 border ${
                 engine.label === s.label
-                  ? 'text-accent border-accent-dim'
-                  : 'text-dimmer border-line-strong'
+                  ? 'text-fg border-line-strong'
+                  : 'text-gray-500 border-line-strong'
               }`}
             >
               {s.label}
@@ -92,22 +92,22 @@ export function Browser() {
             setInput(engine.home);
             setBlocked(false);
           }}
-          className="font-mono text-xs text-dim hover:text-accent px-1"
+          className="font-sans text-pixel-sm text-gray-300 hover:text-fg px-1"
           aria-label="Beranda mesin pencari"
         >
-          âŒ‚
+          Ã¢Å’â€š
         </button>
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="cari materi atau ketik URLâ€¦"
-          className="flex-1 bg-bg text-fg border border-line-strong px-3 py-1.5 font-mono text-xs focus-visible:border-accent"
+          placeholder="cari materi atau ketik URLÃ¢â‚¬¦"
+          className="flex-1 bg-bg text-fg border border-line-strong px-3 py-1.5 font-sans text-pixel-sm focus-visible:border-fg"
           aria-label="Alamat atau pencarian"
         />
         <PixelButton type="submit">GO</PixelButton>
       </form>
 
-      <div className="panel-accent flex-1 min-h-[420px] overflow-hidden relative">
+      <div className="panel-strong flex-1 min-h-[420px] overflow-hidden relative">
         {url && !blocked ? (
           <iframe
             src={url}
@@ -118,7 +118,7 @@ export function Browser() {
           />
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6">
-            <p className="font-mono text-xs text-dim">
+            <p className="font-sans text-pixel-sm text-gray-300">
               {blocked ? 'situs menolak dimuat dalam frame (X-Frame-Options)' : 'belum ada halaman'}
             </p>
             {!blocked && url && (
@@ -126,9 +126,9 @@ export function Browser() {
                 href={url}
                 target="_blank"
                 rel="noreferrer"
-                className="font-mono text-xs text-accent underline"
+                className="font-sans text-pixel-sm text-fg underline"
               >
-                buka di tab baru â†—
+                buka di tab baru Ã¢â€ â€”
               </a>
             )}
             {blocked && (
@@ -136,9 +136,9 @@ export function Browser() {
                 href={url}
                 target="_blank"
                 rel="noreferrer"
-                className="font-mono text-xs text-accent underline"
+                className="font-sans text-pixel-sm text-fg underline"
               >
-                buka ${url} di tab baru â†—
+                buka ${url} di tab baru Ã¢â€ â€”
               </a>
             )}
           </div>
@@ -154,12 +154,12 @@ export function Browser() {
           >
             + SIMPAN KE NOTES
           </PixelButton>
-          <span className="font-mono text-xs text-dim" aria-live="polite">
+          <span className="font-sans text-pixel-sm text-gray-300" aria-live="polite">
             {savedMsg}
           </span>
           <span className="flex-1" />
-          <span className="font-mono text-micro-label text-dimmer">
-            catat sumber: {url || 'â€”'}
+          <span className="font-sans micro-pixel text-gray-500">
+            catat sumber: {url || 'Ã¢â‚¬â€'}
           </span>
         </div>
       </PixelCard>

@@ -23,29 +23,26 @@ export function PixelModal({ open, onClose, title, children, footer }: PixelModa
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-[1px]"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-label={title}
     >
-      <div
-        className="panel-accent w-[480px] max-w-[90vw] shadow-glow-md"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <header className="px-3 py-2 border-b border-accent-dim flex items-center justify-between">
-          <h2 className="font-mono text-xs label-term text-accent text-glow">{title}</h2>
+      <div className="panel-strong pixel-cut w-[480px] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
+        <header className="px-4 py-3 border-b border-line-strong flex items-center justify-between">
+          <h2 className="font-pixel text-pixel-sm text-fg uppercase tracking-widest">{title}</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="font-mono text-dim hover:text-accent text-xs px-1"
+            className="font-pixel text-gray-500 hover:text-fg text-pixel-sm"
           >
-            X
+            [X]
           </button>
         </header>
-        <div className="p-4">{children}</div>
-        {footer && <div className="px-4 pb-4 flex justify-end gap-2">{footer}</div>}
+        <div className="p-5">{children}</div>
+        {footer && <div className="px-5 pb-5 flex justify-end gap-2">{footer}</div>}
       </div>
     </div>
   );

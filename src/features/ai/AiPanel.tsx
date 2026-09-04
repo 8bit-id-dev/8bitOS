@@ -81,7 +81,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
         if (!data.response) throw new Error('EMPTY');
         return finishAiJob(job.id, data.response);
       } catch {
-        // Gateway unreachable — local structured fallback, still audited.
+        // Gateway unreachable â€” local structured fallback, still audited.
         return finishAiJob(job.id, localFallbackResponse(kind, input));
       }
     },
@@ -98,7 +98,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
   const saveNoteMutation = useMutation({
     mutationFn: () => saveAiResponseToNote(user!.id, activeJob!),
     onSuccess: () => {
-      setSavedMsg('● tersimpan ke notes');
+      setSavedMsg('â— tersimpan ke notes');
       void queryClient.invalidateQueries({ queryKey: ['notes'] });
       setTimeout(() => setSavedMsg(''), 2500);
     },
@@ -119,17 +119,17 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/70" role="dialog" aria-label="AI Assistant">
       <div
-        className="panel-accent w-[480px] max-w-[92vw] h-full flex flex-col shadow-glow-md"
+        className="panel-strong w-[480px] max-w-[92vw] h-full flex flex-col "
         onClick={(e) => e.stopPropagation()}
       >
-        <header className="h-header-h flex items-center justify-between px-3 border-b border-accent-dim">
-          <h2 className="font-mono text-xs label-term text-accent text-glow">
+        <header className="h-header-h flex items-center justify-between px-3 border-b border-line-strong">
+          <h2 className="font-sans text-pixel-sm label-pixel text-fg ">
             8bit AI · asisten guru
           </h2>
           <button
             type="button"
             onClick={() => (busy ? setConfirmClose(true) : onClose())}
-            className="font-mono text-xs text-dim hover:text-accent"
+            className="font-sans text-pixel-sm text-gray-300 hover:text-fg"
             aria-label="Tutup panel AI"
           >
             [X]
@@ -142,8 +142,8 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
             <button
               type="button"
               onClick={() => setKind('free')}
-              className={`font-mono text-micro-label px-1.5 py-1 border ${
-                kind === 'free' ? 'bg-accent text-bg border-accent' : 'text-dim border-line-strong'
+              className={`font-sans micro-pixel px-1.5 py-1 border ${
+                kind === 'free' ? 'bg-fg text-bg border-fg' : 'text-gray-300 border-line-strong'
               }`}
             >
               {KIND_LABEL.free}
@@ -153,8 +153,8 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
                 key={t.kind}
                 type="button"
                 onClick={() => setKind(t.kind)}
-                className={`font-mono text-micro-label px-1.5 py-1 border ${
-                  kind === t.kind ? 'bg-accent text-bg border-accent' : 'text-dim border-line-strong'
+                className={`font-sans micro-pixel px-1.5 py-1 border ${
+                  kind === t.kind ? 'bg-fg text-bg border-fg' : 'text-gray-300 border-line-strong'
                 }`}
               >
                 {t.label}
@@ -166,10 +166,10 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
           <select
             value={classContext}
             onChange={(e) => setClassContext(e.target.value)}
-            className="w-full bg-bg text-fg border border-line-strong px-2 py-1.5 font-mono text-xs"
+            className="w-full bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm"
             aria-label="Konteks kelas (opsional)"
           >
-            <option value="">— tanpa konteks kelas —</option>
+            <option value="">â€” tanpa konteks kelas â€”</option>
             {(classSummaries ?? []).map((s) => (
               <option key={s.classRow.id} value={s.classRow.name}>
                 {s.classRow.name}
@@ -182,30 +182,30 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
             value={input}
             onChange={(e) => setInput(e.target.value)}
             rows={3}
-            placeholder={template ? template.placeholder : 'tulis permintaan untuk AI…'}
-            className="w-full bg-bg text-fg border border-line-strong px-2 py-1.5 font-mono text-xs focus-visible:border-accent resize-y"
+            placeholder={template ? template.placeholder : 'tulis permintaan untuk AIâ€¦'}
+            className="w-full bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm focus-visible:border-fg resize-y"
             aria-label="Permintaan AI"
           />
 
           <div className="flex items-center justify-between">
-            <span className="font-mono text-xs text-dim" aria-live="polite">
+            <span className="font-sans text-pixel-sm text-gray-300" aria-live="polite">
               {savedMsg}
             </span>
             <PixelButton
               onClick={() => generateMutation.mutate()}
               disabled={busy || !input.trim()}
             >
-              {busy ? 'MEMPROSES…' : 'HASILKAN →'}
+              {busy ? 'MEMPROSESâ€¦' : 'HASILKAN â†’'}
             </PixelButton>
           </div>
 
           {/* Active response */}
           {activeJob && (
             <div className="panel p-3">
-              <p className="font-mono text-micro-label text-dim mb-1 label-term">
+              <p className="font-sans micro-pixel text-gray-300 mb-1 label-pixel">
                 {KIND_LABEL[(activeJob.kind as AiKind) ?? 'free'] ?? activeJob.kind} · jawaban
               </p>
-              <pre className="font-mono text-xs text-fg whitespace-pre-wrap font-mono max-h-72 overflow-y-auto">
+              <pre className="font-sans text-pixel-sm text-fg whitespace-pre-wrap font-sans max-h-72 overflow-y-auto">
                 {activeJob.response}
               </pre>
               <div className="flex justify-end mt-2">
@@ -214,7 +214,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
                   onClick={() => saveNoteMutation.mutate()}
                   disabled={saveNoteMutation.isPending}
                 >
-                  {saveNoteMutation.isPending ? 'MENYIMPAN…' : '+ SIMPAN KE NOTES'}
+                  {saveNoteMutation.isPending ? 'MENYIMPANâ€¦' : '+ SIMPAN KE NOTES'}
                 </PixelButton>
               </div>
             </div>
@@ -222,11 +222,11 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
 
           {/* History */}
           <div className="panel">
-            <p className="font-mono text-micro-label text-dim px-2 py-1 border-b hairline label-term">
+            <p className="font-sans micro-pixel text-gray-300 px-2 py-1 border-b hairline label-pixel">
               riwayat
             </p>
             {(jobsQ.data ?? []).length === 0 ? (
-              <p className="font-mono text-xs text-dimmer p-2">belum ada riwayat</p>
+              <p className="font-sans text-pixel-sm text-gray-500 p-2">belum ada riwayat</p>
             ) : (
               <ul>
                 {(jobsQ.data ?? []).map((j) => (
@@ -234,12 +234,12 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
                     <button
                       type="button"
                       onClick={() => setActiveJob(j)}
-                      className="w-full text-left px-2 py-1.5 hover:bg-bg-raised"
+                      className="w-full text-left px-2 py-1.5 hover:bg-surface"
                     >
-                      <p className="font-mono text-xs text-fg truncate">
+                      <p className="font-sans text-pixel-sm text-fg truncate">
                         {j.prompt.slice(0, 70)}
                       </p>
-                      <p className="font-mono text-micro-label text-dimmer">
+                      <p className="font-sans micro-pixel text-gray-500">
                         {KIND_LABEL[(j.kind as AiKind) ?? 'free'] ?? j.kind} ·{' '}
                         {j.status === 'done' ? 'selesai' : j.status}
                       </p>

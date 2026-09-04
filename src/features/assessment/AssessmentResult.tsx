@@ -61,43 +61,43 @@ export function AssessmentResult() {
   const passCount = attempts.filter((a) => (a.score ?? 0) >= 70).length;
 
   if (attemptsQ.isLoading) {
-    return <p className="p-4 font-mono text-xs text-dim">loading…</p>;
+    return <p className="p-4 font-sans text-pixel-sm text-gray-300">loading…</p>;
   }
 
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/hasil
         </h1>
-        <Link to="/assessment" className="font-mono text-xs text-dim hover:text-accent">
+        <Link to="/assessment" className="font-sans text-pixel-sm text-gray-300 hover:text-fg">
           ← daftar
         </Link>
       </header>
 
       <PixelCard title="statistik" accent>
-        <div className="grid grid-cols-5 gap-2 text-center font-mono">
+        <div className="grid grid-cols-5 gap-2 text-center font-sans">
           <div className="panel px-2 py-1.5">
-            <p className="text-micro-label text-dim">TERKOREKSI</p>
-            <p className="text-md font-bold text-accent">
+            <p className="micro-pixel text-gray-300">TERKOREKSI</p>
+            <p className="text-body font-bold text-fg">
               {attempts.filter((a) => a.score != null).length}/{students.length || attempts.length}
             </p>
           </div>
           <div className="panel px-2 py-1.5">
-            <p className="text-micro-label text-dim">RATA²</p>
-            <p className="text-md font-bold text-fg">{avg ?? '—'}</p>
+            <p className="micro-pixel text-gray-300">RATA²</p>
+            <p className="text-body font-bold text-fg">{avg ?? '—'}</p>
           </div>
           <div className="panel px-2 py-1.5">
-            <p className="text-micro-label text-dim">TERTINGGI</p>
-            <p className="text-md font-bold text-fg">{max ?? '—'}</p>
+            <p className="micro-pixel text-gray-300">TERTINGGI</p>
+            <p className="text-body font-bold text-fg">{max ?? '—'}</p>
           </div>
           <div className="panel px-2 py-1.5">
-            <p className="text-micro-label text-dim">TERENDAH</p>
-            <p className="text-md font-bold text-fg">{min ?? '—'}</p>
+            <p className="micro-pixel text-gray-300">TERENDAH</p>
+            <p className="text-body font-bold text-fg">{min ?? '—'}</p>
           </div>
           <div className="panel px-2 py-1.5">
-            <p className="text-micro-label text-dim">TUNTAS ≥70</p>
-            <p className="text-md font-bold text-fg">
+            <p className="micro-pixel text-gray-300">TUNTAS ≥70</p>
+            <p className="text-body font-bold text-fg">
               {passCount}/{attempts.length}
             </p>
           </div>
@@ -116,12 +116,12 @@ export function AssessmentResult() {
                 return (
                   <li
                     key={a.id}
-                    className="flex items-center gap-3 border-b border-line last:border-b-0 py-1.5 font-mono text-xs"
+                    className="flex items-center gap-3 border-b border-line last:border-b-0 py-1.5 font-sans text-pixel-sm"
                   >
-                    <span className="text-dimmer w-8 text-right">{i + 1}.</span>
+                    <span className="text-gray-500 w-8 text-right">{i + 1}.</span>
                     <span className="flex-1 text-fg">{s?.full_name ?? '—'}</span>
                     <span
-                      className={(a.score ?? 0) >= 70 ? 'text-accent' : 'text-fg'}
+                      className={(a.score ?? 0) >= 70 ? 'text-fg' : 'text-fg'}
                     >
                       {a.score ?? '—'}
                     </span>

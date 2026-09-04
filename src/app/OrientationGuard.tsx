@@ -18,9 +18,9 @@ export function OrientationGuard({ children }: { children: ReactNode }) {
         className="fixed inset-0 flex flex-col items-center justify-center bg-bg text-fg p-6 text-center gap-3"
         role="alert"
       >
-        <p className="font-mono text-lg label-term text-accent text-glow">ROTATE TABLET</p>
-        <p className="font-mono text-xs text-dim">landscape only</p>
-        <div className="text-[48px] text-accent" aria-hidden>
+        <p className="font-pixel text-pixel-xl text-fg uppercase tracking-widest">ROTATE TABLET</p>
+        <p className="micro-pixel text-gray-300">landscape only</p>
+        <div className="text-[48px] text-fg" aria-hidden>
           ⟳
         </div>
       </div>

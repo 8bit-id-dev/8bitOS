@@ -96,8 +96,8 @@ export function AttendanceSheet() {
   if (!session) {
     return (
       <main className="p-4 space-y-2">
-        <p className="font-mono text-xs text-dim">sesi tidak ditemukan</p>
-        <Link to="/classroom" className="font-mono text-xs text-accent">
+        <p className="font-sans text-pixel-sm text-gray-300">sesi tidak ditemukan</p>
+        <Link to="/classroom" className="font-sans text-pixel-sm text-fg">
           ← ~/classroom
         </Link>
       </main>
@@ -109,27 +109,27 @@ export function AttendanceSheet() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/absensi
         </h1>
-        <span className="font-mono text-xs text-dim">{subjectName || '—'}</span>
+        <span className="font-sans text-pixel-sm text-gray-300">{subjectName || '—'}</span>
       </header>
 
       <PixelCard title="rekap" accent>
-        <div className="grid grid-cols-4 gap-2 text-center font-mono">
+        <div className="grid grid-cols-4 gap-2 text-center font-sans">
           {(Object.keys(STATUS_LABEL) as AttendanceStatus[]).map((k) => (
             <div key={k} className="panel px-2 py-1.5">
-              <p className="text-micro-label text-dim">{STATUS_KEY[k]}</p>
-              <p className="text-md font-bold text-accent">{counts[k]}</p>
+              <p className="micro-pixel text-gray-300">{STATUS_KEY[k]}</p>
+              <p className="text-body font-bold text-fg">{counts[k]}</p>
             </div>
           ))}
         </div>
-        <p className="font-mono text-micro-label text-dimmer mt-2">
+        <p className="font-sans micro-pixel text-gray-500 mt-2">
           offline-first · disimpan ke outbox
         </p>
       </PixelCard>
 
-      {studentsQ.isLoading && <p className="font-mono text-xs text-dim">loading…</p>}
+      {studentsQ.isLoading && <p className="font-sans text-pixel-sm text-gray-300">loading…</p>}
 
       <PixelCard title={`daftar_siswa (${students.length})`}>
         <ul className="flex flex-col">
@@ -140,8 +140,8 @@ export function AttendanceSheet() {
                 key={s.id}
                 className="flex items-center gap-3 border-b border-line last:border-b-0 py-1.5"
               >
-                <span className="font-mono text-dimmer w-8 text-right text-xs">{idx + 1}.</span>
-                <span className="flex-1 font-mono text-xs text-fg">{s.full_name}</span>
+                <span className="font-sans text-gray-500 w-8 text-right text-pixel-sm">{idx + 1}.</span>
+                <span className="flex-1 font-sans text-pixel-sm text-fg">{s.full_name}</span>
                 <div className="flex gap-1">
                   {(Object.keys(STATUS_LABEL) as AttendanceStatus[]).map((k) => {
                     const isActive = current === k;
@@ -151,10 +151,10 @@ export function AttendanceSheet() {
                         type="button"
                         onClick={() => void handleSet(s.id, k)}
                         aria-label={`${s.full_name} ${k}`}
-                        className={`w-9 h-9 font-mono text-xs border transition-colors ${
+                        className={`w-9 h-9 font-sans text-pixel-sm border transition-colors ${
                           isActive
-                            ? 'bg-accent text-bg border-accent shadow-glow'
-                            : 'bg-transparent text-dim border-line-strong hover:border-dim'
+                            ? 'bg-fg text-bg border-fg '
+                            : 'bg-transparent text-gray-300 border-line-strong hover:border-line-strong'
                         }`}
                       >
                         {STATUS_LABEL[k]}

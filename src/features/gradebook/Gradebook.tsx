@@ -30,10 +30,10 @@ export function GradebookHome() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/gradebook
         </h1>
-        <span className="font-mono text-xs text-dim">nilai per kelas</span>
+        <span className="font-sans text-pixel-sm text-gray-300">nilai per kelas</span>
       </header>
 
       {(classSummaries ?? []).length === 0 ? (
@@ -44,10 +44,10 @@ export function GradebookHome() {
             <Link
               key={s.classRow.id}
               to={`/gradebook/${s.classRow.id}`}
-              className="panel block px-3 py-2 hover:border-accent-dim transition-colors"
+              className="panel block px-3 py-2 hover:border-fg transition-colors"
             >
-              <p className="font-mono text-sm text-accent">{s.classRow.name}</p>
-              <p className="font-mono text-xs text-dim mt-0.5">{s.studentCount} siswa</p>
+              <p className="font-sans text-small text-fg">{s.classRow.name}</p>
+              <p className="font-sans text-pixel-sm text-gray-300 mt-0.5">{s.studentCount} siswa</p>
             </Link>
           ))}
         </div>
@@ -154,26 +154,26 @@ export function GradebookClass() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/gradebook/{cls?.name.toLowerCase().replace(/\s+/g, '-') ?? '…'}
         </h1>
-        <Link to="/gradebook" className="font-mono text-xs text-dim hover:text-accent">
+        <Link to="/gradebook" className="font-sans text-pixel-sm text-gray-300 hover:text-fg">
           ← daftar
         </Link>
       </header>
 
-      {componentsQ.isLoading && <p className="font-mono text-xs text-dim">loading…</p>}
+      {componentsQ.isLoading && <p className="font-sans text-pixel-sm text-gray-300">loading…</p>}
 
       {components.length === 0 && !componentsQ.isLoading && (
         <PixelCard title="komponen_nilai">
-          <p className="font-mono text-xs text-dim mb-2">
+          <p className="font-sans text-pixel-sm text-gray-300 mb-2">
             belum ada komponen — pakai set default?
           </p>
           <div className="flex flex-wrap gap-1 mb-2">
             {DEFAULT_COMPONENTS.map((c) => (
               <span
                 key={c.name}
-                className="font-mono text-micro-label px-1.5 py-0.5 border border-line-strong text-dim"
+                className="font-sans micro-pixel px-1.5 py-0.5 border border-line-strong text-gray-300"
               >
                 {c.name} {c.weight}%
               </span>
@@ -194,22 +194,22 @@ export function GradebookClass() {
         <PixelCard title="komponen_baru">
           <div className="flex gap-2 items-end">
             <label className="flex-1">
-              <span className="font-mono text-micro-label text-dim">NAMA</span>
+              <span className="font-sans micro-pixel text-gray-300">NAMA</span>
               <input
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                className="w-full mt-1 bg-bg text-fg border border-line-strong px-2 py-1 font-mono text-xs"
+                className="w-full mt-1 bg-bg text-fg border border-line-strong px-2 py-1 font-sans text-pixel-sm"
               />
             </label>
             <label>
-              <span className="font-mono text-micro-label text-dim">BOBOT %</span>
+              <span className="font-sans micro-pixel text-gray-300">BOBOT %</span>
               <input
                 type="number"
                 min={0}
                 max={100}
                 value={newWeight}
                 onChange={(e) => setNewWeight(e.target.value)}
-                className="w-20 mt-1 bg-bg text-fg border border-line-strong px-2 py-1 font-mono text-xs"
+                className="w-20 mt-1 bg-bg text-fg border border-line-strong px-2 py-1 font-sans text-pixel-sm"
               />
             </label>
             <PixelButton
@@ -228,9 +228,9 @@ export function GradebookClass() {
       {components.length > 0 && (
         <>
           <div className="flex items-center justify-between">
-            <p className="font-mono text-xs text-dim">
-              total bobot: <span className={weight === 100 ? 'text-accent' : 'text-fg'}>{weight}%</span>
-              {weight !== 100 && <span className="text-dimmer"> (ideal 100%)</span>}
+            <p className="font-sans text-pixel-sm text-gray-300">
+              total bobot: <span className={weight === 100 ? 'text-fg' : 'text-fg'}>{weight}%</span>
+              {weight !== 100 && <span className="text-gray-500"> (ideal 100%)</span>}
             </p>
             <PixelButton variant="secondary" onClick={() => setShowAdd(true)}>
               + KOMPONEN
@@ -239,28 +239,28 @@ export function GradebookClass() {
 
           <PixelCard title={`grid nilai (${students.length} siswa)`}>
             <div className="overflow-x-auto">
-              <table className="w-full font-mono text-xs border-collapse">
+              <table className="w-full font-sans text-pixel-sm border-collapse">
                 <thead>
                   <tr>
-                    <th className="text-left text-dim py-1 pr-2 border-b border-line-strong">SISWA</th>
+                    <th className="text-left text-gray-300 py-1 pr-2 border-b border-line-strong">SISWA</th>
                     {components.map((c) => (
                       <th
                         key={c.id}
-                        className="text-center text-dim py-1 px-2 border-b border-line-strong whitespace-nowrap"
+                        className="text-center text-gray-300 py-1 px-2 border-b border-line-strong whitespace-nowrap"
                       >
                         <span className="text-fg">{c.name}</span>
-                        <span className="text-dimmer"> {c.weight}%</span>
+                        <span className="text-gray-500"> {c.weight}%</span>
                         <button
                           type="button"
                           onClick={() => setConfirmDelete(c.id)}
-                          className="ml-1 text-dimmer hover:text-fg"
+                          className="ml-1 text-gray-500 hover:text-fg"
                           aria-label={`Hapus komponen ${c.name}`}
                         >
                           ×
                         </button>
                       </th>
                     ))}
-                    <th className="text-center text-accent py-1 px-2 border-b border-line-strong">
+                    <th className="text-center text-fg py-1 px-2 border-b border-line-strong">
                       AKHIR
                     </th>
                   </tr>
@@ -270,7 +270,7 @@ export function GradebookClass() {
                     const studentGrades = grades.filter((g) => g.student_id === s.id);
                     const final = finalScore(components, studentGrades);
                     return (
-                      <tr key={s.id} className={si % 2 === 1 ? 'bg-bg-raised' : ''}>
+                      <tr key={s.id} className={si % 2 === 1 ? 'bg-surface' : ''}>
                         <td className="py-1 pr-2 text-fg whitespace-nowrap">{s.full_name}</td>
                         {components.map((c) => {
                           const g = gradeMap.get(gradeKey(c.id, s.id));
@@ -291,7 +291,7 @@ export function GradebookClass() {
                                     if (e.key === 'Enter') void commitEdit();
                                     if (e.key === 'Escape') setEditing(null);
                                   }}
-                                  className="w-14 bg-bg text-accent border border-accent-dim px-1 py-0.5 text-center"
+                                  className="w-14 bg-bg text-fg border border-line-strong px-1 py-0.5 text-center"
                                   aria-label={`Nilai ${s.full_name} ${c.name}`}
                                 />
                               ) : (
@@ -299,7 +299,7 @@ export function GradebookClass() {
                                   type="button"
                                   onClick={() => startEdit(c.id, s.id)}
                                   className={`px-2 py-0.5 border border-transparent hover:border-line-strong ${
-                                    g ? 'text-fg' : 'text-dimmer'
+                                    g ? 'text-fg' : 'text-gray-500'
                                   }`}
                                   aria-label={`Edit nilai ${s.full_name} ${c.name}`}
                                 >
@@ -310,7 +310,7 @@ export function GradebookClass() {
                           );
                         })}
                         <td className="text-center px-2 py-0.5">
-                          <span className={final.score != null ? 'text-accent font-bold' : 'text-dimmer'}>
+                          <span className={final.score != null ? 'text-fg font-bold' : 'text-gray-500'}>
                             {final.score ?? '—'}
                           </span>
                         </td>
@@ -320,7 +320,7 @@ export function GradebookClass() {
                 </tbody>
               </table>
             </div>
-            <p className="font-mono text-micro-label text-dimmer mt-2">
+            <p className="font-sans micro-pixel text-gray-500 mt-2">
               tap cell untuk input · enter/blur simpan · nilai akhir = rata-rata tertimbang
             </p>
           </PixelCard>

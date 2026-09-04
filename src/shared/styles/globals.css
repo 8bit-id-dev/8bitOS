@@ -11,9 +11,10 @@
     height: 100%;
     background: var(--c-bg);
     color: var(--c-fg);
-    font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', monospace;
-    font-size: 13px;
-    line-height: 1.5;
+    /* Reading font default (Doc 05 v2: body = Inter, pixel hanya identitas UI) */
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
   }
 
   body {
@@ -23,33 +24,17 @@
     overscroll-behavior: none;
   }
 
-  /* CRT scanline overlay — very subtle */
-  #root::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent 0px,
-      transparent 2px,
-      rgba(0, 0, 0, 0.12) 3px,
-      transparent 4px
-    );
-    z-index: 9999;
-  }
-
   *:focus {
     outline: none;
   }
 
   *:focus-visible {
-    outline: 1px solid var(--c-accent);
-    outline-offset: 1px;
+    outline: 1px solid var(--c-fg);
+    outline-offset: 2px;
   }
 
   ::selection {
-    background: var(--c-accent);
+    background: var(--c-fg);
     color: var(--c-bg);
   }
 
@@ -64,46 +49,60 @@
     background: var(--c-line-strong);
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--c-dim);
+    background: var(--c-gray-500);
   }
 
   a {
-    color: var(--c-accent);
+    color: var(--c-fg);
     text-decoration: none;
   }
 }
 
 @layer components {
-  .text-glow {
-    text-shadow: var(--glow-text);
+  /* Pixel-cut chamfer corner (Doc 05 v2 §7.1) */
+  .pixel-cut {
+    clip-path: polygon(
+      0 3px,
+      3px 3px,
+      3px 0,
+      calc(100% - 3px) 0,
+      calc(100% - 3px) 3px,
+      100% 3px,
+      100% calc(100% - 3px),
+      calc(100% - 3px) calc(100% - 3px),
+      calc(100% - 3px) 100%,
+      3px 100%,
+      3px calc(100% - 3px),
+      0 calc(100% - 3px)
+    );
   }
 
-  .accent-glow {
-    box-shadow: var(--glow-sm);
-  }
-
+  /* Flat card: hairline, no shadow (Doc 05 v2 §7.2) */
   .panel {
-    background: var(--c-bg-raised);
+    background: var(--c-surface);
     border: var(--border-hair);
   }
 
-  .panel-accent {
-    background: var(--c-bg-raised);
-    border: 1px solid var(--c-accent-dim);
+  .panel-strong {
+    background: var(--c-surface);
+    border: var(--border-strong);
   }
 
   .hairline {
-    border-color: var(--c-line-strong);
+    border-color: var(--c-line);
   }
 
-  .label-term {
+  /* Pixel label: identity font for UI chrome */
+  .label-pixel {
+    font-family: 'Pixelify Sans', system-ui, sans-serif;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
   }
 
-  .micro-label {
-    font-size: 9px;
-    line-height: 1;
+  .micro-pixel {
+    font-family: 'Pixelify Sans', system-ui, sans-serif;
+    font-size: 10px;
+    line-height: 1.2;
     text-transform: uppercase;
     letter-spacing: 0.1em;
   }
@@ -111,5 +110,13 @@
   .tap-target {
     min-width: 44px;
     min-height: 44px;
+  }
+
+  /* Pixel paper: subtle 4px grid for canvas (Doc 05 v2 §9) */
+  .pixel-paper {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 4px 4px;
   }
 }

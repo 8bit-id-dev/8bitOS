@@ -24,23 +24,23 @@ export function AppLayout() {
       <Outlet />
       <Dock />
 
-      {/* Command palette trigger (Dokumen 06 §17, Dokumen 07 §28-29) */}
+      {/* Command palette trigger (Doc 05 v2: quiet, pixel label) */}
       <button
         type="button"
         onClick={() => setPaletteOpen(true)}
-        className="fixed bottom-4 right-20 z-40 h-12 px-3 font-mono font-bold text-sm text-bg bg-accent border-2 border-accent shadow-glow hover:shadow-glow-md label-term"
+        className="fixed bottom-4 right-24 z-40 h-12 px-3 pixel-cut font-pixel text-pixel-sm text-bg bg-fg border border-fg label-pixel hover:bg-surface hover:text-fg"
         aria-label="Buka command palette (Ctrl+K)"
         title="Ctrl+K"
       >
         ⌕ CARI
       </button>
 
-      {/* AI FAB — always available (Dokumen 06: AI selalu tersedia) */}
+      {/* AI FAB — 8bit AI pixel identity */}
       <button
         type="button"
         onClick={() => setAiOpen(true)}
-        className="fixed bottom-4 right-4 z-40 h-12 w-12 font-mono font-bold text-lg text-bg bg-accent border-2 border-accent shadow-glow hover:shadow-glow-md label-term"
-        aria-label="Buka AI Assistant"
+        className="fixed bottom-4 right-4 z-40 h-12 w-12 pixel-cut font-pixel text-pixel-md font-bold text-bg bg-fg border border-fg label-pixel hover:bg-surface hover:text-fg"
+        aria-label="Buka 8bit AI"
       >
         AI
       </button>

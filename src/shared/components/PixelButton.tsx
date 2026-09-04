@@ -9,24 +9,31 @@ export interface PixelButtonProps extends ButtonHTMLAttributes<HTMLButtonElement
 }
 
 const base =
-  'font-mono label-term text-xs px-3 py-1.5 border select-none transition-shadow disabled:opacity-40 disabled:cursor-not-allowed';
+  'label-pixel font-pixel text-pixel-sm px-4 py-2 select-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed min-h-[44px]';
 
 const variants: Record<Variant, string> = {
+  // Primary: putih solid, pixel-cut (Doc 05 v2 §7.1)
   primary:
-    'bg-accent text-bg border-accent hover:shadow-glow focus-visible:shadow-glow',
+    'pixel-cut bg-fg text-bg border border-fg hover:bg-surface hover:text-fg',
   secondary:
-    'bg-transparent text-accent border-accent-dim hover:border-accent hover:shadow-glow',
-  ghost: 'bg-transparent text-dim border-transparent hover:text-fg',
-  danger: 'bg-transparent text-fg border-dashed border-dim hover:text-accent',
+    'pixel-cut bg-transparent text-fg border border-line-strong hover:border-fg',
+  ghost: 'bg-transparent text-gray-300 border border-transparent hover:text-fg',
+  danger: 'pixel-cut bg-transparent text-gray-300 border border-dashed border-gray-500 hover:text-fg',
 };
 
 export const PixelButton = forwardRef<HTMLButtonElement, PixelButtonProps>(
   function PixelButton(
-    { variant = 'primary', className = '', children, type = 'button', ...rest },
+    { variant = 'primary', pressed, className = '', children, type = 'button', ...rest },
     ref,
   ) {
+    const press = pressed ? 'translate-x-[2px] translate-y-[2px]' : '';
     return (
-      <button ref={ref} type={type} className={`${base} ${variants[variant]} ${className}`} {...rest}>
+      <button
+        ref={ref}
+        type={type}
+        className={`${base} ${variants[variant]} ${press} ${className}`}
+        {...rest}
+      >
         {children}
       </button>
     );

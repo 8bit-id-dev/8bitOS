@@ -34,10 +34,10 @@ export function DashboardScreen() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/dashboard
         </h1>
-        <span className="font-mono text-xs text-dim">
+        <span className="font-sans text-pixel-sm text-gray-300">
           {formatJakartaDate(nowIso)} · {formatJakartaTime(nowIso)}
         </span>
       </header>
@@ -48,7 +48,7 @@ export function DashboardScreen() {
           <button
             type="button"
             onClick={() => void handleFlush()}
-            className="font-mono text-xs text-accent border border-accent-dim px-2 py-0.5 hover:shadow-glow"
+            className="font-sans text-pixel-sm text-fg border border-line-strong px-2 py-0.5 hover:"
           >
             SYNC {pending} PENDING → RETRY
           </button>
@@ -59,10 +59,10 @@ export function DashboardScreen() {
         {next ? (
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="font-mono font-bold text-md text-accent text-glow">
+              <p className="font-sans font-bold text-body text-fg ">
                 {next.subject.name.toUpperCase()}
               </p>
-              <p className="font-mono text-xs text-dim">
+              <p className="font-sans text-pixel-sm text-gray-300">
                 {next.classRow.name} · {next.slot.start_time.slice(0, 5)} · {next.slot.room || '—'}
               </p>
             </div>
@@ -71,12 +71,12 @@ export function DashboardScreen() {
             </Link>
           </div>
         ) : (
-          <p className="font-mono text-xs text-dim">no upcoming class</p>
+          <p className="font-sans text-pixel-sm text-gray-300">no upcoming class</p>
         )}
       </PixelCard>
 
       <PixelCard title="jadwal_hari_ini">
-        {isLoading && <p className="font-mono text-xs text-dim">loading…</p>}
+        {isLoading && <p className="font-sans text-pixel-sm text-gray-300">loading…</p>}
         {!isLoading && slots.length === 0 && (
           <EmptyState
             title="NO SCHEDULE TODAY"
@@ -87,19 +87,19 @@ export function DashboardScreen() {
           {slots.map((row) => (
             <li
               key={row.slot.id}
-              className="flex items-center gap-3 border-b border-line last:border-b-0 py-1.5 font-mono text-xs"
+              className="flex items-center gap-3 border-b border-line last:border-b-0 py-1.5 font-sans text-pixel-sm"
             >
-              <span className="text-accent w-12">{row.slot.start_time.slice(0, 5)}</span>
+              <span className="text-fg w-12">{row.slot.start_time.slice(0, 5)}</span>
               <span className="flex-1 text-fg">{row.subject.name}</span>
-              <span className="text-dim">{row.classRow.name}</span>
-              <span className="text-dimmer w-14 text-right">{row.slot.room || '—'}</span>
+              <span className="text-gray-300">{row.classRow.name}</span>
+              <span className="text-gray-500 w-14 text-right">{row.slot.room || '—'}</span>
             </li>
           ))}
         </ul>
       </PixelCard>
 
       <div>
-        <p className="font-mono text-micro-label label-term text-dim mb-1.5">quick_actions</p>
+        <p className="font-sans micro-pixel label-pixel text-gray-300 mb-1.5">quick_actions</p>
         <div className="flex gap-2 flex-wrap">
           <Link to="/classroom">
             <PixelButton variant="secondary">CLASSROOM</PixelButton>

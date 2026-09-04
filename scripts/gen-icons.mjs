@@ -1,4 +1,4 @@
-// Generate 8OS app icons (all densities) from inline SVG wordmark.
+// Generate 8OS app icons (all densities) — monochrome pixel edition v2.
 // Usage: node scripts/gen-icons.mjs
 import sharp from 'sharp';
 import fs from 'node:fs';
@@ -6,32 +6,25 @@ import path from 'node:path';
 
 const root = process.cwd();
 
-// Wordmark "8OS" — pixel-ish monospace, phosphor green on dark terminal panel.
+// Wordmark "8OS" — white on #050505 terminal panel, pixel cursor (Doc 05 v2 §14)
 const svg = (size) => {
   const s = size;
-  const fs1 = Math.round(s * 0.34); // glyph size
-  const fw = fs1 * 0.62; // glyph advance (mono)
+  const fs1 = Math.round(s * 0.34);
   const cx = s / 2;
-  const startX = cx - (fw * 3) / 2 + fw * 0.5; // center 3 glyphs
   const y = s * 0.52;
-  const sw = Math.max(2, Math.round(s * 0.055)); // stroke width
-  // pixel segments per glyph on a 5x7 grid
+  const sw = Math.max(2, Math.round(s * 0.045));
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 ${s} ${s}">
-  <rect width="${s}" height="${s}" fill="#0a0f0a"/>
-  <rect x="${sw}" y="${sw}" width="${s - sw * 2}" height="${s - sw * 2}" fill="none" stroke="#2f4a2f" stroke-width="${sw}"/>
-  <g fill="none" stroke="#4af626" stroke-width="${sw}" stroke-linecap="square" stroke-linejoin="miter">
-    <text x="${cx}" y="${y}" font-family="monospace" font-weight="700" font-size="${fs1}" text-anchor="middle" fill="#4af626" stroke="none">8OS</text>
-  </g>
-  <rect x="${s * 0.22}" y="${s * 0.68}" width="${s * 0.24}" height="${s * 0.05}" fill="#4af626"/>
+  <rect width="${s}" height="${s}" fill="#050505"/>
+  <rect x="${sw}" y="${sw}" width="${s - sw * 2}" height="${s - sw * 2}" fill="none" stroke="#333333" stroke-width="${sw}"/>
+  <text x="${cx}" y="${y}" font-family="monospace" font-weight="700" font-size="${fs1}" text-anchor="middle" fill="#ffffff">8OS</text>
+  <rect x="${s * 0.22}" y="${s * 0.68}" width="${s * 0.22}" height="${s * 0.05}" fill="#ffffff"/>
 </svg>`;
 };
 
 const targets = [
-  // PWA (public/)
   { dir: 'public', name: 'icon-192.png', size: 192 },
   { dir: 'public', name: 'icon-512.png', size: 512 },
-  { dir: 'public', name: 'maskable-512.png', size: 512, pad: true },
-  // Android launcher (mipmap-*)
+  { dir: 'public', name: 'maskable-512.png', size: 512 },
   { dir: 'android/app/src/main/res/mipmap-mdpi', name: 'ic_launcher.png', size: 48 },
   { dir: 'android/app/src/main/res/mipmap-mdpi', name: 'ic_launcher_round.png', size: 48 },
   { dir: 'android/app/src/main/res/mipmap-hdpi', name: 'ic_launcher.png', size: 72 },
@@ -42,7 +35,6 @@ const targets = [
   { dir: 'android/app/src/main/res/mipmap-xxhdpi', name: 'ic_launcher_round.png', size: 144 },
   { dir: 'android/app/src/main/res/mipmap-xxxhdpi', name: 'ic_launcher.png', size: 192 },
   { dir: 'android/app/src/main/res/mipmap-xxxhdpi', name: 'ic_launcher_round.png', size: 192 },
-  // Foreground (adaptive) — transparent bg, wordmark only
   { dir: 'android/app/src/main/res/mipmap-xxxhdpi', name: 'ic_launcher_foreground.png', size: 432, transparent: true },
 ];
 
@@ -51,13 +43,11 @@ for (const t of targets) {
   fs.mkdirSync(outDir, { recursive: true });
   let svgStr = svg(t.size);
   if (t.transparent) {
-    // strip background + border for adaptive foreground
     svgStr = svgStr
-      .replace(/<rect width="\d+" height="\d+" fill="#0a0f0a"\/>/, '')
-      .replace(/<rect x="\d+"[^>]+stroke="#2f4a2f"[^>]+\/>/, '')
-      .replace(/<rect x="[^"]+" y="[^"]+" width="[^"]+" height="[^"]+" fill="#4af626"\/>/, '');
+      .replace(/<rect width="\d+" height="\d+" fill="#050505"\/>/, '')
+      .replace(/<rect x="\d+"[^>]+stroke="#333333"[^>]+\/>/, '')
+      .replace(/<rect x="[^"]+" y="[^"]+" width="[^"]+" height="[^"]+" fill="#ffffff"\/>/, '');
   }
   await sharp(Buffer.from(svgStr)).png().toFile(path.join(outDir, t.name));
-  console.log('ok', t.dir + '/' + t.name, t.size + 'px');
 }
-console.log('DONE');
+console.log('DONE', targets.length, 'icons (monochrome)');

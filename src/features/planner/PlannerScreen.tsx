@@ -105,14 +105,14 @@ export function PlannerScreen() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/planner
         </h1>
-        <div className="flex items-center gap-2 font-mono text-xs">
+        <div className="flex items-center gap-2 font-sans text-pixel-sm">
           <button
             type="button"
             onClick={() => setWeekOffset(weekOffset - 1)}
-            className="text-dim hover:text-accent px-1"
+            className="text-gray-300 hover:text-fg px-1"
             aria-label="Minggu sebelumnya"
           >
             ←
@@ -121,7 +121,7 @@ export function PlannerScreen() {
           <button
             type="button"
             onClick={() => setWeekOffset(weekOffset + 1)}
-            className="text-dim hover:text-accent px-1"
+            className="text-gray-300 hover:text-fg px-1"
             aria-label="Minggu berikutnya"
           >
             →
@@ -130,7 +130,7 @@ export function PlannerScreen() {
             <button
               type="button"
               onClick={() => setWeekOffset(0)}
-              className="text-dim border border-line-strong px-1.5 hover:border-accent-dim"
+              className="text-gray-300 border border-line-strong px-1.5 hover:border-fg"
             >
               hari ini
             </button>
@@ -139,13 +139,13 @@ export function PlannerScreen() {
       </header>
 
       <div className="flex items-center justify-between">
-        <p className="font-mono text-xs text-dim">
-          kesiapan: <span className="text-accent">{progress.ready}/{progress.total}</span> siap
+        <p className="font-sans text-pixel-sm text-gray-300">
+          kesiapan: <span className="text-fg">{progress.ready}/{progress.total}</span> siap
         </p>
         <PixelButton onClick={openNew}>+ RENCANA</PixelButton>
       </div>
 
-      {plansQ.isLoading && <p className="font-mono text-xs text-dim">loading…</p>}
+      {plansQ.isLoading && <p className="font-sans text-pixel-sm text-gray-300">loading…</p>}
 
       {!plansQ.isLoading && plans.length === 0 && (
         <EmptyState
@@ -163,7 +163,7 @@ export function PlannerScreen() {
                 onChange={(e) =>
                   setDraft({ ...draft, class_id: e.target.value || null })
                 }
-                className="bg-bg text-fg border border-line-strong px-2 py-1.5 font-mono text-xs flex-1"
+                className="bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm flex-1"
                 aria-label="Kelas"
               >
                 <option value="">— pilih kelas —</option>
@@ -178,7 +178,7 @@ export function PlannerScreen() {
                 onChange={(e) =>
                   setDraft({ ...draft, status: e.target.value as PlanStatus })
                 }
-                className="bg-bg text-fg border border-line-strong px-2 py-1.5 font-mono text-xs"
+                className="bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm"
                 aria-label="Status"
               >
                 {(Object.keys(STATUS_LABEL) as PlanStatus[]).map((s) => (
@@ -191,14 +191,14 @@ export function PlannerScreen() {
 
             {FIELDS.map((f) => (
               <label key={f.key} className="block">
-                <span className="font-mono text-micro-label label-term text-dim">
+                <span className="font-sans micro-pixel label-pixel text-gray-300">
                   {f.label}
                 </span>
                 <textarea
                   value={draft[f.key]}
                   onChange={(e) => set(f.key, e.target.value)}
                   rows={f.key === 'topic' ? 1 : 2}
-                  className="w-full mt-1 bg-bg text-fg border border-line-strong px-2 py-1.5 font-mono text-xs focus-visible:border-accent resize-y"
+                  className="w-full mt-1 bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm focus-visible:border-fg resize-y"
                 />
               </label>
             ))}
@@ -215,7 +215,7 @@ export function PlannerScreen() {
               </PixelButton>
             </div>
             {saveMutation.isError && (
-              <p className="font-mono text-xs text-fg">
+              <p className="font-sans text-pixel-sm text-fg">
                 ERROR: {(saveMutation.error as Error).message}
               </p>
             )}
@@ -231,27 +231,27 @@ export function PlannerScreen() {
               key={p.id}
               type="button"
               onClick={() => openEdit(p)}
-              className="panel w-full text-left px-3 py-2 hover:border-accent-dim transition-colors"
+              className="panel w-full text-left px-3 py-2 hover:border-fg transition-colors"
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="font-mono text-xs text-accent truncate">
+                <span className="font-sans text-pixel-sm text-fg truncate">
                   {planLabel(p)}
                 </span>
                 <span
-                  className={`font-mono text-micro-label px-1 border ${
+                  className={`font-sans micro-pixel px-1 border ${
                     p.status === 'done'
-                      ? 'text-accent border-accent-dim'
+                      ? 'text-fg border-line-strong'
                       : p.status === 'ready'
-                        ? 'text-fg border-dim'
-                        : 'text-dim border-line-strong'
+                        ? 'text-fg border-line-strong'
+                        : 'text-gray-300 border-line-strong'
                   }`}
                 >
                   {STATUS_LABEL[p.status]}
                 </span>
               </div>
-              {cls && <p className="font-mono text-xs text-dim mt-0.5">{cls.name}</p>}
+              {cls && <p className="font-sans text-pixel-sm text-gray-300 mt-0.5">{cls.name}</p>}
               {p.goals && (
-                <p className="font-mono text-xs text-dimmer mt-0.5 truncate">{p.goals}</p>
+                <p className="font-sans text-pixel-sm text-gray-500 mt-0.5 truncate">{p.goals}</p>
               )}
             </button>
           );

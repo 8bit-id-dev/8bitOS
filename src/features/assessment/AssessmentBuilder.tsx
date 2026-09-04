@@ -165,10 +165,10 @@ export function AssessmentBuilder() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           {isEdit ? '~/assessment/edit' : '~/assessment/new'}
         </h1>
-        <Link to="/assessment" className="font-mono text-xs text-dim hover:text-accent">
+        <Link to="/assessment" className="font-sans text-pixel-sm text-gray-300 hover:text-fg">
           ← daftar
         </Link>
       </header>
@@ -179,14 +179,14 @@ export function AssessmentBuilder() {
             value={meta.title}
             onChange={(e) => setMeta({ ...meta, title: e.target.value })}
             placeholder="judul asesmen…"
-            className="w-full bg-bg text-fg border border-line-strong px-2 py-1.5 font-mono text-sm focus-visible:border-accent"
+            className="w-full bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-small focus-visible:border-fg"
             aria-label="Judul"
           />
           <div className="flex gap-2">
             <select
               value={meta.class_id ?? ''}
               onChange={(e) => setMeta({ ...meta, class_id: e.target.value || null })}
-              className="flex-1 bg-bg text-fg border border-line-strong px-2 py-1.5 font-mono text-xs"
+              className="flex-1 bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm"
               aria-label="Kelas"
             >
               <option value="">— kelas —</option>
@@ -199,7 +199,7 @@ export function AssessmentBuilder() {
             <select
               value={meta.type}
               onChange={(e) => setMeta({ ...meta, type: e.target.value as AssessmentType })}
-              className="bg-bg text-fg border border-line-strong px-2 py-1.5 font-mono text-xs"
+              className="bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm"
               aria-label="Jenis"
             >
               {ASSESSMENT_TYPES.map((t) => (
@@ -211,7 +211,7 @@ export function AssessmentBuilder() {
             <select
               value={meta.status}
               onChange={(e) => setMeta({ ...meta, status: e.target.value as AssessmentStatus })}
-              className="bg-bg text-fg border border-line-strong px-2 py-1.5 font-mono text-xs"
+              className="bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm"
               aria-label="Status"
             >
               {STATUS_OPTIONS.map((s) => (
@@ -234,7 +234,7 @@ export function AssessmentBuilder() {
             </PixelButton>
           </div>
           {saveMetaMutation.isError && (
-            <p className="font-mono text-xs text-fg">
+            <p className="font-sans text-pixel-sm text-fg">
               ERROR: {(saveMetaMutation.error as Error).message}
             </p>
           )}
@@ -245,7 +245,7 @@ export function AssessmentBuilder() {
         <>
           <PixelCard title={`soal (${questions.length})`}>
             {questions.length === 0 && (
-              <p className="font-mono text-xs text-dim">belum ada soal</p>
+              <p className="font-sans text-pixel-sm text-gray-300">belum ada soal</p>
             )}
             <ul className="flex flex-col">
               {questions.map((q, i) => (
@@ -253,14 +253,14 @@ export function AssessmentBuilder() {
                   key={q.id}
                   className="flex items-start gap-2 border-b border-line last:border-b-0 py-1.5"
                 >
-                  <span className="font-mono text-xs text-dimmer w-8 text-right pt-0.5">
+                  <span className="font-sans text-pixel-sm text-gray-500 w-8 text-right pt-0.5">
                     {i + 1}.
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-mono text-xs text-fg break-words">
+                    <p className="font-sans text-pixel-sm text-fg break-words">
                       {q.prompt || '(kosong)'}
                     </p>
-                    <p className="font-mono text-micro-label text-dimmer mt-0.5">
+                    <p className="font-sans micro-pixel text-gray-500 mt-0.5">
                       {TYPE_OPTIONS.find((t) => t.value === q.type)?.label} · {q.points} poin
                       {q.answer_key != null && ` · kunci: ${q.answer_key}`}
                     </p>
@@ -269,14 +269,14 @@ export function AssessmentBuilder() {
                     <button
                       type="button"
                       onClick={() => openEditQuestion(q)}
-                      className="font-mono text-xs text-dim hover:text-accent"
+                      className="font-sans text-pixel-sm text-gray-300 hover:text-fg"
                     >
                       [EDIT]
                     </button>
                     <button
                       type="button"
                       onClick={() => deleteQuestionMutation.mutate(q.id)}
-                      className="font-mono text-xs text-dim hover:text-fg"
+                      className="font-sans text-pixel-sm text-gray-300 hover:text-fg"
                     >
                       [HAPUS]
                     </button>
@@ -300,7 +300,7 @@ export function AssessmentBuilder() {
                     onChange={(e) =>
                       setQDraft({ ...qDraft, type: e.target.value as QuestionType })
                     }
-                    className="bg-bg text-fg border border-line-strong px-2 py-1.5 font-mono text-xs"
+                    className="bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm"
                     aria-label="Tipe soal"
                   >
                     {TYPE_OPTIONS.map((t) => (
@@ -315,7 +315,7 @@ export function AssessmentBuilder() {
                     step={0.5}
                     value={qDraft.points}
                     onChange={(e) => setQDraft({ ...qDraft, points: Number(e.target.value) })}
-                    className="w-20 bg-bg text-fg border border-line-strong px-2 py-1.5 font-mono text-xs"
+                    className="w-20 bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm"
                     aria-label="Poin"
                   />
                 </div>
@@ -325,23 +325,23 @@ export function AssessmentBuilder() {
                   onChange={(e) => setQDraft({ ...qDraft, prompt: e.target.value })}
                   rows={3}
                   placeholder="pertanyaan…"
-                  className="w-full bg-bg text-fg border border-line-strong px-2 py-1.5 font-mono text-xs focus-visible:border-accent"
+                  className="w-full bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm focus-visible:border-fg"
                   aria-label="Pertanyaan"
                 />
 
                 {isTf ? (
                   <div>
-                    <p className="font-mono text-micro-label text-dim mb-1">KUNCI</p>
+                    <p className="font-sans micro-pixel text-gray-300 mb-1">KUNCI</p>
                     <div className="flex gap-1">
                       {TF_OPTIONS.map((v) => (
                         <button
                           key={v}
                           type="button"
                           onClick={() => setQDraft({ ...qDraft, answer_key: v })}
-                          className={`font-mono text-xs px-3 py-1 border ${
+                          className={`font-sans text-pixel-sm px-3 py-1 border ${
                             qDraft.answer_key === v
-                              ? 'bg-accent text-bg border-accent'
-                              : 'text-dim border-line-strong'
+                              ? 'bg-fg text-bg border-fg'
+                              : 'text-gray-300 border-line-strong'
                           }`}
                         >
                           {v}
@@ -351,10 +351,10 @@ export function AssessmentBuilder() {
                   </div>
                 ) : needsOptions ? (
                   <div className="space-y-2">
-                    <p className="font-mono text-micro-label text-dim">OPSI</p>
+                    <p className="font-sans micro-pixel text-gray-300">OPSI</p>
                     {qDraft.options.map((opt, i) => (
                       <div key={i} className="flex items-center gap-2">
-                        <span className="font-mono text-xs text-accent w-5">
+                        <span className="font-sans text-pixel-sm text-fg w-5">
                           {String.fromCharCode(65 + i)}.
                         </span>
                         <input
@@ -364,16 +364,16 @@ export function AssessmentBuilder() {
                             next[i] = e.target.value;
                             setQDraft({ ...qDraft, options: next });
                           }}
-                          className="flex-1 bg-bg text-fg border border-line-strong px-2 py-1 font-mono text-xs"
+                          className="flex-1 bg-bg text-fg border border-line-strong px-2 py-1 font-sans text-pixel-sm"
                           aria-label={`Opsi ${String.fromCharCode(65 + i)}`}
                         />
                         <button
                           type="button"
                           onClick={() => setQDraft({ ...qDraft, answer_key: String.fromCharCode(65 + i) })}
-                          className={`font-mono text-xs px-1 border ${
+                          className={`font-sans text-pixel-sm px-1 border ${
                             qDraft.answer_key === String.fromCharCode(65 + i)
-                              ? 'bg-accent text-bg border-accent'
-                              : 'text-dim border-line-strong'
+                              ? 'bg-fg text-bg border-fg'
+                              : 'text-gray-300 border-line-strong'
                           }`}
                           aria-label={`Jadikan ${String.fromCharCode(65 + i)} kunci`}
                         >
@@ -383,7 +383,7 @@ export function AssessmentBuilder() {
                     ))}
                   </div>
                 ) : (
-                  <p className="font-mono text-xs text-dimmer">
+                  <p className="font-sans text-pixel-sm text-gray-500">
                     tipe {qDraft.type} — koreksi manual di halaman KOREKSI
                   </p>
                 )}
@@ -400,7 +400,7 @@ export function AssessmentBuilder() {
                   </PixelButton>
                 </div>
                 {saveQuestionMutation.isError && (
-                  <p className="font-mono text-xs text-fg">
+                  <p className="font-sans text-pixel-sm text-fg">
                     ERROR: {(saveQuestionMutation.error as Error).message}
                   </p>
                 )}
@@ -415,7 +415,7 @@ export function AssessmentBuilder() {
             <button
               type="button"
               onClick={() => setConfirmDelete(true)}
-              className="font-mono text-xs text-dim hover:text-fg"
+              className="font-sans text-pixel-sm text-gray-300 hover:text-fg"
             >
               [HAPUS ASESMEN]
             </button>

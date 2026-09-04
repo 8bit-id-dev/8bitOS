@@ -33,17 +33,17 @@ export function StudentForm({ open, initial, onSubmit, onCancel, pending }: Stud
         <PixelInput label="NAMA LENGKAP" value={fullName} onChange={(e) => setFullName(e.target.value)} />
         <PixelInput label="NISN" value={nisn} onChange={(e) => setNisn(e.target.value)} />
         <div>
-          <p className="font-mono text-micro-label label-term text-dim mb-1">GENDER</p>
+          <p className="font-sans micro-pixel label-pixel text-gray-300 mb-1">GENDER</p>
           <div className="flex gap-1">
             {(['L', 'P'] as const).map((g) => (
               <button
                 key={g}
                 type="button"
                 onClick={() => setGender(g)}
-                className={`font-mono text-xs px-3 py-1 border ${
+                className={`font-sans text-pixel-sm px-3 py-1 border ${
                   gender === g
-                    ? 'bg-accent text-bg border-accent shadow-glow'
-                    : 'bg-transparent text-dim border-line-strong'
+                    ? 'bg-fg text-bg border-fg '
+                    : 'bg-transparent text-gray-300 border-line-strong'
                 }`}
               >
                 {g === 'L' ? 'LAKI-LAKI' : 'PEREMPUAN'}
@@ -51,7 +51,7 @@ export function StudentForm({ open, initial, onSubmit, onCancel, pending }: Stud
             ))}
           </div>
         </div>
-        {error && <p className="font-mono text-xs text-fg">ERROR: {error}</p>}
+        {error && <p className="font-sans text-pixel-sm text-fg">ERROR: {error}</p>}
       </div>
       <div className="mt-4 flex justify-end gap-2">
         <PixelButton variant="secondary" onClick={onCancel}>

@@ -37,16 +37,16 @@ export function Whiteboard() {
     if (!ctx) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // grid background
-    ctx.strokeStyle = '#1d2b1d';
+    // pixel paper: subtle 4px grid (Doc 05 v2 §9)
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
     ctx.lineWidth = 1;
-    for (let x = 0; x < canvas.width; x += 24) {
+    for (let x = 0; x < canvas.width; x += 4) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, canvas.height);
       ctx.stroke();
     }
-    for (let y = 0; y < canvas.height; y += 24) {
+    for (let y = 0; y < canvas.height; y += 4) {
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.lineTo(canvas.width, y);
@@ -110,10 +110,10 @@ export function Whiteboard() {
 
   const strokeConfig = (): Pick<Stroke, 'color' | 'width'> =>
     tool === 'pen'
-      ? { color: '#4af626', width: 3 }
+      ? { color: '#ffffff', width: 3 }
       : tool === 'highlight'
-        ? { color: 'rgba(200, 230, 201, 0.35)', width: 18 }
-        : { color: '#0a0f0a', width: 24 };
+        ? { color: 'rgba(255, 255, 255, 0.28)', width: 18 }
+        : { color: '#050505', width: 24 };
 
   const onDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -159,24 +159,28 @@ export function Whiteboard() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/whiteboard
         </h1>
-        <span className="font-mono text-xs text-dim">
+        <span className="font-sans text-pixel-sm text-gray-300">
           {strokes.length} goresan · tersimpan lokal
         </span>
       </header>
 
       <div className="flex gap-1 flex-wrap items-center">
+        {/* Pen mode chip (Doc 05 v2 §8) */}
+        <span className="micro-pixel text-gray-500 border border-dashed border-gray-500 px-2 py-1">
+          ✎ PEN MODE
+        </span>
         {TOOLS.map((t) => (
           <button
             key={t.id}
             type="button"
             onClick={() => setTool(t.id)}
-            className={`font-mono text-xs px-2.5 py-1 border ${
+            className={`font-sans text-pixel-sm px-2.5 py-1 border ${
               tool === t.id
-                ? 'bg-accent text-bg border-accent shadow-glow'
-                : 'text-dim border-line-strong hover:border-dim'
+                ? 'bg-fg text-bg border-fg '
+                : 'text-gray-300 border-line-strong hover:border-fg'
             }`}
           >
             {t.label}
@@ -194,7 +198,7 @@ export function Whiteboard() {
         </PixelButton>
       </div>
 
-      <div className="panel-accent flex-1 min-h-[400px] p-1">
+      <div className="panel-strong pixel-cut flex-1 min-h-[400px] p-1 pixel-paper">
         <canvas
           ref={canvasRef}
           className="w-full h-full touch-none cursor-crosshair"
@@ -207,7 +211,7 @@ export function Whiteboard() {
         />
       </div>
 
-      <p className="font-mono text-micro-label text-dimmer">
+      <p className="font-sans micro-pixel text-gray-500">
         pointer/stylus: tekan lebih kuat untuk garis lebih tebal · palm rejection otomatis saat pen aktif
       </p>
     </main>

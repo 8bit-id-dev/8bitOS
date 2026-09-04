@@ -121,13 +121,13 @@ export function AssessmentRun() {
   });
 
   if (questionsQ.isLoading) {
-    return <p className="p-4 font-mono text-xs text-dim">loading…</p>;
+    return <p className="p-4 font-sans text-pixel-sm text-gray-300">loading…</p>;
   }
   if (questions.length === 0) {
     return (
       <main className="p-4 space-y-3">
         <EmptyState title="BELUM ADA SOAL" hint="Tambahkan soal di editor asesmen." />
-        <Link to={`/assessment/${assessmentId}/edit`} className="font-mono text-xs text-accent">
+        <Link to={`/assessment/${assessmentId}/edit`} className="font-sans text-pixel-sm text-fg">
           ← editor
         </Link>
       </main>
@@ -139,10 +139,10 @@ export function AssessmentRun() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/koreksi
         </h1>
-        <span className="font-mono text-xs text-dim">
+        <span className="font-sans text-pixel-sm text-gray-300">
           {scoredCount}/{students.length} terkoreksi · {questions.length} soal
         </span>
       </header>
@@ -158,7 +158,7 @@ export function AssessmentRun() {
 
       <PixelCard title="pilih_siswa">
         {students.length === 0 ? (
-          <p className="font-mono text-xs text-dim">
+          <p className="font-sans text-pixel-sm text-gray-300">
             kelas belum dipilih di editor, atau belum ada siswa
           </p>
         ) : (
@@ -171,12 +171,12 @@ export function AssessmentRun() {
                   key={s.id}
                   type="button"
                   onClick={() => pick(s.id)}
-                  className={`font-mono text-xs px-2 py-1 border ${
+                  className={`font-sans text-pixel-sm px-2 py-1 border ${
                     isActive
-                      ? 'bg-accent text-bg border-accent'
+                      ? 'bg-fg text-bg border-fg'
                       : attempt?.score != null
-                        ? 'text-accent border-accent-dim'
-                        : 'text-dim border-line-strong'
+                        ? 'text-fg border-line-strong'
+                        : 'text-gray-300 border-line-strong'
                   }`}
                 >
                   {s.full_name.split(' ')[0]}
@@ -193,8 +193,8 @@ export function AssessmentRun() {
           <div className="space-y-4">
             {questions.map((q, i) => (
               <div key={q.id} className="space-y-1.5">
-                <p className="font-mono text-xs text-fg">
-                  <span className="text-dimmer">{i + 1}.</span> {q.prompt}
+                <p className="font-sans text-pixel-sm text-fg">
+                  <span className="text-gray-500">{i + 1}.</span> {q.prompt}
                 </p>
                 {q.type === 'tf' ? (
                   <div className="flex gap-1">
@@ -203,10 +203,10 @@ export function AssessmentRun() {
                         key={v}
                         type="button"
                         onClick={() => setResponses({ ...responses, [q.id]: v })}
-                        className={`font-mono text-xs px-3 py-1 border ${
+                        className={`font-sans text-pixel-sm px-3 py-1 border ${
                           responses[q.id] === v
-                            ? 'bg-accent text-bg border-accent'
-                            : 'text-dim border-line-strong'
+                            ? 'bg-fg text-bg border-fg'
+                            : 'text-gray-300 border-line-strong'
                         }`}
                       >
                         {v}
@@ -222,10 +222,10 @@ export function AssessmentRun() {
                           key={oi}
                           type="button"
                           onClick={() => setResponses({ ...responses, [q.id]: key })}
-                          className={`font-mono text-xs px-2 py-1 border ${
+                          className={`font-sans text-pixel-sm px-2 py-1 border ${
                             responses[q.id] === key
-                              ? 'bg-accent text-bg border-accent'
-                              : 'text-dim border-line-strong'
+                              ? 'bg-fg text-bg border-fg'
+                              : 'text-gray-300 border-line-strong'
                           }`}
                         >
                           {key}. {opt}
@@ -239,7 +239,7 @@ export function AssessmentRun() {
                       value={responses[q.id] ?? ''}
                       onChange={(e) => setResponses({ ...responses, [q.id]: e.target.value })}
                       placeholder={`jawaban ${TYPE_LABEL[q.type]}…`}
-                      className="flex-1 bg-bg text-fg border border-line-strong px-2 py-1 font-mono text-xs"
+                      className="flex-1 bg-bg text-fg border border-line-strong px-2 py-1 font-sans text-pixel-sm"
                       aria-label={`Jawaban soal ${i + 1}`}
                     />
                     <input
@@ -252,17 +252,17 @@ export function AssessmentRun() {
                         setResponses({ ...responses, [`${q.id}__score`]: e.target.value })
                       }
                       placeholder="0"
-                      className="w-16 bg-bg text-fg border border-line-strong px-2 py-1 font-mono text-xs"
+                      className="w-16 bg-bg text-fg border border-line-strong px-2 py-1 font-sans text-pixel-sm"
                       aria-label={`Skor manual soal ${i + 1}`}
                     />
-                    <span className="font-mono text-xs text-dimmer">/{q.points}</span>
+                    <span className="font-sans text-pixel-sm text-gray-500">/{q.points}</span>
                   </div>
                 )}
               </div>
             ))}
 
             <div className="flex items-center justify-between">
-              <span className="font-mono text-xs text-dim" aria-live="polite">
+              <span className="font-sans text-pixel-sm text-gray-300" aria-live="polite">
                 {saveState}
               </span>
               <PixelButton

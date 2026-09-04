@@ -105,15 +105,15 @@ export function Documents() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           {cls ? `~/documents/${cls.name.toLowerCase().replace(/\s+/g, '-')}` : '~/documents'}
         </h1>
         {classId ? (
-          <Link to={`/classroom/${classId}`} className="font-mono text-xs text-dim hover:text-accent">
+          <Link to={`/classroom/${classId}`} className="font-sans text-pixel-sm text-gray-300 hover:text-fg">
             ← kelas
           </Link>
         ) : (
-          <span className="font-mono text-xs text-dim">semua dokumen</span>
+          <span className="font-sans text-pixel-sm text-gray-300">semua dokumen</span>
         )}
       </header>
 
@@ -122,7 +122,7 @@ export function Documents() {
           <select
             value={kind}
             onChange={(e) => setKind(e.target.value as DocumentKind)}
-            className="bg-bg text-fg border border-line-strong px-2 py-1.5 font-mono text-xs"
+            className="bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm"
             aria-label="Jenis dokumen"
           >
             {KINDS.map((k) => (
@@ -135,15 +135,15 @@ export function Documents() {
             ref={fileInput}
             type="file"
             onChange={(e) => handleFile(e.target.files)}
-            className="text-xs font-mono text-dim file:mr-2 file:font-mono file:text-xs file:px-2 file:py-1 file:border file:border-accent-dim file:bg-transparent file:text-accent"
+            className="text-pixel-sm font-sans text-gray-300 file:mr-2 file:font-sans file:text-pixel-sm file:px-2 file:py-1 file:border file:border-line-strong file:bg-transparent file:text-fg"
             aria-label="Pilih file"
           />
-          {uploading && <span className="font-mono text-xs text-dim">mengunggah…</span>}
+          {uploading && <span className="font-sans text-pixel-sm text-gray-300">mengunggah…</span>}
           {uploadError && (
-            <span className="font-mono text-xs text-fg">ERROR: {uploadError}</span>
+            <span className="font-sans text-pixel-sm text-fg">ERROR: {uploadError}</span>
           )}
           <span className="flex-1" />
-          <span className="font-mono text-micro-label text-dimmer">
+          <span className="font-sans micro-pixel text-gray-500">
             {cls ? `kelas: ${cls.name} · ` : ''}maks 50MB · PDF/DOCX/XLSX/PPT/PNG/JPG
           </span>
         </div>
@@ -153,8 +153,8 @@ export function Documents() {
         <button
           type="button"
           onClick={() => setFilterKind('')}
-          className={`font-mono text-micro-label px-1.5 py-0.5 border ${
-            filterKind === '' ? 'text-accent border-accent-dim' : 'text-dimmer border-line-strong'
+          className={`font-sans micro-pixel px-1.5 py-0.5 border ${
+            filterKind === '' ? 'text-fg border-line-strong' : 'text-gray-500 border-line-strong'
           }`}
         >
           SEMUA
@@ -164,10 +164,10 @@ export function Documents() {
             key={k.value}
             type="button"
             onClick={() => setFilterKind(k.value)}
-            className={`font-mono text-micro-label px-1.5 py-0.5 border ${
+            className={`font-sans micro-pixel px-1.5 py-0.5 border ${
               filterKind === k.value
-                ? 'text-accent border-accent-dim'
-                : 'text-dimmer border-line-strong'
+                ? 'text-fg border-line-strong'
+                : 'text-gray-500 border-line-strong'
             }`}
           >
             {k.label}
@@ -175,7 +175,7 @@ export function Documents() {
         ))}
       </div>
 
-      {docsQ.isLoading && <p className="font-mono text-xs text-dim">loading…</p>}
+      {docsQ.isLoading && <p className="font-sans text-pixel-sm text-gray-300">loading…</p>}
 
       {!docsQ.isLoading && docs.length === 0 && (
         <EmptyState
@@ -186,11 +186,11 @@ export function Documents() {
 
       <div className="space-y-2">
         {docs.map((d) => (
-          <PixelCard key={d.id} className="hover:border-accent-dim transition-colors">
+          <PixelCard key={d.id} className="hover:border-fg transition-colors">
             <div className="flex items-center gap-3">
               <div className="flex-1 min-w-0">
-                <p className="font-mono text-xs text-fg truncate">{d.title}</p>
-                <p className="font-mono text-micro-label text-dimmer mt-0.5">
+                <p className="font-sans text-pixel-sm text-fg truncate">{d.title}</p>
+                <p className="font-sans micro-pixel text-gray-500 mt-0.5">
                   {KIND_LABEL[d.kind]} · {d.mime_type.split('/').pop() ?? '?'} ·{' '}
                   {formatSize(d.size_bytes)}
                 </p>
@@ -205,7 +205,7 @@ export function Documents() {
               <button
                 type="button"
                 onClick={() => setConfirmDelete(d)}
-                className="font-mono text-xs text-dim hover:text-fg"
+                className="font-sans text-pixel-sm text-gray-300 hover:text-fg"
                 aria-label={`Hapus ${d.title}`}
               >
                 [HAPUS]

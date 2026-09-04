@@ -7,7 +7,7 @@ export function RequireAuth() {
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center font-pixel text-sm text-gray-300">
+      <div className="fixed inset-0 flex items-center justify-center font-pixel text-small text-gray-300">
         LOADING…
       </div>
     );

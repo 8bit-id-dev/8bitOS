@@ -20,21 +20,21 @@ const ClassRowView = ({ s }: { s: ClassSummary }) => {
   return (
     <Link
       to={`/classroom/${c.id}`}
-      className="block panel px-3 py-2 hover:border-accent-dim hover:shadow-glow transition-colors"
+      className="block panel px-3 py-2 hover:border-fg hover: transition-colors"
     >
       <div className="flex items-baseline justify-between gap-2">
-        <h3 className="font-mono font-bold text-base text-accent">{c.name}</h3>
-        <span className="font-mono text-micro-label text-dimmer">{c.academic_year}</span>
+        <h3 className="font-sans font-bold text-base text-fg">{c.name}</h3>
+        <span className="font-sans micro-pixel text-gray-500">{c.academic_year}</span>
       </div>
-      <p className="font-mono text-xs text-dim mt-0.5">
-        homeroom: {c.homeroom || '—'} · siswa: {s.studentCount}
+      <p className="font-sans text-pixel-sm text-gray-300 mt-0.5">
+        homeroom: {c.homeroom || 'â€”'} · siswa: {s.studentCount}
       </p>
       {s.subjectNames.length > 0 && (
         <div className="flex gap-1 flex-wrap mt-1.5">
           {s.subjectNames.map((name) => (
             <span
               key={name}
-              className="font-mono text-micro-label px-1 border border-line-strong text-dim"
+              className="font-sans micro-pixel px-1 border border-line-strong text-gray-300"
             >
               {name}
             </span>
@@ -52,18 +52,18 @@ export function ClassList() {
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="font-mono font-bold text-lg text-accent text-glow label-term">
+        <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/classroom
         </h1>
-        <span className="font-mono text-xs text-dim">{user?.email ?? '—'}</span>
+        <span className="font-sans text-pixel-sm text-gray-300">{user?.email ?? 'â€”'}</span>
       </header>
 
-      {isLoading && <p className="font-mono text-xs text-dim">loading…</p>}
+      {isLoading && <p className="font-sans text-pixel-sm text-gray-300">loadingâ€¦</p>}
 
       {error && (
-        <div className="panel-accent p-3">
-          <p className="font-mono text-xs text-fg">BACKEND TIDAK TERHUBUNG.</p>
-          <p className="font-mono text-xs text-dim mt-1">{(error as Error).message}</p>
+        <div className="panel-strong p-3">
+          <p className="font-sans text-pixel-sm text-fg">BACKEND TIDAK TERHUBUNG.</p>
+          <p className="font-sans text-pixel-sm text-gray-300 mt-1">{(error as Error).message}</p>
         </div>
       )}
 
