@@ -27,7 +27,7 @@ import type {
   Student,
   Subject,
 } from './types';
-import { enqueueAttendance } from './outbox';
+import { enqueueActivity, enqueueAttendance } from './outbox';
 
 export interface ClassSummary {
   classRow: ClassRow;
@@ -891,7 +891,10 @@ export const logSessionActivity = async (
     title,
     metadata,
   });
-  if (error) throw error;
+  if (error) {
+    // Offline-first (Dok 10 §35): gagal kirim -> antri di outbox.
+    await enqueueActivity({ userId, sessionId, type, title, metadata });
+  }
 };
 
 export const listSessionActivities = async (

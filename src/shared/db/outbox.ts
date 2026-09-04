@@ -1,5 +1,8 @@
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
-import type { AttendanceStatus } from './types';
+import type { AttendanceStatus, ActivityType } from './types';
+
+// Outbox multi-entitas (Dok 10 §35 Sync Queue): semua mutasi penting
+// yang harus survive offline — attendance, notes, grades, activities.
 
 export interface AttendanceUpsert {
   sessionId: string;
@@ -8,13 +11,43 @@ export interface AttendanceUpsert {
   note?: string;
 }
 
-export type OutboxOp = 'upsert';
+export interface NoteUpsert {
+  noteId: string;
+  userId: string;
+  title: string;
+  body: string;
+  kind: string;
+  classId?: string | null;
+  sessionId?: string | null;
+}
+
+export interface GradeUpsert {
+  userId: string;
+  componentId: string;
+  studentId: string;
+  score: number;
+  note?: string;
+}
+
+export interface ActivityInsert {
+  userId: string;
+  sessionId: string;
+  type: ActivityType;
+  title: string;
+  metadata?: Record<string, unknown>;
+}
+
+export type OutboxTable = 'attendance_records' | 'notes' | 'grades' | 'session_activities';
+
+export type OutboxPayload = AttendanceUpsert | NoteUpsert | GradeUpsert | ActivityInsert;
+
+export type OutboxOp = 'upsert' | 'insert';
 
 export interface OutboxRow {
   id?: number;
-  table: 'attendance_records';
+  table: OutboxTable;
   op: OutboxOp;
-  payload: AttendanceUpsert;
+  payload: OutboxPayload;
   attempts: number;
   created_at: string;
 }
@@ -73,11 +106,15 @@ const getDb = (): Promise<IDBPDatabase<OutboxSchema>> => {
   return dbPromise;
 };
 
-const enqueue = async (table: OutboxRow['table'], payload: OutboxRow['payload']): Promise<void> => {
+const enqueue = async (
+  table: OutboxTable,
+  op: OutboxOp,
+  payload: OutboxPayload,
+): Promise<void> => {
   const db = await getDb();
   await db.add(STORE, {
     table,
-    op: 'upsert',
+    op,
     payload,
     attempts: 0,
     created_at: new Date().toISOString(),
@@ -85,7 +122,16 @@ const enqueue = async (table: OutboxRow['table'], payload: OutboxRow['payload'])
 };
 
 export const enqueueAttendance = (payload: AttendanceUpsert): Promise<void> =>
-  enqueue('attendance_records', payload);
+  enqueue('attendance_records', 'upsert', payload);
+
+export const enqueueNote = (payload: NoteUpsert): Promise<void> =>
+  enqueue('notes', 'upsert', payload);
+
+export const enqueueGrade = (payload: GradeUpsert): Promise<void> =>
+  enqueue('grades', 'upsert', payload);
+
+export const enqueueActivity = (payload: ActivityInsert): Promise<void> =>
+  enqueue('session_activities', 'insert', payload);
 
 export const peek = async (): Promise<OutboxRow[]> => {
   const db = await getDb();

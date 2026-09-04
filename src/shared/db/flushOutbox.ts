@@ -1,34 +1,87 @@
 import { supabase } from './supabase';
-import {
-  incrementAttempts,
-  peek,
-  remove,
-  type AttendanceUpsert,
-  type OutboxRow,
-} from './outbox';
+import { incrementAttempts, peek, remove, type OutboxRow } from './outbox';
+import type { ActivityInsert, AttendanceUpsert, GradeUpsert, NoteUpsert } from './outbox';
 
-const flushAttendance = async (row: OutboxRow): Promise<boolean> => {
-  const payload = row.payload as AttendanceUpsert;
-  const { error } = await supabase.from('attendance_records').upsert(
-    {
-      session_id: payload.sessionId,
-      student_id: payload.studentId,
-      status: payload.status,
-      note: payload.note ?? '',
-      recorded_at: new Date().toISOString(),
-    },
-    { onConflict: 'session_id,student_id' },
-  );
-  return !error;
+// Flush multi-entitas (Dok 10 §35): kirim semua antrian saat online.
+// Urutan penting: activities dulu (timeline), lalu attendance, notes, grades.
+const TABLE_ORDER: Record<OutboxRow['table'], number> = {
+  session_activities: 0,
+  attendance_records: 1,
+  notes: 2,
+  grades: 3,
+};
+
+const flushOne = async (row: OutboxRow): Promise<boolean> => {
+  const p = row.payload;
+  if (row.table === 'attendance_records') {
+    const a = p as AttendanceUpsert;
+    const { error } = await supabase.from('attendance_records').upsert(
+      {
+        session_id: a.sessionId,
+        student_id: a.studentId,
+        status: a.status,
+        note: a.note ?? '',
+        recorded_at: new Date().toISOString(),
+      },
+      { onConflict: 'session_id,student_id' },
+    );
+    return !error;
+  }
+  if (row.table === 'notes') {
+    const n = p as NoteUpsert;
+    const { error } = await supabase.from('notes').upsert(
+      {
+        id: n.noteId,
+        user_id: n.userId,
+        title: n.title,
+        body: n.body,
+        kind: n.kind,
+        class_id: n.classId ?? null,
+        session_id: n.sessionId ?? null,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'id' },
+    );
+    return !error;
+  }
+  if (row.table === 'grades') {
+    const g = p as GradeUpsert;
+    const { error } = await supabase.from('grades').upsert(
+      {
+        user_id: g.userId,
+        component_id: g.componentId,
+        student_id: g.studentId,
+        score: g.score,
+        note: g.note ?? '',
+        recorded_at: new Date().toISOString(),
+      },
+      { onConflict: 'component_id,student_id' },
+    );
+    return !error;
+  }
+  if (row.table === 'session_activities') {
+    const act = p as ActivityInsert;
+    const { error } = await supabase.from('session_activities').insert({
+      user_id: act.userId,
+      session_id: act.sessionId,
+      type: act.type,
+      title: act.title,
+      metadata: act.metadata ?? {},
+    });
+    return !error;
+  }
+  return false;
 };
 
 export const flushOutbox = async (): Promise<{ flushed: number; remaining: number }> => {
   const rows = await peek();
+  // Urutkan per-entity agar dependency terjaga (activity → attendance → note → grade)
+  const ordered = [...rows].sort((a, b) => TABLE_ORDER[a.table] - TABLE_ORDER[b.table]);
   let flushed = 0;
-  for (const row of rows) {
+  for (const row of ordered) {
     let ok = false;
     try {
-      ok = row.table === 'attendance_records' ? await flushAttendance(row) : false;
+      ok = await flushOne(row);
     } catch {
       ok = false;
     }
@@ -39,6 +92,6 @@ export const flushOutbox = async (): Promise<{ flushed: number; remaining: numbe
       if (row.id !== undefined) await incrementAttempts(row.id);
     }
   }
-  const remaining = rows.length - flushed;
+  const remaining = ordered.length - flushed;
   return { flushed, remaining };
 };

@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/shared/db/supabase';
 import { env } from '@/shared/lib/env';
+import { useSessionContext } from '@/features/classroom/sessionContext';
 import {
   createAiJob,
   finishAiJob,
@@ -32,6 +33,18 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
   const [activeJob, setActiveJob] = useState<AiJob | null>(null);
   const [savedMsg, setSavedMsg] = useState('');
   const [confirmClose, setConfirmClose] = useState(false);
+  // Context Awareness (Dok 08 §40): session aktif jadi context default.
+  const activeSession = useSessionContext((s) => s.active);
+  const touchedContext = useRef(false);
+
+  // Saat panel dibuka: isi context dari session aktif bila user belum memilih.
+  useEffect(() => {
+    if (open && !touchedContext.current && activeSession) {
+      setClassContext(activeSession.className);
+    }
+    if (!open) touchedContext.current = false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, activeSession?.sessionId]);
 
   const jobsQ = useQuery({
     queryKey: ['ai-jobs'],
@@ -166,14 +179,18 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
           {/* Context class */}
           <select
             value={classContext}
-            onChange={(e) => setClassContext(e.target.value)}
+            onChange={(e) => {
+              touchedContext.current = true;
+              setClassContext(e.target.value);
+            }}
             className="w-full bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm"
             aria-label="Konteks kelas (opsional)"
           >
-            <option value=""> tanpa konteks kelas </option>
+            <option value="">— tanpa konteks kelas —</option>
             {(classSummaries ?? []).map((s) => (
               <option key={s.classRow.id} value={s.classRow.name}>
                 {s.classRow.name}
+                {activeSession && s.classRow.id === activeSession.classId ? ' (sesi aktif)' : ''}
               </option>
             ))}
           </select>
