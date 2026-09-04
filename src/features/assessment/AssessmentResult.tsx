@@ -6,6 +6,7 @@ import { PixelCard } from '@/shared/components/PixelCard';
 import { PixelButton } from '@/shared/components/PixelButton';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { classAverage } from '@/features/gradebook/gradebook.helpers';
+import { exportAssessmentResultCsv } from '@/shared/lib/exportCsv';
 
 export function AssessmentResult() {
   const { assessmentId = '' } = useParams<{ assessmentId: string }>();
@@ -136,6 +137,26 @@ export function AssessmentResult() {
         <Link to={`/assessment/${assessmentId}/run`}>
           <PixelButton variant="secondary">← KOREKSI</PixelButton>
         </Link>
+        {/* Export (Doc 08 §42): hasil asesmen CSV */}
+        <div className="inline-block ml-2">
+          <PixelButton
+            variant="secondary"
+            onClick={() =>
+              exportAssessmentResultCsv(
+                'asesmen',
+                [...attempts]
+                  .sort((a, b) => (b.score ?? -1) - (a.score ?? -1))
+                  .map((a, i) => ({
+                    rank: i + 1,
+                    name: studentById.get(a.student_id)?.full_name ?? '—',
+                    score: a.score,
+                  })),
+              )
+            }
+          >
+            CSV ↓
+          </PixelButton>
+        </div>
       </div>
     </main>
   );

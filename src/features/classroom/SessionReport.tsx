@@ -17,6 +17,7 @@ import {
 } from './sessionReport.helpers';
 import { useSessionContext } from './sessionContext';
 import { formatJakartaDate, formatJakartaTime } from '@/shared/lib/time';
+import { exportAttendanceCsv } from '@/shared/lib/exportCsv';
 
 export function SessionReport() {
   const { classId = '', sessionId = '' } = useParams<{ classId: string; sessionId: string }>();
@@ -140,10 +141,31 @@ export function SessionReport() {
         )}
       </PixelCard>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         <Link to={`/classroom/${classId}/attendance/${sessionId}`}>
           <PixelButton variant="secondary">← ABSENSI</PixelButton>
         </Link>
+        {/* Export (Doc 08 §42): absensi CSV */}
+        <PixelButton
+          variant="secondary"
+          onClick={() =>
+            exportAttendanceCsv(
+              className,
+              formatJakartaDate(session.scheduled_for),
+              (studentsQ.data ?? []).map((s, i) => {
+                const rec = attendance.find((a) => a.student_id === s.id);
+                return {
+                  no: i + 1,
+                  name: s.full_name,
+                  nisn: s.nisn,
+                  status: rec?.status ?? null,
+                };
+              }),
+            )
+          }
+        >
+          CSV ↓
+        </PixelButton>
         {!isDone && (
           <PixelButton onClick={() => endMutation.mutate()} disabled={endMutation.isPending}>
             {endMutation.isPending ? 'MENYIMPAN…' : 'SELESAIKAN SESI →'}

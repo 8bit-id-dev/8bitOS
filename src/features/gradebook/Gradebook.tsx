@@ -14,6 +14,7 @@ import { useSession } from '@/features/auth/useSession';
 import { PixelCard } from '@/shared/components/PixelCard';
 import { PixelButton } from '@/shared/components/PixelButton';
 import { EmptyState } from '@/shared/components/EmptyState';
+import { exportGradebookCsv } from '@/shared/lib/exportCsv';
 import { ConfirmDialog } from '@/shared/components/ConfirmDialog';
 import { DEFAULT_COMPONENTS, finalScore, totalWeight } from './gradebook.helpers';
 
@@ -229,12 +230,34 @@ export function GradebookClass() {
         <>
           <div className="flex items-center justify-between">
             <p className="font-sans text-pixel-sm text-gray-300">
-              total bobot: <span className={weight === 100 ? 'text-fg' : 'text-fg'}>{weight}%</span>
+              total bobot: <span className={weight === 100 ? 'text-fg' : 'text-gray-300'}>{weight}%</span>
               {weight !== 100 && <span className="text-gray-500"> (ideal 100%)</span>}
             </p>
-            <PixelButton variant="secondary" onClick={() => setShowAdd(true)}>
-              + KOMPONEN
-            </PixelButton>
+            <div className="flex gap-2">
+              {/* Export (Doc 08 §42) */}
+              <PixelButton
+                variant="secondary"
+                onClick={() =>
+                  exportGradebookCsv(
+                    cls?.name ?? 'kelas',
+                    components.map((c) => ({ name: c.name, weight: c.weight })),
+                    students.map((s) => {
+                      const studentGrades = grades.filter((g) => g.student_id === s.id);
+                      return {
+                        name: s.full_name,
+                        scores: components.map((c) => gradeMap.get(gradeKey(c.id, s.id))?.score ?? null),
+                        final: finalScore(components, studentGrades).score,
+                      };
+                    }),
+                  )
+                }
+              >
+                CSV ↓
+              </PixelButton>
+              <PixelButton variant="secondary" onClick={() => setShowAdd(true)}>
+                + KOMPONEN
+              </PixelButton>
+            </div>
           </div>
 
           <PixelCard title={`grid nilai (${students.length} siswa)`}>

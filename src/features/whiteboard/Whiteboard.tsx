@@ -13,6 +13,9 @@ const TOOLS = [
   { id: 'eraser', label: 'PENGHAPUS' },
 ] as const;
 
+// Pen presets (Doc 08 §29): 0.5 / 1 / 2 / 4 — monochrome
+const PEN_PRESETS = [0.5, 1, 2, 4];
+
 type Tool = (typeof TOOLS)[number]['id'];
 
 const STORAGE_KEY = '8bithos:whiteboard:strokes';
@@ -20,6 +23,7 @@ const STORAGE_KEY = '8bithos:whiteboard:strokes';
 export function Whiteboard() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [tool, setTool] = useState<Tool>('pen');
+  const [penWidth, setPenWidth] = useState<number>(2);
   const [strokes, setStrokes] = useState<Stroke[]>(() => {
     try {
       return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]') as Stroke[];
@@ -110,7 +114,7 @@ export function Whiteboard() {
 
   const strokeConfig = (): Pick<Stroke, 'color' | 'width'> =>
     tool === 'pen'
-      ? { color: '#ffffff', width: 3 }
+      ? { color: '#ffffff', width: penWidth }
       : tool === 'highlight'
         ? { color: 'rgba(255, 255, 255, 0.28)', width: 18 }
         : { color: '#050505', width: 24 };
@@ -186,6 +190,22 @@ export function Whiteboard() {
             {t.label}
           </button>
         ))}
+        {tool === 'pen' &&
+          PEN_PRESETS.map((w) => (
+            <button
+              key={w}
+              type="button"
+              onClick={() => setPenWidth(w)}
+              className={`micro-pixel px-2 py-1 border ${
+                penWidth === w
+                  ? 'bg-fg text-bg border-fg'
+                  : 'text-gray-300 border-line-strong hover:border-fg'
+              }`}
+              aria-label={`Ketebalan pen ${w}`}
+            >
+              {w.toFixed(1)}
+            </button>
+          ))}
         <span className="flex-1" />
         <PixelButton variant="secondary" onClick={undo}>
           ↶ UNDO

@@ -13,6 +13,7 @@ import { useSession } from '@/features/auth/useSession';
 import { PixelCard } from '@/shared/components/PixelCard';
 import { PixelButton } from '@/shared/components/PixelButton';
 import { EmptyState } from '@/shared/components/EmptyState';
+import { PixelLoading } from '@/shared/components/PixelLoading';
 import { ConfirmDialog } from '@/shared/components/ConfirmDialog';
 
 const KINDS: Array<{ value: DocumentKind; label: string }> = [
@@ -43,6 +44,7 @@ export function Documents() {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const [confirmDelete, setConfirmDelete] = useState<DocumentRow | null>(null);
+  const [search, setSearch] = useState('');
 
   const { data: classSummaries } = useQuery({
     queryKey: ['classes', user?.id ?? 'anon'],
@@ -100,7 +102,17 @@ export function Documents() {
   const cls = classId
     ? (classSummaries ?? []).find((s) => s.classRow.id === classId)?.classRow
     : null;
-  const docs = docsQ.data ?? [];
+  const docsRaw = docsQ.data ?? [];
+  // Search (Doc 08 WORK-02 MATERIALS: "SEARCH MATERIAL...")
+  const q = search.trim().toLowerCase();
+  const docs = q
+    ? docsRaw.filter(
+        (d) =>
+          d.title.toLowerCase().includes(q) ||
+          d.kind.toLowerCase().includes(q) ||
+          d.tags.toLowerCase().includes(q),
+      )
+    : docsRaw;
 
   return (
     <main className="p-4 space-y-3 flex flex-col min-h-screen">
@@ -116,6 +128,16 @@ export function Documents() {
           <span className="font-sans text-pixel-sm text-gray-300">semua dokumen</span>
         )}
       </header>
+
+      {/* Search (Doc 08 WORK-02) */}
+      <input
+        type="search"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="cari dokumen…"
+        className="w-full max-w-sm bg-bg text-fg border border-line-strong px-3 py-1.5 font-sans text-small focus-visible:border-fg"
+        aria-label="Cari dokumen"
+      />
 
       <PixelCard title="upload" accent>
         <div className="flex gap-2 items-center flex-wrap">
@@ -175,7 +197,7 @@ export function Documents() {
         ))}
       </div>
 
-      {docsQ.isLoading && <p className="font-sans text-pixel-sm text-gray-300">loading…</p>}
+      {docsQ.isLoading && <PixelLoading />}
 
       {!docsQ.isLoading && docs.length === 0 && (
         <EmptyState
