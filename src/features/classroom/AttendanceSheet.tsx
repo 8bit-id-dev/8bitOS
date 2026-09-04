@@ -6,6 +6,7 @@ import { listAttendanceForSession, listStudentsByClass, upsertAttendance } from 
 import type { AttendanceStatus, ClassSession, Subject } from '@/shared/db/types';
 import { PixelCard } from '@/shared/components/PixelCard';
 import { PixelButton } from '@/shared/components/PixelButton';
+import { useToast } from '@/shared/components/Toast';
 import { useSession } from '@/features/auth/useSession';
 
 const STATUS_LABEL: Record<AttendanceStatus, string> = {
@@ -41,6 +42,7 @@ const useSessionDetail = (sessionId: string) => {
 export function AttendanceSheet() {
   const { sessionId = '', classId = '' } = useParams<{ sessionId: string; classId: string }>();
   const { user } = useSession();
+  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const { data: session } = useSessionDetail(sessionId);
@@ -83,6 +85,7 @@ export function AttendanceSheet() {
   const handleSet = async (studentId: string, status: AttendanceStatus) => {
     if (!user || !sessionId) return;
     await upsertAttendance(sessionId, studentId, status);
+    toast(`✓ ${status.toUpperCase()} TERCATAT`);
     void queryClient.invalidateQueries({ queryKey: ['session-attendance', sessionId] });
     void queryClient.invalidateQueries({ queryKey: ['pending-count', user.id] });
   };

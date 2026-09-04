@@ -20,6 +20,7 @@ import { PixelCard } from '@/shared/components/PixelCard';
 import { PixelButton } from '@/shared/components/PixelButton';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { ConfirmDialog } from '@/shared/components/ConfirmDialog';
+import { MathText } from '@/shared/components/math';
 import { TYPE_OPTIONS } from './assessment.helpers';
 
 const ASSESSMENT_TYPES: Array<{ value: AssessmentType; label: string }> = [
@@ -257,9 +258,8 @@ export function AssessmentBuilder() {
                     {i + 1}.
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-sans text-pixel-sm text-fg break-words">
-                      {q.prompt || '(kosong)'}
-                    </p>
+                    {/* Prompt dirender dengan inline $latex$ (Dok 09 §17 MathText) */}
+                    <MathText text={q.prompt || '(kosong)'} />
                     <p className="font-sans micro-pixel text-gray-500 mt-0.5">
                       {TYPE_OPTIONS.find((t) => t.value === q.type)?.label} · {q.points} poin
                       {q.answer_key != null && ` · kunci: ${q.answer_key}`}
@@ -324,7 +324,7 @@ export function AssessmentBuilder() {
                   value={qDraft.prompt}
                   onChange={(e) => setQDraft({ ...qDraft, prompt: e.target.value })}
                   rows={3}
-                  placeholder="pertanyaan…"
+                  placeholder="pertanyaan… (rumus: $latex$)"
                   className="w-full bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm focus-visible:border-fg"
                   aria-label="Pertanyaan"
                 />

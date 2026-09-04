@@ -11,6 +11,8 @@ import { useSession } from '@/features/auth/useSession';
 import { PixelCard } from '@/shared/components/PixelCard';
 import { PixelButton } from '@/shared/components/PixelButton';
 import { EmptyState } from '@/shared/components/EmptyState';
+import { MathText } from '@/shared/components/math';
+import { useToast } from '@/shared/components/Toast';
 import { attemptScore, gradeAnswer, isObjective, toPercent, TYPE_LABEL } from './assessment.helpers';
 
 const TF_OPTIONS = ['BENAR', 'SALAH'];
@@ -18,6 +20,7 @@ const TF_OPTIONS = ['BENAR', 'SALAH'];
 export function AssessmentRun() {
   const { assessmentId = '' } = useParams<{ assessmentId: string }>();
   const { user } = useSession();
+  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const questionsQ = useQuery({
@@ -115,6 +118,7 @@ export function AssessmentRun() {
     },
     onSuccess: () => {
       setSaveState('● tersimpan');
+      toast('✓ KOREKSI TERSIMPAN');
       void queryClient.invalidateQueries({ queryKey: ['attempts', assessmentId] });
     },
     onError: (e) => setSaveState(`ERROR: ${(e as Error).message}`),
@@ -213,7 +217,8 @@ export function AssessmentRun() {
             {questions.map((q, i) => (
               <div key={q.id} className="space-y-1.5">
                 <p className="font-sans text-pixel-sm text-fg">
-                  <span className="text-gray-500">{i + 1}.</span> {q.prompt}
+                  <span className="text-gray-500">{i + 1}.</span>{' '}
+                  <MathText text={q.prompt} />
                 </p>
                 {q.type === 'tf' ? (
                   <div className="flex gap-1">

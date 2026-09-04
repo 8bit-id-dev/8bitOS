@@ -6,11 +6,13 @@ import { useSession } from '@/features/auth/useSession';
 import { useSessionContext } from '@/features/classroom/sessionContext';
 import { PixelModal } from '@/shared/components/PixelModal';
 import { PixelButton } from '@/shared/components/PixelButton';
+import { useToast } from '@/shared/components/Toast';
 
 // Quick Capture (Dokumen 06 §18): ide spontan dalam hitungan detik,
 // otomatis diberi konteks session aktif bila ada.
 export function QuickCapture({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { user } = useSession();
+  const { toast } = useToast();
   const activeSession = useSessionContext((s) => s.active);
   const queryClient = useQueryClient();
   const [text, setText] = useState('');
@@ -42,6 +44,7 @@ export function QuickCapture({ open, onClose }: { open: boolean; onClose: () => 
     },
     onSuccess: () => {
       setSavedLabel('● tersimpan ke notes');
+      toast('✓ CAPTURE TERSIMPAN');
       void queryClient.invalidateQueries({ queryKey: ['notes'] });
       setTimeout(() => {
         onClose();
