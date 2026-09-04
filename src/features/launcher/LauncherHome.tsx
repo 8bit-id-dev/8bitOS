@@ -14,12 +14,12 @@ import {
 import { count } from '@/shared/db/outbox';
 
 const MODULES = [
-  { to: '/classroom', label: 'KELAS', glyph: 'â–¤' },
-  { to: '/planner', label: 'PLANNER', glyph: 'â—ˆ' },
-  { to: '/notes', label: 'NOTES', glyph: 'â–§' },
-  { to: '/browser', label: 'BROWSER', glyph: 'âŒ˜' },
-  { to: '/assessment', label: 'QUIZ', glyph: 'â—‰' },
-  { to: '/gradebook', label: 'NILAI', glyph: 'â–¦' },
+  { to: '/classroom', label: 'KELAS', glyph: '' },
+  { to: '/planner', label: 'PLANNER', glyph: '' },
+  { to: '/notes', label: 'NOTES', glyph: '' },
+  { to: '/browser', label: 'BROWSER', glyph: 'R' },
+  { to: '/assessment', label: 'QUIZ', glyph: '0' },
+  { to: '/gradebook', label: 'NILAI', glyph: '' },
 ];
 
 export function LauncherHome() {
@@ -71,12 +71,12 @@ export function LauncherHome() {
       <header className="flex items-center justify-between text-pixel-sm">
         <span className="text-fg  font-bold">8bitOS</span>
         <span className="text-gray-300">
-          {date} · <span className="text-fg">{time}</span>
-          {pending > 0 && <span className="ml-2 text-fg">· SYNC {pending}</span>}
+          {date}  <span className="text-fg">{time}</span>
+          {pending > 0 && <span className="ml-2 text-fg"> SYNC {pending}</span>}
         </span>
       </header>
 
-      {/* Clock block — pixel display (Doc 05 v2 §4.2) */}
+      {/* Clock block  pixel display (Doc 05 v2 4.2) */}
       <section className="mt-4">
         <p className="micro-pixel text-gray-300">GOOD MORNING, TEACHER</p>
         <h1 className="font-pixel text-display leading-none font-bold text-fg tracking-wide">
@@ -89,13 +89,13 @@ export function LauncherHome() {
         <section className="panel-strong p-4 max-w-md">
           <p className="micro-pixel text-gray-300 label-pixel mb-1">next_session</p>
           <p className="text-body font-bold text-fg">
-            {next.subject.name.toUpperCase()} · {next.classRow.name}
+            {next.subject.name.toUpperCase()}  {next.classRow.name}
           </p>
           <p className="text-pixel-sm text-gray-300 mt-0.5">
-            {next.slot.start_time.slice(0, 5)} · ruang {next.slot.room || 'â€”'}
+            {next.slot.start_time.slice(0, 5)}  ruang {next.slot.room || ''}
           </p>
           <Link to={`/classroom/${next.classRow.id}`} className="inline-block mt-3">
-            <PixelButton>MULAI KBM â†’</PixelButton>
+            <PixelButton>MULAI KBM  </PixelButton>
           </Link>
         </section>
       ) : (
@@ -130,20 +130,20 @@ export function LauncherHome() {
           onClick={() => setDrawerOpen(true)}
           className="font-sans text-pixel-sm text-gray-300 border border-line-strong px-3 py-1.5 hover:border-fg hover:text-fg transition-colors"
         >
-          â–¤ ALL APPS
+           ALL APPS
         </button>
         <div className="flex items-center gap-2">
           <Link
             to="/"
             className="font-sans text-pixel-sm text-gray-300 border border-line-strong px-3 py-1.5 hover:border-fg hover:text-fg transition-colors"
           >
-            âŒ• CARI (ctrl+k)
+            R" CARI (ctrl+k)
           </Link>
           <Link
             to="/"
             className="font-sans text-pixel-sm text-gray-300 border border-line-strong px-3 py-1.5 hover:border-fg hover:text-fg transition-colors"
           >
-            WORKSPACE â†’
+            WORKSPACE  
           </Link>
         </div>
       </footer>
@@ -160,7 +160,7 @@ export function LauncherHome() {
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="search appsâ€¦"
+              placeholder="search apps…"
               autoFocus
               className="flex-1 max-w-sm bg-bg text-fg border border-line-strong px-3 py-2 font-sans text-small focus-visible:border-fg"
             />
@@ -176,7 +176,7 @@ export function LauncherHome() {
 
           {!isLauncherNative() && (
             <p className="text-pixel-sm text-gray-500">
-              app drawer hanya tersedia di Android native â€” jalankan via APK/Capacitor
+              app drawer hanya tersedia di Android native  jalankan via APK/Capacitor
             </p>
           )}
 
@@ -189,7 +189,7 @@ export function LauncherHome() {
                   onClick={() => void launchAndroidApp(a.packageName)}
                   className="panel h-24 flex flex-col items-center justify-center gap-2 hover:border-fg hover: transition-colors"
                 >
-                  <span className="text-xl text-fg">â–£</span>
+                  <span className="text-xl text-fg"></span>
                   <span className="micro-pixel text-gray-300 text-center px-1 leading-tight">
                     {a.label}
                   </span>

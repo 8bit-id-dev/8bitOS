@@ -17,6 +17,7 @@ import { PixelCard } from '@/shared/components/PixelCard';
 import { PixelButton } from '@/shared/components/PixelButton';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { StudentForm } from './StudentForm';
+import { useSessionContext } from './sessionContext';
 
 type TabKey = 'overview' | 'roster' | 'attendance' | 'notes';
 
@@ -107,7 +108,7 @@ const OverviewTab = ({
           <div className="flex gap-2 flex-wrap">
             {Array.from(
               new Map(
-                schedule.map((s) => [s.subject_id, subjectById.get(s.subject_id) ?? 'â€”']),
+                schedule.map((s) => [s.subject_id, subjectById.get(s.subject_id) ?? '']),
               ),
             ).map(([subjectId, name]) => (
               <PixelButton
@@ -115,7 +116,7 @@ const OverviewTab = ({
                 onClick={() => onStart(subjectId)}
                 disabled={isStarting}
               >
-                {String(name).toUpperCase()} â†’
+                {String(name).toUpperCase()}  
               </PixelButton>
             ))}
           </div>
@@ -134,10 +135,10 @@ const OverviewTab = ({
               >
                 <span className="text-gray-300 w-16">{dayLabel(s.day_of_week)}</span>
                 <span className="text-fg">
-                  {s.start_time.slice(0, 5)}â€“{s.end_time.slice(0, 5)}
+                  {s.start_time.slice(0, 5)}{s.end_time.slice(0, 5)}
                 </span>
-                <span className="flex-1 text-fg">{subjectById.get(s.subject_id) ?? 'â€”'}</span>
-                <span className="text-gray-500">{s.room || 'â€”'}</span>
+                <span className="flex-1 text-fg">{subjectById.get(s.subject_id) ?? ''}</span>
+                <span className="text-gray-500">{s.room || ''}</span>
               </li>
             ))}
           </ul>
@@ -146,13 +147,13 @@ const OverviewTab = ({
 
       <p className="font-sans text-pixel-sm">
         <Link to="/classroom" className="text-gray-300 hover:text-fg">
-          â† ~/classroom
+            ~/classroom
         </Link>
         <Link
           to={`/classroom/${classId}/documents`}
           className="text-gray-300 hover:text-fg ml-3"
         >
-          ðŸ“„ dokumen kelas â†’
+          x dokumen kelas  
         </Link>
         <span className="text-gray-500 ml-2">{className}</span>
       </p>
@@ -221,7 +222,7 @@ const RosterTab = ({
             >
               {s.full_name}
             </Link>
-            <span className="text-gray-300">{s.nisn || 'â€”'}</span>
+            <span className="text-gray-300">{s.nisn || ''}</span>
             <span className="text-gray-300 w-6 text-center">{s.gender}</span>
           </li>
         ))}
@@ -257,18 +258,27 @@ export function ClassHub() {
       return createSession(user.id, classId, subjectId, new Date(), 'Sesi baru');
     },
     onSuccess: (session) => {
+      // Session-Based Teaching (Dok 06 §3): session aktif global
+      useSessionContext.getState().start({
+        sessionId: session.id,
+        classId,
+        className: data?.classRow?.name ?? '',
+        subjectName:
+          data?.subjectById?.get(session.subject_id) ?? '',
+        startedAtIso: new Date().toISOString(),
+      });
       void queryClient.invalidateQueries({ queryKey: ['class-bundle', classId] });
       window.location.hash = `#/classroom/${classId}/attendance/${session.id}`;
     },
   });
 
   const subjectName = useMemo(() => {
-    if (!data?.subjectById) return 'â€”';
-    return Array.from(data.subjectById.values()).join(', ') || 'â€”';
+    if (!data?.subjectById) return '';
+    return Array.from(data.subjectById.values()).join(', ') || '';
   }, [data]);
 
   if (isLoading) {
-    return <p className="p-4 font-sans text-pixel-sm text-gray-300">loadingâ€¦</p>;
+    return <p className="p-4 font-sans text-pixel-sm text-gray-300">loading……</p>;
   }
   if (error) {
     return (
@@ -277,7 +287,7 @@ export function ClassHub() {
           <p className="font-sans text-pixel-sm text-fg">GAGAL MEMUAT KELAS.</p>
           <p className="font-sans text-pixel-sm text-gray-300">{(error as Error).message}</p>
           <Link to="/classroom" className="font-sans text-pixel-sm text-fg inline-block">
-            â† kembali
+              kembali
           </Link>
         </div>
       </main>

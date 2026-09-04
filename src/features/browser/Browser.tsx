@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { PixelButton } from '@/shared/components/PixelButton';
 import { PixelCard } from '@/shared/components/PixelCard';
@@ -48,7 +49,7 @@ export function Browser() {
         body: input.trim(),
       }),
     onSuccess: () => {
-      setSavedMsg('Ã¢â€” tersimpan ke notes');
+      setSavedMsg('●● tersimpan ke notes');
       void queryClient.invalidateQueries({ queryKey: ['notes'] });
       setTimeout(() => setSavedMsg(''), 2500);
     },
@@ -95,12 +96,12 @@ export function Browser() {
           className="font-sans text-pixel-sm text-gray-300 hover:text-fg px-1"
           aria-label="Beranda mesin pencari"
         >
-          Ã¢Å’â€š
+          ●a
         </button>
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="cari materi atau ketik URLÃ¢â‚¬¦"
+          placeholder="cari materi atau ketik URL●●"
           className="flex-1 bg-bg text-fg border border-line-strong px-3 py-1.5 font-sans text-pixel-sm focus-visible:border-fg"
           aria-label="Alamat atau pencarian"
         />
@@ -128,7 +129,7 @@ export function Browser() {
                 rel="noreferrer"
                 className="font-sans text-pixel-sm text-fg underline"
               >
-                buka di tab baru Ã¢â€ â€”
+                buka di tab baru ↗⬠
               </a>
             )}
             {blocked && (
@@ -138,7 +139,7 @@ export function Browser() {
                 rel="noreferrer"
                 className="font-sans text-pixel-sm text-fg underline"
               >
-                buka ${url} di tab baru Ã¢â€ â€”
+                {`buka ${url} di tab baru ↗`}
               </a>
             )}
           </div>
@@ -154,12 +155,16 @@ export function Browser() {
           >
             + SIMPAN KE NOTES
           </PixelButton>
+          {/* Content → Question flow (Dokumen 06 §13) */}
+          <Link to="/assessment/new" className="inline-block">
+            <PixelButton>+ BUAT SOAL</PixelButton>
+          </Link>
           <span className="font-sans text-pixel-sm text-gray-300" aria-live="polite">
             {savedMsg}
           </span>
           <span className="flex-1" />
           <span className="font-sans micro-pixel text-gray-500">
-            catat sumber: {url || 'Ã¢â‚¬â€'}
+            catat sumber: {url || '—'}
           </span>
         </div>
       </PixelCard>

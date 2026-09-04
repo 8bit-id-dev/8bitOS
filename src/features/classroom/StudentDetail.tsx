@@ -56,14 +56,14 @@ export function StudentDetail() {
   });
 
   if (studentQ.isLoading) {
-    return <p className="p-4 font-sans text-pixel-sm text-gray-300">loadingâ€¦</p>;
+    return <p className="p-4 font-sans text-pixel-sm text-gray-300">loading……</p>;
   }
   if (!studentQ.data) {
     return (
       <main className="p-4 space-y-2">
         <EmptyState title="SISWA TIDAK DITEMUKAN" hint="Periksa tautan Anda." />
         <Link to={`/classroom/${classId}`} className="font-sans text-pixel-sm text-fg">
-          â† kembali
+            kembali
         </Link>
       </main>
     );
@@ -103,7 +103,7 @@ export function StudentDetail() {
       <PixelCard title="profil" accent>
         <p className="font-sans text-body font-bold text-fg">{s.full_name}</p>
         <p className="font-sans text-pixel-sm text-gray-300 mt-0.5">
-          NISN: {s.nisn || 'â€”'} · {s.gender === 'L' ? 'Laki-laki' : 'Perempuan'}
+          NISN: {s.nisn || ''}  {s.gender === 'L' ? 'Laki-laki' : 'Perempuan'}
         </p>
         {attendanceRate !== null && (
           <p className="font-sans text-pixel-sm text-gray-300 mt-1">
@@ -132,7 +132,7 @@ export function StudentDetail() {
                         : 'text-gray-500'
                   }
                 >
-                  {row.record ? STATUS_SHORT[row.record.status] : 'â€”'}
+                  {row.record ? STATUS_SHORT[row.record.status] : ''}
                 </span>
               </li>
             ))}
@@ -142,7 +142,7 @@ export function StudentDetail() {
 
       <div className="flex gap-2">
         <Link to={`/classroom/${classId}`}>
-          <PixelButton variant="secondary">â† KELAS</PixelButton>
+          <PixelButton variant="secondary">  KELAS</PixelButton>
         </Link>
       </div>
 

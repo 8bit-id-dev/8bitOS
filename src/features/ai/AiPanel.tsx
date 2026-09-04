@@ -81,7 +81,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
         if (!data.response) throw new Error('EMPTY');
         return finishAiJob(job.id, data.response);
       } catch {
-        // Gateway unreachable â€” local structured fallback, still audited.
+        // Gateway unreachable  local structured fallback, still audited.
         return finishAiJob(job.id, localFallbackResponse(kind, input));
       }
     },
@@ -98,7 +98,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
   const saveNoteMutation = useMutation({
     mutationFn: () => saveAiResponseToNote(user!.id, activeJob!),
     onSuccess: () => {
-      setSavedMsg('â— tersimpan ke notes');
+      setSavedMsg('● tersimpan ke notes');
       void queryClient.invalidateQueries({ queryKey: ['notes'] });
       setTimeout(() => setSavedMsg(''), 2500);
     },
@@ -124,7 +124,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
       >
         <header className="h-header-h flex items-center justify-between px-3 border-b border-line-strong">
           <h2 className="font-sans text-pixel-sm label-pixel text-fg ">
-            8bit AI · asisten guru
+            8bit AI  asisten guru
           </h2>
           <button
             type="button"
@@ -169,7 +169,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
             className="w-full bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm"
             aria-label="Konteks kelas (opsional)"
           >
-            <option value="">â€” tanpa konteks kelas â€”</option>
+            <option value=""> tanpa konteks kelas </option>
             {(classSummaries ?? []).map((s) => (
               <option key={s.classRow.id} value={s.classRow.name}>
                 {s.classRow.name}
@@ -182,7 +182,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
             value={input}
             onChange={(e) => setInput(e.target.value)}
             rows={3}
-            placeholder={template ? template.placeholder : 'tulis permintaan untuk AIâ€¦'}
+            placeholder={template ? template.placeholder : 'tulis permintaan untuk AI…'}
             className="w-full bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-pixel-sm focus-visible:border-fg resize-y"
             aria-label="Permintaan AI"
           />
@@ -195,7 +195,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
               onClick={() => generateMutation.mutate()}
               disabled={busy || !input.trim()}
             >
-              {busy ? 'MEMPROSESâ€¦' : 'HASILKAN â†’'}
+              {busy ? 'MEMPROSES……' : 'HASILKAN  '}
             </PixelButton>
           </div>
 
@@ -203,7 +203,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
           {activeJob && (
             <div className="panel p-3">
               <p className="font-sans micro-pixel text-gray-300 mb-1 label-pixel">
-                {KIND_LABEL[(activeJob.kind as AiKind) ?? 'free'] ?? activeJob.kind} · jawaban
+                {KIND_LABEL[(activeJob.kind as AiKind) ?? 'free'] ?? activeJob.kind}  jawaban
               </p>
               <pre className="font-sans text-pixel-sm text-fg whitespace-pre-wrap font-sans max-h-72 overflow-y-auto">
                 {activeJob.response}
@@ -214,7 +214,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
                   onClick={() => saveNoteMutation.mutate()}
                   disabled={saveNoteMutation.isPending}
                 >
-                  {saveNoteMutation.isPending ? 'MENYIMPANâ€¦' : '+ SIMPAN KE NOTES'}
+                  {saveNoteMutation.isPending ? 'MENYIMPAN………' : '+ SIMPAN KE NOTES'}
                 </PixelButton>
               </div>
             </div>
@@ -240,7 +240,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
                         {j.prompt.slice(0, 70)}
                       </p>
                       <p className="font-sans micro-pixel text-gray-500">
-                        {KIND_LABEL[(j.kind as AiKind) ?? 'free'] ?? j.kind} ·{' '}
+                        {KIND_LABEL[(j.kind as AiKind) ?? 'free'] ?? j.kind} {' '}
                         {j.status === 'done' ? 'selesai' : j.status}
                       </p>
                     </button>
@@ -254,7 +254,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
 
       <ConfirmDialog
         open={confirmClose}
-        title="TUTUP SAAT MEMPROSES?"
+        title="TUTUP SAAT MEMPROSES…?"
         message="Permintaan AI sedang berjalan. Jika ditutup, hasil mungkin tidak tersimpan."
         confirmLabel="TETAP TUTUP"
         destructive

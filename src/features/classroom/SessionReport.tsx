@@ -15,6 +15,7 @@ import {
   sessionDurationLabel,
   withUnmarked,
 } from './sessionReport.helpers';
+import { useSessionContext } from './sessionContext';
 import { formatJakartaDate, formatJakartaTime } from '@/shared/lib/time';
 
 export function SessionReport() {
@@ -44,6 +45,8 @@ export function SessionReport() {
   const endMutation = useMutation({
     mutationFn: () => endSession(sessionId),
     onSuccess: () => {
+      // END SESSION (Dok 06 §21): clear global session context
+      useSessionContext.getState().end();
       void queryClient.invalidateQueries({ queryKey: ['session-report', sessionId] });
       void queryClient.invalidateQueries({ queryKey: ['class-bundle', classId] });
       navigate(`/classroom/${classId}`);

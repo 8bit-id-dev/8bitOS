@@ -75,6 +75,9 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
       { id: 'n-docs', label: 'Documents', group: 'NAV', keywords: 'dokumen arsip modul', to: '/documents' },
       { id: 'n-whiteboard', label: 'Whiteboard', group: 'NAV', keywords: 'papan tulis', to: '/whiteboard' },
       { id: 'n-browser', label: 'Browser', group: 'NAV', keywords: 'cari web', to: '/browser' },
+      { id: 'n-capture', label: 'Quick Capture', hint: 'ctrl+j', group: 'AKSI', keywords: 'ide cepat catatan spontan', action: () => window.dispatchEvent(new CustomEvent('8bithos:quick-capture')) },
+      { id: 'n-timer5', label: 'Timer 5 Menit', hint: 'overlay', group: 'AKSI', keywords: 'timer waktu countdown', action: () => window.dispatchEvent(new CustomEvent('8bithos:timer', { detail: 5 })) },
+      { id: 'n-timer15', label: 'Timer 15 Menit', hint: 'overlay', group: 'AKSI', keywords: 'timer waktu countdown', action: () => window.dispatchEvent(new CustomEvent('8bithos:timer', { detail: 15 })) },
     ];
 
     const classes: PaletteItem[] = (classSummaries ?? []).map((s) => ({
@@ -107,7 +110,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
     const studentItems: PaletteItem[] = (students ?? []).map((s) => ({
       id: `s-${s.id}`,
       label: s.full_name,
-      hint: `${s.className} · siswa`,
+      hint: `${s.className}  siswa`,
       group: 'SISWA',
       keywords: `nisn ${s.nisn}`,
       to: `/classroom/${s.classId}/students/${s.id}`,
@@ -202,7 +205,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
               onClose();
             }
           }}
-          placeholder="cari siswa, kelas, catatan, asesmenâ€¦ atau ketik perintah"
+          placeholder="cari siswa, kelas, catatan, asesmen… atau ketik perintah"
           className="w-full bg-transparent text-fg font-sans text-small px-4 py-3 outline-none border-b border-line-strong placeholder:text-gray-500"
           aria-label="Pencarian global"
         />
@@ -234,8 +237,8 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
         </ul>
 
         <footer className="px-4 py-2 border-t hairline flex items-center gap-3 font-sans micro-pixel text-gray-500">
-          <span>â†‘â†“ navigasi</span>
-          <span>â†µ buka</span>
+          <span>   navigasi</span>
+          <span>  buka</span>
           <span>esc tutup</span>
           <span className="flex-1" />
           <span>ctrl+k</span>

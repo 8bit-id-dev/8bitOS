@@ -27,7 +27,7 @@ const ClassRowView = ({ s }: { s: ClassSummary }) => {
         <span className="font-sans micro-pixel text-gray-500">{c.academic_year}</span>
       </div>
       <p className="font-sans text-pixel-sm text-gray-300 mt-0.5">
-        homeroom: {c.homeroom || 'â€”'} · siswa: {s.studentCount}
+        homeroom: {c.homeroom || ''}  siswa: {s.studentCount}
       </p>
       {s.subjectNames.length > 0 && (
         <div className="flex gap-1 flex-wrap mt-1.5">
@@ -55,10 +55,10 @@ export function ClassList() {
         <h1 className="font-sans font-bold text-pixel-xl text-fg  label-pixel">
           ~/classroom
         </h1>
-        <span className="font-sans text-pixel-sm text-gray-300">{user?.email ?? 'â€”'}</span>
+        <span className="font-sans text-pixel-sm text-gray-300">{user?.email ?? ''}</span>
       </header>
 
-      {isLoading && <p className="font-sans text-pixel-sm text-gray-300">loadingâ€¦</p>}
+      {isLoading && <p className="font-sans text-pixel-sm text-gray-300">loading……</p>}
 
       {error && (
         <div className="panel-strong p-3">
