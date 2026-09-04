@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createNote } from '@/shared/db/queries';
+import { createNote, logSessionActivity } from '@/shared/db/queries';
 import type { NoteKind } from '@/shared/db/types';
 import { useSession } from '@/features/auth/useSession';
 import { useSessionContext } from '@/features/classroom/sessionContext';
@@ -42,9 +42,18 @@ export function QuickCapture({ open, onClose }: { open: boolean; onClose: () => 
         session_id: activeSession?.sessionId ?? null,
       });
     },
-    onSuccess: () => {
+    onSuccess: (_note) => {
       setSavedLabel('● tersimpan ke notes');
       toast('✓ CAPTURE TERSIMPAN');
+      // Timeline (Doc 10 §17): capture dalam sesi tercatat sebagai aktivitas note
+      if (user && activeSession) {
+        void logSessionActivity(
+          user.id,
+          activeSession.sessionId,
+          'note',
+          text.trim().split('\n')[0]?.slice(0, 60) || 'Quick capture',
+        ).catch(() => undefined);
+      }
       void queryClient.invalidateQueries({ queryKey: ['notes'] });
       setTimeout(() => {
         onClose();

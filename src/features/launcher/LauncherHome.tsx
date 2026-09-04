@@ -12,14 +12,19 @@ import {
   type LauncherApp,
 } from '@/shared/lib/launcherApps';
 import { count } from '@/shared/db/outbox';
+import { SessionIndicator } from '@/features/classroom/SessionIndicator';
+import { useSessionContext } from '@/features/classroom/sessionContext';
+import { AiPanel } from '@/features/ai/AiPanel';
 
 const MODULES = [
-  { to: '/classroom', label: 'KELAS', glyph: '' },
-  { to: '/planner', label: 'PLANNER', glyph: '' },
-  { to: '/notes', label: 'NOTES', glyph: '' },
-  { to: '/browser', label: 'BROWSER', glyph: 'R' },
-  { to: '/assessment', label: 'QUIZ', glyph: '0' },
-  { to: '/gradebook', label: 'NILAI', glyph: '' },
+  { to: '/classroom', label: 'KELAS', glyph: '▤' },
+  { to: '/planner', label: 'PLANNER', glyph: '◈' },
+  { to: '/notes', label: 'NOTES', glyph: '▧' },
+  { to: '/browser', label: 'BROWSER', glyph: '⌘' },
+  { to: '/assessment', label: 'QUIZ', glyph: '◉' },
+  { to: '/gradebook', label: 'NILAI', glyph: '▦' },
+  { to: '/whiteboard', label: 'BOARD', glyph: '▩' },
+  { to: '/tools', label: 'TOOLS', glyph: '▣' },
 ];
 
 export function LauncherHome() {
@@ -29,6 +34,8 @@ export function LauncherHome() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [pending, setPending] = useState(0);
   const [search, setSearch] = useState('');
+  const [aiOpen, setAiOpen] = useState(false);
+  const activeSession = useSessionContext((s) => s.active);
 
   useEffect(() => {
     const t = setInterval(() => setNowIso(new Date().toISOString()), 1_000);
@@ -67,11 +74,14 @@ export function LauncherHome() {
 
   return (
     <div className="min-h-screen bg-bg text-fg font-sans flex flex-col p-6 gap-6 select-none">
+      {/* Persistent session indicator (Doc 06 §4) */}
+      <SessionIndicator />
+
       {/* Top status strip */}
       <header className="flex items-center justify-between text-pixel-sm">
-        <span className="text-fg  font-bold">8bitOS</span>
+        <span className="text-fg font-bold">8bitOS</span>
         <span className="text-gray-300">
-          {date}  <span className="text-fg">{time}</span>
+          {date} <span className="text-fg">{time}</span>
           {pending > 0 && <span className="ml-2 text-fg"> SYNC {pending}</span>}
         </span>
       </header>
@@ -176,7 +186,7 @@ export function LauncherHome() {
 
           {!isLauncherNative() && (
             <p className="text-pixel-sm text-gray-500">
-              app drawer hanya tersedia di Android native  jalankan via APK/Capacitor
+              app drawer hanya tersedia di Android native — jalankan via APK/Capacitor
             </p>
           )}
 
@@ -187,9 +197,9 @@ export function LauncherHome() {
                   key={a.packageName}
                   type="button"
                   onClick={() => void launchAndroidApp(a.packageName)}
-                  className="panel h-24 flex flex-col items-center justify-center gap-2 hover:border-fg hover: transition-colors"
+                  className="panel h-24 flex flex-col items-center justify-center gap-2 hover:border-fg transition-colors"
                 >
-                  <span className="text-xl text-fg"></span>
+                  <span className="text-xl text-fg">▣</span>
                   <span className="micro-pixel text-gray-300 text-center px-1 leading-tight">
                     {a.label}
                   </span>
@@ -202,6 +212,30 @@ export function LauncherHome() {
           </div>
         </div>
       )}
+
+      {/* Class Mode quick strip (Doc 08 §38-39): sesi aktif → buka absensi; AI FAB */}
+      <div className="flex items-center justify-between gap-3">
+        {activeSession ? (
+          <Link
+            to={`/classroom/${activeSession.classId}/attendance/${activeSession.sessionId}`}
+            className="pixel-cut bg-fg text-bg border border-fg px-3 py-2 label-pixel font-pixel text-pixel-xs hover:bg-surface hover:text-fg"
+          >
+            ▶ LANJUTKAN {activeSession.subjectName.toUpperCase()} · {activeSession.className}
+          </Link>
+        ) : (
+          <span className="micro-pixel text-gray-500">CLASS MODE muncul saat sesi dimulai</span>
+        )}
+        <button
+          type="button"
+          onClick={() => setAiOpen(true)}
+          className="pixel-cut bg-fg text-bg border border-fg h-11 w-11 font-pixel text-pixel-md font-bold label-pixel hover:bg-surface hover:text-fg"
+          aria-label="Buka 8bit AI"
+        >
+          AI
+        </button>
+      </div>
+
+      <AiPanel open={aiOpen} onClose={() => setAiOpen(false)} />
 
       {/* noop navigate guard */}
       <span className="hidden">{typeof navigate === 'function' ? '' : ''}</span>

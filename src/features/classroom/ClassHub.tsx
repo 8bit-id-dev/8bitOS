@@ -2,9 +2,11 @@ import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  createNote,
   createSession,
   createStudent,
   getClassById,
+  listNotes,
   listScheduleForClass,
   listSessionsForClass,
   listStudentsByClass,
@@ -23,11 +25,11 @@ type TabKey = 'overview' | 'roster' | 'attendance' | 'notes';
 
 const TAB_KEYS: TabKey[] = ['overview', 'roster', 'attendance', 'notes'];
 
-const TABS: Record<TabKey, { label: string; soon?: boolean }> = {
+const TABS: Record<TabKey, { label: string }> = {
   overview: { label: 'OVERVIEW' },
   roster: { label: 'ROSTER' },
-  attendance: { label: 'ATTENDANCE', soon: true },
-  notes: { label: 'NOTES', soon: true },
+  attendance: { label: 'ATTENDANCE' },
+  notes: { label: 'NOTES' },
 };
 
 const dayLabel = (dow: number): string => {
@@ -280,9 +282,161 @@ const RosterTab = ({
   );
 };
 
-const SoonTab = ({ name }: { name: string }) => (
-  <EmptyState title={`${name} COMING SOON`} hint="Akan tersedia di rilis berikutnya." />
-);
+const AttendanceTab = ({
+  classId,
+  sessions,
+}: {
+  classId: string;
+  sessions: { id: string; topic: string; scheduled_for: string; status: string }[];
+}) => {
+  // Sesi terakhir (aktif atau terbaru) — one-tap ke sheet absensi (Dok 06 §5)
+  const latest = sessions.find((s) => s.status === 'active') ?? sessions[0];
+  return (
+    <div className="space-y-3">
+      {latest ? (
+        <PixelCard title="sesi_terakhir">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="font-sans text-pixel-sm text-fg truncate">
+                {latest.topic || '(tanpa topik)'}
+              </p>
+              <p className="font-sans micro-pixel text-gray-300 mt-0.5">
+                {new Date(latest.scheduled_for).toLocaleDateString('id-ID', {
+                  day: '2-digit',
+                  month: 'short',
+                })}{' '}
+                ·{' '}
+                <span className={latest.status === 'active' ? 'text-fg' : 'text-gray-500'}>
+                  {latest.status === 'active' ? 'AKTIF' : latest.status === 'done' ? 'SELESAI' : 'RENCANA'}
+                </span>
+              </p>
+            </div>
+            <Link to={`/classroom/${classId}/attendance/${latest.id}`}>
+              <PixelButton>BUKA ABSENSI →</PixelButton>
+            </Link>
+          </div>
+        </PixelCard>
+      ) : (
+        <EmptyState
+          title="BELUM ADA SESI"
+          hint="Mulai sesi dari tab OVERVIEW untuk membuka absensi."
+        />
+      )}
+      {sessions.length > 1 && (
+        <PixelCard title={`riwayat_sesi (${sessions.length})`}>
+          <ul className="flex flex-col">
+            {sessions.map((s) => (
+              <li key={s.id} className="border-b border-line last:border-b-0">
+                <Link
+                  to={`/classroom/${classId}/attendance/${s.id}`}
+                  className="flex items-center gap-3 py-1.5 font-sans text-pixel-sm hover:text-fg"
+                >
+                  <span className="micro-pixel text-gray-500 w-14">
+                    {s.status === 'active' ? 'AKTIF' : s.status === 'done' ? 'SELESAI' : 'RENCANA'}
+                  </span>
+                  <span className="flex-1 text-fg truncate">{s.topic || '(tanpa topik)'}</span>
+                  <span className="text-gray-300">
+                    {new Date(s.scheduled_for).toLocaleDateString('id-ID', {
+                      day: '2-digit',
+                      month: 'short',
+                    })}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </PixelCard>
+      )}
+    </div>
+  );
+};
+
+const NotesTab = ({ classId, className }: { classId: string; className: string }) => {
+  const queryClient = useQueryClient();
+  const { user } = useSession();
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [saved, setSaved] = useState(false);
+
+  const notesQ = useQuery({
+    queryKey: ['notes-class', classId],
+    queryFn: () => listNotes({ classId }),
+    enabled: Boolean(user && classId),
+    staleTime: 15_000,
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error('NO_AUTH');
+      return createNote(user.id, {
+        kind: 'class',
+        title: title.trim() || `Catatan ${className}`,
+        body,
+        class_id: classId,
+      });
+    },
+    onSuccess: () => {
+      setTitle('');
+      setBody('');
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+      void queryClient.invalidateQueries({ queryKey: ['notes-class', classId] });
+      void queryClient.invalidateQueries({ queryKey: ['notes'] });
+    },
+  });
+
+  const notes = notesQ.data ?? [];
+
+  return (
+    <div className="space-y-3">
+      <PixelCard title="catatan_baru" accent>
+        <div className="space-y-2">
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder={`judul (default: Catatan ${className})…`}
+            className="w-full bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-small focus-visible:border-fg"
+            aria-label="Judul catatan kelas"
+          />
+          <textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            rows={3}
+            placeholder="catatan kelas…"
+            className="w-full bg-bg text-fg border border-line-strong px-2 py-1.5 font-sans text-small focus-visible:border-fg resize-y"
+            aria-label="Isi catatan kelas"
+          />
+          <div className="flex items-center justify-between">
+            <span className="micro-pixel text-gray-500" aria-live="polite">
+              {saved ? '● tersimpan' : ''}
+            </span>
+            <PixelButton
+              onClick={() => createMutation.mutate()}
+              disabled={createMutation.isPending || !body.trim()}
+            >
+              {createMutation.isPending ? 'MENYIMPAN…' : '+ SIMPAN CATATAN KELAS'}
+            </PixelButton>
+          </div>
+        </div>
+      </PixelCard>
+
+      <PixelCard title={`catatan_kelas (${notes.length})`}>
+        {notes.length === 0 ? (
+          <p className="font-sans text-pixel-sm text-gray-300">belum ada catatan kelas</p>
+        ) : (
+          <ul className="flex flex-col">
+            {notes.map((n) => (
+              <li key={n.id} className="border-b border-line last:border-b-0 py-1.5">
+                <p className="font-sans text-pixel-sm text-fg">{n.title || '(tanpa judul)'}</p>
+                <p className="font-sans text-small text-gray-500 line-clamp-2">{n.body}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </PixelCard>
+    </div>
+  );
+};
 
 export function ClassHub() {
   const params = useParams<{ classId: string }>();
@@ -359,17 +513,13 @@ export function ClassHub() {
               key={k}
               type="button"
               onClick={() => setTab(k)}
-              disabled={t.soon}
               className={`px-3 py-1 font-sans micro-pixel label-pixel border-b-2 -mb-px transition-colors ${
                 isActive
                   ? 'text-fg border-fg'
-                  : t.soon
-                    ? 'text-gray-500 border-transparent cursor-not-allowed'
-                    : 'text-gray-300 border-transparent hover:text-fg'
+                  : 'text-gray-300 border-transparent hover:text-fg'
               }`}
             >
               {t.label}
-              {t.soon && <span className="ml-1 text-gray-500">[soon]</span>}
             </button>
           );
         })}
@@ -388,8 +538,12 @@ export function ClassHub() {
         />
       )}
       {tab === 'roster' && <RosterTab classId={classId} students={data.students} />}
-      {tab === 'attendance' && <SoonTab name="ATTENDANCE" />}
-      {tab === 'notes' && <SoonTab name="NOTES" />}
+      {tab === 'attendance' && (
+        <AttendanceTab classId={classId} sessions={data.sessions} />
+      )}
+      {tab === 'notes' && (
+        <NotesTab classId={classId} className={data.classRow.name} />
+      )}
 
       <p className="font-sans text-pixel-sm text-gray-500">mapel: {subjectName}</p>
     </main>

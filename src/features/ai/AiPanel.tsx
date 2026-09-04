@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/shared/db/supabase';
+import { env } from '@/shared/lib/env';
 import {
   createAiJob,
   finishAiJob,
@@ -20,7 +21,7 @@ import {
   type AiKind,
 } from './ai.helpers';
 
-const AI_ENDPOINT = 'https://nzamuxnrrqlqdtwdisrt.supabase.co/functions/v1/ai-generate';
+const AI_ENDPOINT = env.functionsUrl('ai-generate');
 
 export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { user } = useSession();
