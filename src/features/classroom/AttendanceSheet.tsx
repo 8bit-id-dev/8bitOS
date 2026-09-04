@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/shared/db/supabase';
@@ -7,6 +7,7 @@ import type { AttendanceStatus, ClassSession, Subject } from '@/shared/db/types'
 import { PixelCard } from '@/shared/components/PixelCard';
 import { PixelButton } from '@/shared/components/PixelButton';
 import { useToast } from '@/shared/components/Toast';
+import { logSessionActivity } from '@/shared/db/queries';
 import { useSession } from '@/features/auth/useSession';
 
 const STATUS_LABEL: Record<AttendanceStatus, string> = {
@@ -43,6 +44,7 @@ export function AttendanceSheet() {
   const { sessionId = '', classId = '' } = useParams<{ sessionId: string; classId: string }>();
   const { user } = useSession();
   const { toast } = useToast();
+  const firstMarkLogged = useRef(false);
   const queryClient = useQueryClient();
 
   const { data: session } = useSessionDetail(sessionId);
@@ -86,6 +88,13 @@ export function AttendanceSheet() {
     if (!user || !sessionId) return;
     await upsertAttendance(sessionId, studentId, status);
     toast(`✓ ${status.toUpperCase()} TERCATAT`);
+    // Timeline (Doc 10 §17): aktivitas attendance pertama dicatat sekali
+    if (!firstMarkLogged.current) {
+      firstMarkLogged.current = true;
+      void logSessionActivity(user.id, sessionId, 'attendance', 'Absensi dimulai').catch(
+        () => undefined,
+      );
+    }
     void queryClient.invalidateQueries({ queryKey: ['session-attendance', sessionId] });
     void queryClient.invalidateQueries({ queryKey: ['pending-count', user.id] });
   };

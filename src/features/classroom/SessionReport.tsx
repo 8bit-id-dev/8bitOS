@@ -4,6 +4,7 @@ import {
   endSession,
   getClassById,
   getSessionReport,
+  listSessionActivities,
   listStudentsByClass,
 } from '@/shared/db/queries';
 import { useSession } from '@/features/auth/useSession';
@@ -41,6 +42,13 @@ export function SessionReport() {
     queryKey: ['class-students', classId],
     queryFn: () => listStudentsByClass(classId),
     enabled: Boolean(classId),
+  });
+
+  // Timeline KBM (Doc 10 §17/§48): dibangun dari session_activities
+  const activitiesQ = useQuery({
+    queryKey: ['session-activities', sessionId],
+    queryFn: () => listSessionActivities(sessionId),
+    enabled: Boolean(sessionId),
   });
 
   const endMutation = useMutation({
@@ -119,6 +127,34 @@ export function SessionReport() {
             <p className="text-body font-bold text-gray-300">{counts.unmarked}</p>
           </div>
         </div>
+      </PixelCard>
+
+      {/* Timeline KBM (Doc 10 §48 Learning Timeline) */}
+      <PixelCard title={`timeline (${activitiesQ.data?.length ?? 0})`}>
+        {(activitiesQ.data?.length ?? 0) === 0 ? (
+          <p className="font-sans text-pixel-sm text-gray-300">
+            belum ada aktivitas tercatat
+          </p>
+        ) : (
+          <ul className="flex flex-col">
+            {(activitiesQ.data ?? []).map((a) => (
+              <li
+                key={a.id}
+                className="flex items-center gap-3 border-b border-line last:border-b-0 py-1.5 font-sans text-pixel-sm"
+              >
+                <span className="text-gray-500 w-12 tabular-nums">
+                  {new Date(a.started_at).toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </span>
+                <span className="w-2 h-2 bg-fg" aria-hidden />
+                <span className="micro-pixel text-gray-300 w-20 uppercase">{a.type}</span>
+                <span className="flex-1 text-fg truncate">{a.title}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </PixelCard>
 
       <PixelCard title={`catatan_sesi (${notes.length})`}>

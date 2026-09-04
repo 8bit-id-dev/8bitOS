@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import type {
+  ActivityType,
   AiJob,
   Assessment,
   AssessmentStatus,
@@ -8,6 +9,8 @@ import type {
   AttemptAnswer,
   AttendanceRecord,
   AttendanceStatus,
+  AuditAction,
+  AuditLog,
   ClassRow,
   ClassSession,
   DocumentKind,
@@ -20,6 +23,7 @@ import type {
   Question,
   QuestionType,
   ScheduleSlot,
+  SessionActivity,
   Student,
   Subject,
 } from './types';
@@ -594,6 +598,15 @@ export const upsertGrade = async (
   score: number,
   note?: string,
 ): Promise<Grade> => {
+  // Audit trail (Doc 10 §37): nilai lama dicatat sebelum ditimpa.
+  const { data: existing } = await supabase
+    .from('grades')
+    .select('*')
+    .eq('component_id', componentId)
+    .eq('student_id', studentId)
+    .maybeSingle();
+  const oldScore = (existing as unknown as Grade | null)?.score ?? null;
+
   const { data, error } = await supabase
     .from('grades')
     .upsert(
@@ -610,6 +623,9 @@ export const upsertGrade = async (
     .select('*')
     .single();
   if (error) throw error;
+  if (oldScore !== null && oldScore !== score) {
+    await writeAudit(userId, 'grade', `${componentId}:${studentId}`, 'update', { score: oldScore }, { score });
+  }
   return data as unknown as Grade;
 };
 
@@ -857,4 +873,77 @@ export const saveAiResponseToNote = async (
     title: `AI: ${job.prompt.slice(0, 60)}`,
     body: job.response ?? '',
   });
+};
+
+// ---------- Session Activities timeline (Doc 10 §17) ----------
+
+export const logSessionActivity = async (
+  userId: string,
+  sessionId: string,
+  type: ActivityType,
+  title: string,
+  metadata: Record<string, unknown> = {},
+): Promise<void> => {
+  const { error } = await supabase.from('session_activities').insert({
+    user_id: userId,
+    session_id: sessionId,
+    type,
+    title,
+    metadata,
+  });
+  if (error) throw error;
+};
+
+export const listSessionActivities = async (
+  sessionId: string,
+): Promise<SessionActivity[]> => {
+  const { data, error } = await supabase
+    .from('session_activities')
+    .select('*')
+    .eq('session_id', sessionId)
+    .order('started_at');
+  if (error) throw error;
+  return (data ?? []) as unknown as SessionActivity[];
+};
+
+// ---------- Audit log (Doc 10 §37) ----------
+
+export const writeAudit = async (
+  userId: string,
+  entityType: string,
+  entityId: string,
+  action: AuditAction,
+  oldValue?: Record<string, unknown> | null,
+  newValue?: Record<string, unknown> | null,
+): Promise<void> => {
+  // Audit tidak boleh menggagalkan operasi utama — swallow error.
+  try {
+    await supabase.from('audit_logs').insert({
+      user_id: userId,
+      entity_type: entityType,
+      entity_id: entityId,
+      action,
+      old_value: oldValue ?? null,
+      new_value: newValue ?? null,
+    });
+  } catch {
+    /* audit best-effort */
+  }
+};
+
+export const listAuditLogs = async (
+  entityType?: string,
+  entityId?: string,
+  limit = 50,
+): Promise<AuditLog[]> => {
+  let q = supabase
+    .from('audit_logs')
+    .select('*')
+    .order('timestamp', { ascending: false })
+    .limit(limit);
+  if (entityType) q = q.eq('entity_type', entityType);
+  if (entityId) q = q.eq('entity_id', entityId);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as unknown as AuditLog[];
 };

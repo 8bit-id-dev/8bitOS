@@ -202,3 +202,40 @@ export interface AiJob {
   created_at: string;
   finished_at: string | null;
 }
+
+// ---------- Doc 10 §17: Session Activities (timeline KBM) ----------
+
+export type ActivityType =
+  | 'attendance'
+  | 'presentation'
+  | 'discussion'
+  | 'quiz'
+  | 'exercise'
+  | 'assessment'
+  | 'note'
+  | 'browser';
+
+export interface SessionActivity {
+  id: string;
+  user_id: string;
+  session_id: string;
+  type: ActivityType;
+  title: string;
+  started_at: string;
+  metadata: Record<string, unknown>;
+}
+
+// ---------- Doc 10 §37: Audit Log ----------
+
+export type AuditAction = 'create' | 'update' | 'delete';
+
+export interface AuditLog {
+  id: string;
+  user_id: string;
+  entity_type: string;
+  entity_id: string;
+  action: AuditAction;
+  old_value: Record<string, unknown> | null;
+  new_value: Record<string, unknown> | null;
+  timestamp: string;
+}
